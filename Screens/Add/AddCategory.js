@@ -1,0 +1,164 @@
+import { NavigationContainer , useNavigation , useRoute } from '@react-navigation/native'
+import React from 'react'
+import { StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView} from 'react-native'
+import {AntDesign , FontAwesome5} from 'react-native-vector-icons'
+import { RandomContext } from '../Exports/Context'
+import { background, colorsArray } from '../Exports/Colors'
+import LottieView from 'lottie-react-native';
+import {theme} from '../Exports/Colors'
+import axios from 'axios'
+import {URL} from '../Exports/Config'
+import { add } from '../../Styles/Add'
+import {Avatar} from 'react-native-paper'
+
+
+const AddCategory = () => {
+
+    const [source,setSource] = React.useState(true)
+  
+
+    const progress = React.useRef(new Animated.Value(0)).current
+    const navigation = useNavigation()
+    const route = useRoute()
+
+    const [body, setBody] = React.useState(route?.params?.body ? route?.params?.body : {} )
+    const [productName, setProductName] = React.useState(route?.params?.product_name ? route?.params?.product_name : "")
+
+
+    const [randomNo,userId] = React.useContext(RandomContext)
+ 
+
+    const [comment,setComment] = React.useState("")
+
+
+    const [inputFocus,setInputFocus] = React.useState(false)
+    const [searchText,setSearchText] = React.useState("")
+    const [searchTextProduct,setSearchTextProduct] = React.useState("")
+    const [searchArray,setSearchArray] = React.useState([])
+    const [searchLoading,setSearchLoading] = React.useState(false)
+
+    React.useEffect(()=>{
+        setBody({...body, product_name : productName})
+        Animated.timing(progress, {
+            toValue: 1,
+            duration: 10000,
+            easing: Easing.linear,
+            useNativeDriver : true
+            },).start();
+
+        axios.get(URL + "/search/category", {params:{product_text : "" }} , {timeout : 3000})
+        .then(res => res.data).then(function(responseData) {
+        //   console.log("SearchArray",responseData)
+            setSearchLoading(false)
+            setSearchArray(responseData)
+        //    console.log("Reached Here response")
+        })
+        .catch(function(error) {
+            setSearchLoading(false)
+        //    console.log("Reached Here error")
+        });
+    },[])
+
+    const onClickSearchItemChild = (category_id , category_name) => {
+        setSearchTextProduct(category_name)
+    //    console.log(category_name)
+        navigation.navigate("AddContext", {body : body, category_name : category_name , category_id : category_id})
+    }
+
+    const searchProduct = (text) => {
+        
+        setSearchTextProduct(text)
+        setSearchLoading(true)
+        
+        axios.get(URL + "/search/category", {params:{category_text : text }} , {timeout : 3000})
+          .then(res => res.data).then(function(responseData) {
+        //      console.log("SearchArray",responseData)
+              setSearchLoading(false)
+              setSearchArray(responseData)
+          //    console.log("Reached Here response")
+        })
+        .catch(function(error) {
+              setSearchLoading(false)
+          //    console.log("Reached Here error")
+        });
+
+    }
+
+
+
+    return (
+        <View style = {{flex : 1, backgroundColor : background}}>
+            <Animated.View 
+            style = {add.headerView}>
+                    <TouchableOpacity 
+                    onPress = {()=>navigation.goBack()}
+                    style = {add.headerBack}>
+                        <AntDesign name = "arrowleft" size = {30} color = {colorsArray[randomNo]}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style = {add.headerTitle}
+                        disabled
+                        >
+                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : colorsArray[randomNo-1]}}>Add Category</Text>
+                    </TouchableOpacity>
+            </Animated.View>
+            <View style = {{margin : 10 ,marginTop : 60,}}>
+                <View style={add.fixedView}>
+                <View style={add.elementFixed}>
+                    <Text style = {add.headingFixed}>{body.product_name}</Text>
+                </View>
+                </View>
+                <View style={add.element}>
+                    {/* <Text style = {add.heading}>Category Name</Text> */}
+                    <View style = {{flexDirection : 'row', marginTop : 10, justifyContent : 'space-between', borderRadius : 10, borderWidth : 1, borderColor : '#DDD', paddingHorizontal : 5, paddingVertical : 5,}}>
+                        <TextInput style = {{fontSize : 16}}
+                            placeholder = "Add Category"
+                            onChangeText = {(text) => searchProduct(text)}
+                            value = {searchTextProduct}
+                            onFocus = {()=>setInputFocus(true)}
+                            onBlur = {()=>setInputFocus(false)}
+                        />
+                        <TouchableOpacity 
+                            style = {{padding : 2 , paddingLeft : 10 , paddingRight : 10,}}
+                            onPress = {()=>onClickSearchItemChild(0,searchTextProduct)} >
+                            <AntDesign name = "plus" size = {24} color = {theme} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <ScrollView style = {add.dropDownList}>
+                { searchArray.length ?
+                searchArray.map((item,index)=>{
+                    return(
+                        <TouchableOpacity 
+                                    key = {index.toString()}
+                                    style = {add.dropDownItem}
+                                    onPress = {()=>onClickSearchItemChild(item.category_id, item.category_name)} >
+                            {item.product_image && item.product_image != "None" && item.product_image != "" ?
+                            <Image source = {{uri : item.product_image}} style = {add.dropDownItemImage}/> :
+                            <Avatar.Image style = {add.dropDownItemAvatar}
+                            source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.category_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                            size={30}/> }  
+                            <View style = {add.dropDownView}>
+                                <Text style = {add.dropDownText}>{item.category_name}</Text>
+                            </View>
+                            
+                        </TouchableOpacity>
+                       )})
+                : null}
+                </ScrollView>
+            </View>
+            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 60 , height : 60 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+                <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
+                style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
+                    <AntDesign name = "home" size = {30} color = 'white' />
+                </TouchableOpacity>
+            </View>
+        </View>
+    )
+}
+
+export default AddCategory
+
+const styles = StyleSheet.create({
+   
+})
