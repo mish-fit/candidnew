@@ -185,7 +185,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
-                            height: Dimensions.get('screen').width * 0.69,
+                            height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
@@ -263,8 +263,8 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
             <View style = {{ justifyContent : 'center', alignItems : 'center' , }}>
                 <Image source = {{uri : item.feed_summary_image}} 
                     style = {{
-                        width : Dimensions.get('screen').width * 0.460,
-                        height: Dimensions.get('screen').width * 0.345,
+                        width : Dimensions.get('screen').width * 0.46,
+                        height: Dimensions.get('screen').width * 0.46,
                         borderTopLeftRadius : 20 , borderBottomLeftRadius : 20 ,
                     }} 
                 />

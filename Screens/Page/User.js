@@ -141,7 +141,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
                 </View>  
-                <View>
+                <View style = {{flex : 1}}>
                     <View style = {{flexDirection : 'row', marginLeft : 5}}>
                         <TouchableOpacity onPress = {()=> {
                          //   console.log(" user info ",userInfo, " item " , item)
@@ -162,7 +162,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </View>
                
                     <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{fontWeight : 'bold', fontSize : 20 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                        <Text style = {{fontSize : 12 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -181,7 +181,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
-                            height: Dimensions.get('screen').width * 0.69,
+                            height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
@@ -256,32 +256,32 @@ const FeedItemSummaryComponent = ({item,id}) => {
             <View style = {{ justifyContent : 'center', alignItems : 'center' , }}>
                 <Image source = {{uri : item.feed_image}} 
                     style = {{
-                        width : Dimensions.get('screen').width * 0.460,
-                        height: Dimensions.get('screen').width * 0.345,
+                        width : Dimensions.get('screen').width * 0.46,
+                        height: Dimensions.get('screen').width * 0.46,
                         borderTopLeftRadius : 20 , borderBottomLeftRadius : 20 ,
                     }} 
                 />
             </View>  
             <View style = {{ justifyContent : 'space-between', borderTopRightRadius : 20 , borderBottomRightRadius : 20 , flexShrink : 1, flex : 1}}>
                 <View style = {{paddingTop : 5 ,paddingLeft : 5 , flexDirection : 'row', flexWrap : 'wrap' , flexShrink : 1,}}>
-                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 15 , color : colorsArray[colorNo+1] }}>{item.product_name}</Text>
+                    <Text style = {{ flexShrink : 1, fontSize : 12 , color : colorsArray[colorNo+1] }}>{item.product_name}</Text>
                 </View>
                 <View style = {{paddingHorizontal: 5, paddingVertical : 2,  flexShrink : 1}}>
                     <View style = {{flexDirection : 'row', justifyContent : 'space-between', }}>
                         <TouchableOpacity 
                         style = {{alignItems : 'center', justifyContent : 'center'}} >
-                            <Text style = {{fontSize : 15, fontStyle : 'italic',flexShrink : 1, backgroundColor : '#DDD' , borderRadius : 10, padding : 3}}>
+                            <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1, backgroundColor : '#DDD' , borderRadius : 10, padding : 3}}>
                                 {item.category_name}
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity 
                         style = {{alignItems : 'center', justifyContent : 'center'}} >
-                            <Text style = {{fontSize : 15, fontStyle : 'italic',flexShrink : 1, borderColor : '#DDD' , borderWidth : 1, borderRadius : 10, padding : 3}}>
+                            <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1, borderColor : '#DDD' , borderWidth : 1, borderRadius : 10, padding : 3}}>
                                 {item.context_name}
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style = {{fontSize : 13, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_count_buys > 0 ? item.feed_count_buys + " friends bought this" : ""}</Text>
+                    <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_count_buys > 0 ? item.feed_count_buys + " friends bought this" : ""}</Text>
                     
                 </View>
                 <TouchableOpacity 

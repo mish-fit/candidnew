@@ -31,11 +31,11 @@ const AddComment = () => {
     const [productId,setProductId] = React.useState(0)
     const [contextId,setContextId] = React.useState(0)
     const [postImage,setPostImage] = React.useState("")
-
+    
  
 
     React.useEffect(()=>{
-     //   console.log(body)
+        
     
     },[])
 

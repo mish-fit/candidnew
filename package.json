@@ -46,6 +46,7 @@
     "react-native-android-sms-listener": "^0.8.0",
     "react-native-contacts": "^7.0.2",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-get-random-values": "^1.7.1",
     "react-native-get-sms-android": "^2.1.0",
     "react-native-modal": "^13.0.0",
     "react-native-modal-datetime-picker": "^13.0.0",

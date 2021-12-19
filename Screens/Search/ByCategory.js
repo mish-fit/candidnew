@@ -63,7 +63,7 @@ const FeedItemComponent = ({item,id}) => {
                    
                 </View>
                 <View style = {{marginTop : 5 ,marginLeft : 30 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                    <Text style = {{fontWeight : 'bold', fontSize : 20 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                    <Text style = {{ fontSize : 12 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
                 </View>
                 <View style = {{marginHorizontal : 30 , marginVertical : 5,flexDirection : 'row' , justifyContent : 'space-between'}}>
                     <View style = {{ paddingHorizontal: 5, paddingVertical : 2, backgroundColor :  "#888" , borderRadius : 10, }}>
@@ -78,7 +78,7 @@ const FeedItemComponent = ({item,id}) => {
                     <Image source = {{uri : item.image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
-                            height: Dimensions.get('screen').width * 0.69,
+                            height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />

@@ -215,7 +215,7 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
         <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'space-between'}}>
                 <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                    <Text style = {{fontWeight : 'bold', fontSize : 20 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                    <Text style = {{fontSize : 12 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
                 </View>
                 <Menu style = {{}}>
                     <MenuTrigger>
@@ -243,7 +243,7 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
                 <Image source = {{uri : item.feed_image}} 
                     style = {{
                         width : Dimensions.get('screen').width * 0.92,
-                        height: Dimensions.get('screen').width * 0.69,
+                        height: Dimensions.get('screen').width * 0.92,
                         borderRadius : 40, 
                     }} 
                 />

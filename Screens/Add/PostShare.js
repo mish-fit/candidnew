@@ -37,7 +37,7 @@ const PostShare = () => {
         //Amplitude.logEventWithPropertiesAsync('REFERRAL', {userId : userId})
         try {
             const result = await Share.share({
-              message: 'Shop from the amazing products I recommended on https://www.taiqui.app/' + body.user_id.slice(9,10) + body.user_id.slice(1,2)  + body.user_name.replace(' ','+') + body.user_id.slice(2,3) + body.user_id.slice(8,9)   
+              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/' + body.user_name   
             });
             if (result.action === Share.sharedAction) {
               if (result.activityType) {

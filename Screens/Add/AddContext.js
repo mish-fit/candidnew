@@ -60,10 +60,10 @@ const AddContext = () => {
         });
     },[])
 
-    const onClickSearchItemChild = (context_name) => {
-        setSearchTextProduct(context_name)
-       // console.log(context_name)
-        navigation.navigate("AddImage", {body : body , context_name : context_name })
+    const onClickSearchItemChild = (name) => {
+        setSearchTextProduct(name)
+        console.log(name)
+        navigation.navigate("AddImage", {body : body , context_name : name })
     }
 
     const searchProduct = (text) => {

@@ -26,7 +26,7 @@ export const add = StyleSheet.create({
     headerBack : {width: 40 , height : 40 , marginLeft : 20,
         borderRadius : 60 , justifyContent : 'center', alignItems : 'center' },
     headerTitle : {marginRight : 40,flex : 1 , justifyContent :'center', alignItems :'center'},
-    headingFixed : {fontSize : 20 , fontWeight : 'bold', color : theme},
+    headingFixed : {fontSize : 14 ,  color : 'black'},
     headingFixedLight : {fontSize : 15 , color : themeLight},
     headingFixedLightest : {fontSize : 13 , color : 'white', fontStyle :'italic',},
     elementFixed : {
@@ -47,7 +47,7 @@ export const add = StyleSheet.create({
         marginTop : 5,
         borderRadius : 20,
         padding : 5 ,
-        paddingLeft : 10,
+        paddingLeft : 5,
         backgroundColor : '#AAA',
         borderRadius : 10,
     },

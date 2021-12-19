@@ -152,7 +152,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
                 </View>  
-                <View>
+                <View style = {{flex : 1,}}>
                     <View style = {{flexDirection : 'row', marginLeft : 5}}>
                         <TouchableOpacity onPress = {()=> {
                          //   console.log(" user info ",userInfo, " item " , item)
@@ -172,8 +172,8 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         }
                     </View>
                
-                    <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{fontWeight : 'bold', fontSize : 20 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                    <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flex : 1, }}>
+                        <Text style = {{fontSize : 12 , color : colorsArray[colorNo] , }}>{item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -192,7 +192,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
-                            height: Dimensions.get('screen').width * 0.69,
+                            height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
@@ -558,7 +558,7 @@ const Feed = () => {
             ref = {ref}
             style = {{marginBottom : 40}}
             contentContainerStyle = {{}}
-            data = {toggled ? feedData : feedData.filter((item,index)=>item.rating>3)}
+            data = {toggled ? feedData.filter((item,index)=>item.rating >3) : feedData}
             renderItem = {FeedItem}
             onScroll = {handleScroll}
             showsVerticalScrollIndicator = {false}
@@ -580,7 +580,7 @@ const Feed = () => {
             justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
                 <View style = {{flexDirection : 'row'}}>
                     <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 18,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>Positive Reviews</Text>
+                        <Text style = {{color : theme, fontSize : 15,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>All Reviews</Text>
                     </View>
                     <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
                         <Switch
@@ -591,7 +591,7 @@ const Feed = () => {
                         />
                     </View>
                     <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 18,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>All Reviews</Text>
+                        <Text style = {{color : theme, fontSize : 15,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Positive Reviews</Text>
                     </View>
                 </View>
             </View>

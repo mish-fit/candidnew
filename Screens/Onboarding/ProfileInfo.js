@@ -22,7 +22,13 @@ import { theme } from '../Exports/Colors';
 import { s3URL, uploadImageOnS3 } from '../Exports/S3';
 import LottieView from 'lottie-react-native';
 
+import 'react-native-get-random-values'
+import { nanoid , customAlphabet} from 'nanoid'
+
+
+
 const ProfileInfo = () => {
+  const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6)
 
   const navigation = useNavigation()
   const route = useRoute()
@@ -42,6 +48,9 @@ const ProfileInfo = () => {
   const [userName,setUserName] = React.useState(route.params?.username ? route.params?.username  : "")
   const [userId] = React.useContext(RandomContext)
   const [phoneNumber,setPhoneNumber] = React.useState(route.params?.phoneNumber ? route.params?.phoneNumber : "")
+  const [refereeName,setRefereeName] = React.useState(route.params?.refereeName ? route.params?.refereeName : "")
+  const [refereeId,setRefereeId] = React.useState(route.params?.refereeId ? route.params?.refereeId : "")
+  const [coinsValue,setCoinsValue] = React.useState(route.params?.coinsValue ? route.params?.coinsValue : "")
   const [userInfo,setUserInfo] = React.useState([])
   const [submitted,setSubmitted] = React.useState(false)
 
@@ -57,6 +66,8 @@ const ProfileInfo = () => {
 
   const [userNameAccepted,setUserNameAccepted] = React.useState(false)
   const [userNameRefreshBoolean,setUserNameRefreshBoolean] = React.useState(false)
+
+  const [coupon,setCoupon] = React.useState(nanoid())
 
   
   const [variable,setVariable] = React.useState(route.params?.variable ?  route.params?.variable : "new user")
@@ -269,10 +280,29 @@ const ProfileInfo = () => {
           "city_name": "",
           "pin_code": 0 ,
           "twitter_user_name" : "",
-          "social_handles" : socialHandles
+          "social_handles" : socialHandles,
+          "coupon" : coupon
         }
-     // console.log("USER BODY",userbody)
-  
+      console.log("USER BODY",userbody)
+      
+     const userPoints = {
+      "user_id": phoneNumber.slice(1,13),
+      "user_name": userName,
+      "reward_type": "completed Onboarding",
+      "coins_value": coinsValue,
+      "reward_type_id": 0
+    }
+    const refereePoints = {
+      "user_id": refereeId,
+      "user_name": refereeName,
+      "reward_type": "Signed up using your referral code",
+      "coins_value": coinsValue,
+      "reward_type_id": 0,
+      "engaged_user_name" : userName
+    }
+
+      console.log("USER POINTS",userPoints)
+      console.log("REFEREE POINTS",refereePoints)
 
       axios({
       method: 'post',
@@ -280,7 +310,30 @@ const ProfileInfo = () => {
       data: userbody
       })
       .then(res => {
-        //  console.log("USER", res)
+        if(refereeId && refereeId != "" ) 
+        {
+            axios({
+              method: 'post',
+              url: URL + '/rewards/earn',
+              data: userPoints
+              }).then(res=>{
+                console.log(res)
+              }).catch((e)=>{
+                console.log(e)
+            })
+            axios({
+              method: 'post',
+              url: URL + '/rewards/earn',
+              data: refereePoints
+              }).then(res=>{
+                console.log(res)
+              }).catch((e)=>{
+                console.log(e)
+            })
+        }
+          
+
+
           ToastAndroid.show("Hi " + userbody.user_name, ToastAndroid.LONG)
                   setTimeout(function(){
                   navigation.navigate("Home", {source : "Onboarding", body : userbody})
@@ -378,8 +431,8 @@ const ProfileInfo = () => {
                     <AntDesign name = "checkcircle" color = "green" size = {20} /> :
                     <AntDesign name = "closecircle" color = "#888" size = {20} /> 
                     }
-                    </View>
                   </View>
+                </View>
                 <View style = {{flexDirection  : 'row'}}>
                   
                   <TextInput 
@@ -466,11 +519,11 @@ const ProfileInfo = () => {
                  alignItems:'flex-end'}}>
                 <TouchableOpacity 
                         onPress = {onSubmitOnboarding}
-                        disabled = {userName == ""}
+                        disabled = {!userNameAccepted}
                         style = {{
-                          backgroundColor : userName == "" ? "#DDD" :theme , width : 100, height : 40 , borderRadius : 10, 
+                          backgroundColor : !userNameAccepted ? "#DDD" :theme , width : 100, height : 40 , borderRadius : 10, 
                         flex : 1, justifyContent : 'center' , alignItems : 'center'}}>
-                    <Text style = {{color : userName == "" ? '#888' : 'white'}}>Submit</Text>
+                    <Text style = {{color : !userNameAccepted ? '#888' : 'white'}}>Submit</Text>
                 </TouchableOpacity>
               </View>                  
             </View>

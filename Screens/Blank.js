@@ -19,7 +19,7 @@ const Blank = () => {
                             navigation.navigate("Home",{phoneNumber : user.phoneNumber, body : responseData[0] })
                         }
                         else {
-                            navigation.navigate("ProfileInfo",{phoneNumber : user.phoneNumber})
+                            navigation.navigate("Coupon",{phoneNumber : user.phoneNumber})
                         }
                     }).catch(function(error) {
           
