@@ -92,6 +92,17 @@ export default function DrawerContent(props) {
                             label="My Profile"
                             onPress={() => {props.navigation.navigate('MyDetails')}}
                         />
+                        <DrawerItem 
+                            icon={({color, size}) => (
+                                <AntDesign 
+                                name="edit" 
+                                color={color}
+                                size={size}
+                                />
+                            )}
+                            label="Edit Profile"
+                            onPress={() => {props.navigation.navigate('EditProfile')}}
+                        />
                         <DrawerItem
                             icon={({color, size}) => (
                                 <AntDesign 
@@ -107,7 +118,7 @@ export default function DrawerContent(props) {
                    
                     <Drawer.Section style={styles.bottomDrawerSection}>
                         <View style = {styles.headerView}>
-                            <Text style = {styles.header}>Follow TaiQ on Social Media </Text>
+                            <Text style = {styles.header}>Follow Candid on Social Media </Text>
                         </View>
                         
                         <DrawerItem 

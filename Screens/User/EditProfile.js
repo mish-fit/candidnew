@@ -21,210 +21,68 @@ import { RandomContext } from '../Exports/Context';
 import { theme } from '../Exports/Colors';
 import { s3URL, uploadImageOnS3 } from '../Exports/S3';
 import LottieView from 'lottie-react-native';
-
 import 'react-native-get-random-values'
 import { nanoid , customAlphabet} from 'nanoid'
 
 
 
-const ProfileInfo = () => {
-  const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6)
 
+const EditProfile = () => {
+ 
   const navigation = useNavigation()
-  const route = useRoute()
-  const progress = React.useRef(new Animated.Value(0)).current
-
-  const [selectedItem, setSelectedItem ] = useState(0);
-  const [date, setDate] = useState(new Date())
-  const [image, setImage] = React.useState(route.params?.image ? route.params?.image  : "");
-  const [gender, setGender] = useState(route.params?.gender ? route.params?.gender  : "")
-  const [instagram, setInstagram] = useState(route.params?.instagram ? route.params?.instagram  :"")
-  const [twitter, setTwitter] = useState(route.params?.twitter ? route.params?.twitter  :"")
   
-  const [imageUrl,setImageUrl] = useState("")
+  const route = useRoute()
+  
+  const progress = React.useRef(new Animated.Value(0)).current
+  
   const [profileImageChange,setProfileImageChange] = useState(false)
-  const [coverImageChange,setCoverImageChange] = useState(false)
-  const [age,setAge] = useState("")
-  const [userName,setUserName] = React.useState(route.params?.username ? route.params?.username  : "")
-  const [userId] = React.useContext(RandomContext)
-  const [phoneNumber,setPhoneNumber] = React.useState(route.params?.phoneNumber ? route.params?.phoneNumber : "")
-  const [refereeName,setRefereeName] = React.useState(route.params?.refereeName ? route.params?.refereeName : "")
-  const [refereeId,setRefereeId] = React.useState(route.params?.refereeId ? route.params?.refereeId : "")
-  const [coinsValue,setCoinsValue] = React.useState(route.params?.coinsValue ? route.params?.coinsValue : "")
+  const [image,setImage] = React.useState("")
+  
+  const [randomNo, userId] = React.useContext(RandomContext)
+
   const [userInfo,setUserInfo] = React.useState([])
+  
   const [submitted,setSubmitted] = React.useState(false)
 
-  const [userDob,setUserDob] = useState(route.params?.dob ? route.params?.dob  :"")
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  const [expoToken,setExpoToken] = React.useState("")
-  const [deviceToken,setDeviceToken] = React.useState("")
   const [refresh,setRefresh] = React.useState(false)
-  const [dbContacts,setDbContacts] = React.useState([])
-  const [dbPhoneNumbers,setDbPhoneNumbers] = React.useState([])
-  const [socialHandles,setSocialHandles] = React.useState({})
 
-  const [userNameAccepted,setUserNameAccepted] = React.useState(false)
+  const [userNameAccepted,setUserNameAccepted] = React.useState(true)
   const [userNameRefreshBoolean,setUserNameRefreshBoolean] = React.useState(false)
-
- 
-
   
-  const [variable,setVariable] = React.useState(route.params?.variable ?  route.params?.variable : "new user")
+  const [userName,setUserName] = React.useState("")
+  const [userDob,setUserDob] = useState("")
+  const [userImage, setUserImage] = React.useState("")
+  const [gender, setGender] = useState("")
+  const [instagram, setInstagram] = useState("")
+  const [twitter, setTwitter] = useState("")
+  const [socialHandles,setSocialHandles] = React.useState({})
   
   const showDatePicker = () => {setDatePickerVisibility(true);};
+  
   const hideDatePicker = () => {setDatePickerVisibility(false);};
+  
   const handleConfirm = (date) => {
       setUserDob(moment(date).format("YYYY-MM-DD"))
       hideDatePicker();
   };
 
-
-  const [contactsAlreadyExist,setContactsAlreadyExist] = React.useState(true)
-
-    
-  const registerForExpoPushNotificationsAsync= async() => {
-      let token;
-      
-      if (Constants.isDevice) {
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        
-        let finalStatus = existingStatus;
-        if (existingStatus !== 'granted') {
-          const { status } = await Notifications.requestPermissionsAsync();
-          finalStatus = status;
-        }
-        if (finalStatus !== 'granted') {
-          ToastAndroid.show('Failed to get push token for push notification!',ToastAndroid.SHORT);
-          return;
-        }
-        try {
-          token = await Notifications.getExpoPushTokenAsync({
-            experienceId : '@kandurisv/taiq'
-          })
-        }
-        catch(e) {
-        //  console.log(e)
-        }
-         } 
-      else {
-        alert('Must use physical device for Push Notifications');
-      }
-
-    if (Platform.OS === 'android') {
-      Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
-      });
-    }
-    
-    return token.data;
-  }
-  
-  const registerForDevicePushNotificationsAsync = async() => {
-    let token;
-   
-    if (Constants.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-     
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-      }
-
-      token = (await Notifications.getDevicePushTokenAsync()).data;
-      
-    } else {
-      alert('Must use physical device for Push Notifications');
-    }
-   // console.log("token", token)
-    return token;
-  }
-  
-
-  
-
-
     useEffect(() => {
-      const registerNotification = async () => {
-        registerForExpoPushNotificationsAsync().then(token => {
-         // console.log("expo token", token)
-          setExpoToken(token)
-          AsyncStorage.setItem('expoToken', token )
-        });
-        registerForDevicePushNotificationsAsync().then(token => {
-         // console.log("device token", token)
-          setDeviceToken(token)
-          AsyncStorage.setItem('deviceToken', token )
-        });
-      }
-        registerNotification()
-
-    
-      const getContacts = () => {
-
-          Contacts.getAll().then(contacts => {
-              const a = []
-              setDbPhoneNumbers([])
-              setDbContacts([])
-              contacts.map((item,index)=>{
-                  //console.log("Phone",item.phoneNumbers)
-                  if(item.phoneNumbers.length) {
-                      item.phoneNumbers.map((item1,index1)=>{
-                          a.push(item1.number.replace(/\s+/g, ''))
-                        //setDbPhoneNumbers(dbPhoneNumbers => [...dbPhoneNumbers,item1.number.replace(/\s+/g, '')] );  
-                      })  
-                  } 
-                  //console.log("Reached Here", dbPhoneNumbers.length)
-              })
-              setDbPhoneNumbers(a)
-          }).then(()=>{
-            console.log("Reached Here", dbPhoneNumbers.length)
-            //console.log(dbPhoneNumbers.filter((val,id,array) => array.indexOf(val) == id))
-            setDbContacts(dbPhoneNumbers.filter((val,id,array) => array.indexOf(val) == id))
-            
-            if(dbPhoneNumbers.length) {
-            const contactsBody = {
-              "user_id": phoneNumber.slice(1,13),
-              "user_name": "",
-              "val": JSON.stringify(dbPhoneNumbers.filter((val,id,array) => array.indexOf(val) == id)), 
-            }
-      
-            axios({
-              method: 'post',
-              url: URL + '/contacts',
-              data: contactsBody
-              })
-              .then(res => {
-                //console.log("Contacts res", res)
-              }).catch((e) => {
-                //console.log("Contacts error", e)
-              })
-            }
-            else {
-              setRefresh(!refresh)
-            }
-        
-          })
-      }
-      
-      getContacts()
-
-
-    //  console.log("USER DETAILS USE EFFECT" , route.params.userDetails)
+        console.log(userId)
        const getUserInfo = () => {
-        axios.get(URL + "/user/info", {params:{user_id : phoneNumber.slice(1,13) }} , {timeout:5000})
+        axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout:5000})
         .then(res => res.data).then(function(responseData) {
-        //    console.log("USER INFO",responseData)
+            console.log("USER INFO",responseData)
             setUserInfo(responseData)
-           
+            setUserName(responseData[0].user_name)
+            setImage(responseData[0].user_profile_image)
+            setUserImage(responseData[0].user_profile_image)
+            setUserDob(responseData[0].user_dob)
+            setGender(responseData[0].user_gender)
+            setInstagram(responseData[0].instagram_user_name)
+            setTwitter(responseData[0].twitter_user_name)
+            setSocialHandles(responseData[0].social_handles)
         })
         .catch(function(error) {
             //
@@ -260,90 +118,31 @@ const ProfileInfo = () => {
     const onSubmitOnboarding = () =>{
         setSubmitted(true)
         if(profileImageChange) {
-          uploadImageOnS3(phoneNumber.slice(1,13) + "/profile",image) 
+          uploadImageOnS3(userId.slice(1,13) + "/profile",image) 
         }
 
         const userbody = {
-          "user_id": phoneNumber.slice(1,13),
+          "user_id": userId.slice(1,13),
           "user_name": userName,
-          "user_profile_image": profileImageChange ? s3URL + phoneNumber.slice(1,13) + "/profile" : "",
-          "user_phone_number": phoneNumber,
+          "user_profile_image": profileImageChange || userImage != "" ? s3URL + userId.slice(1,13) + "/profile" : "",
           "user_gender": gender,
-          "user_email": "",
           "user_dob": userDob,
-          "expo_token": expoToken,
-          "device_token": deviceToken,
           "instagram_user_name": instagram,
-          "country_name": "India",
-          "state_name": "",
-          "city_name": "",
-          "pin_code": 0 ,
-          "twitter_user_name" : "",
-          "social_handles" : socialHandles,
-          "coupon" : nanoid()
+          "twitter_user_name" : twitter,
+          "social_handles" : socialHandles
         }
       console.log("USER BODY",userbody)
-      
-     const userPoints = {
-      "user_id": phoneNumber.slice(1,13),
-      "user_name": userName,
-      "reward_type": "completed Onboarding",
-      "coins_value": coinsValue,
-      "reward_type_id": 1,
-      "engaged_post_id" : "", 
-      "engaged_user_id" : "",  
-      "engaged_user_name" : "", 
-      "engaged_product_name" : "" 
-    }
-    
-    const refereePoints = {
-      "user_id": refereeId,
-      "user_name": refereeName,
-      "reward_type": "Signed up using your referral code",
-      "coins_value": coinsValue,
-      "reward_type_id": 2,
-      "engaged_post_id" : "", 
-      "engaged_user_id" : "",  
-      "engaged_product_name" : "" ,
-      "engaged_user_name" : userName
-    }
-
-      console.log("USER POINTS",userPoints)
-      console.log("REFEREE POINTS",refereePoints)
-
+ 
       axios({
       method: 'post',
-      url: URL + '/user/new',
+      url: URL + '/user/edit',
       data: userbody
       })
       .then(res => {
-        if(refereeId && refereeId != "" ) 
-        {
-            axios({
-              method: 'post',
-              url: URL + '/rewards/earn',
-              data: userPoints
-              }).then(res=>{
-                console.log(res)
-              }).catch((e)=>{
-                console.log(e)
-            })
-            axios({
-              method: 'post',
-              url: URL + '/rewards/earn',
-              data: refereePoints
-              }).then(res=>{
-                console.log(res)
-              }).catch((e)=>{
-                console.log(e)
-            })
-        }
-          
-
-
-          ToastAndroid.show("Hi " + userbody.user_name, ToastAndroid.LONG)
+          console.log(res)
+       ToastAndroid.show("Your Details are updated", ToastAndroid.LONG)
                   setTimeout(function(){
-                  navigation.navigate("Home", {source : "Onboarding", body : userbody})
+                  navigation.navigate("Home", {source : "Edit", body : userbody})
                   }, 300);        
           }).catch((e) => {
               ToastAndroid.show("Error updating details. Please try later")
@@ -400,15 +199,7 @@ const ProfileInfo = () => {
         <ScrollView 
           contentContainerStyle = {style.mainViewContentContainer}
           style = {style.mainViewContainer} >
-          {/* <View style = {header.headerView}>
-            <ModernHeader 
-              title="My Info"
-              titleStyle = {header.headerText}
-              backgroundColor= {background}
-              leftDisable
-              rightDisable
-            />
-          </View> */}
+
 
           <View style = {{}}>
             <View style = {style.editUserDetailsDisplayContainer}>
@@ -539,4 +330,4 @@ const ProfileInfo = () => {
     )
 }
 
-export default ProfileInfo
+export default EditProfile
