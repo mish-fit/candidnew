@@ -22,7 +22,7 @@ const Redemptions = () => {
     const [userSummary,setUserSummary] = React.useState(route?.params?.userSummary)
     const [recentBurn,setRecentBurn] = React.useState(route?.params?.recentBurn)
 
-    const [myRewardsCoins,setMyRewardsCoins] = React.useState(7000)
+    const [myRewardsCoins,setMyRewardsCoins] = React.useState()
     const [randomNo] = React.useContext(RandomContext)
 
     const [pageLoading, setPageLoading] = React.useState(false)

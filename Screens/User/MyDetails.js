@@ -12,12 +12,13 @@ import { FlatList } from 'react-native-gesture-handler'
 import {Menu,MenuOptions,MenuOption,MenuTrigger,} from 'react-native-popup-menu';
 import LottieView from 'lottie-react-native'
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import {Avatar} from 'react-native-paper'
 
 const FriendsCarousel = ({DATA , onClickItem}) => {
     const [data,setData] = React.useState([...DATA])
     const scrollX = React.useRef(new Animated.Value(0)).current
     
-    const ITEM_SIZE = 60
+    const ITEM_SIZE = 100
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
     
     const renderItem = ({item , index}) => {
@@ -27,35 +28,30 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
         }
        
         const inputRange = [
-            ITEM_SIZE*(index-3),
-            ITEM_SIZE*index,
-            ITEM_SIZE*(index+1),
-            ITEM_SIZE*(index+2),   
+            ITEM_SIZE*(index-1),
+            ITEM_SIZE*(index),
+            
         ]
-        const opacityInputRange = [
-            -1,
-            0,
-            ITEM_SIZE*index,
-            ITEM_SIZE*(index+1),   
-        ]
+       
         const scale = scrollX.interpolate({
             inputRange,
-            outputRange : [1,1,0.5,0]
+            outputRange : [1,1]
         })
-        const opacity = scrollX.interpolate({
-            inputRange : opacityInputRange,
-            outputRange : [1,1,1,0]
-        })
+      
   
         return(
             <Animated.View style={[home.mainViewCarouselScrollableItemContainer,{borderWidth : 0}  , {transform : [{scale}]}]}>
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
-                    <View style = {{flex: 1  , width : 100, backgroundColor : background}}>
-                      <Image source = {{uri : item.user_profile_image ? item.user_profile_image : "No Image"}} 
-                          style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 40 , width : 80, height : 80 , marginLeft : 10} ]} />
+                    <View style = {{flex: 1  , width : ITEM_SIZE, backgroundColor : background}}>
+                     {item.user_profile_image ? 
+                     <Image source = {{uri : item.user_profile_image}} 
+                          style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : ITEM_SIZE-20 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
+                   : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
+                    source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.following_user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                    size={ITEM_SIZE-40}/> }
                     </View>
                     <View style = {{backgroundColor : background , height : 45 , borderRadius : 5, }}>
-                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.user_name.length > 30 ? item.user_name.substring(0,20) + "..." : item.user_name}</Text>
+                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.following_user_name.length > 30 ? item.following_user_name.substring(0,20) + "..." : item.following_user_name}</Text>
                     </View>
                 </TouchableOpacity>
             </Animated.View>
@@ -88,7 +84,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
         console.log("Following",isFollowing)
     },[])
 
-    const ITEM_SIZE = 60
+    const ITEM_SIZE = 100
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
 
     const renderItem = ({item , index}) => {
@@ -102,10 +98,9 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
         }
         
         const inputRange = [
-            ITEM_SIZE*(index-3),
-            ITEM_SIZE*index,
-            ITEM_SIZE*(index+1),
-            ITEM_SIZE*(index+2),   
+            ITEM_SIZE*(index-1),
+            ITEM_SIZE*(index),
+           
         ]
         const opacityInputRange = [
             -1,
@@ -115,7 +110,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
         ]
         const scale = scrollX.interpolate({
             inputRange,
-            outputRange : [1,1,0.5,0]
+            outputRange : [1,1]
         })
         const opacity = scrollX.interpolate({
             inputRange : opacityInputRange,
@@ -125,9 +120,13 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
         return(
             <Animated.View style={[home.mainViewCarouselScrollableItemContainer,{borderWidth : 0}  , {transform : [{scale}]}]}>
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
-                    <View style = {{flex: 1  , width : 100, backgroundColor : background }}>
-                        <Image source = {{uri : item.user_profile_image ? item.user_profile_image : "No Image"}} 
-                            style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 40 , width : 80, height : 80 , marginLeft : 10} ]} />
+                    <View style = {{flex: 1  , width : ITEM_SIZE, backgroundColor : background }}>
+                    {item.user_profile_image ? 
+                     <Image source = {{uri : item.user_profile_image}} 
+                          style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : ITEM_SIZE-20 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
+                   : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
+                    source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                    size={ITEM_SIZE-40}/> }
                     </View>
                     <View style = {{backgroundColor : background , borderRadius : 5,alignItems : 'center', justifyContent : 'center' }}>
                         <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.user_name.length > 20 ? item.user_name.substring(0,20) + "..." : item.user_name}</Text>
@@ -155,7 +154,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                 [{nativeEvent :  {contentOffset : {x : scrollX}}}],
                 {useNativeDriver : true}
             )}
-            snapToInterval = {ITEM_SIZE+5}
+            snapToInterval = {ITEM_SIZE}
             showsHorizontalScrollIndicator = {false}
             />
     )
@@ -322,7 +321,7 @@ const MyDetails = () => {
 
             axios.get(URL + "/user/followingusers",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-              //  console.log("MY FIENDS",responseData)
+                console.log("MY FIENDS",responseData)
                 setMyFriends(responseData)
             })
             .catch(function(error) {

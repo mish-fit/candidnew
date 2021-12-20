@@ -134,7 +134,7 @@ const MySummary = () => {
             </View>
             
             <View style = {{height: 40, backgroundColor : theme }}>
-                <TouchableOpacity onPress = {()=>navigation.navigate("Redeem")}
+                <TouchableOpacity onPress = {()=>navigation.navigate("HowToEarn",{userSummary: userSummary, userInfo : userInfo, recentBurn : recentBurn})}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1 , borderBottomColor : '#888', borderBottomWidth : 1, borderStyle:'dashed'}}>
                     <Text style = {{color : "#EEE"}}>How to Earn ?</Text>
                 </TouchableOpacity>

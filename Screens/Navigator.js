@@ -27,6 +27,7 @@ import Blank from './Blank';
 import InApp from './Browser/InApp';
 import Coupon from './Onboarding/Coupon';
 import EditProfile from './User/EditProfile';
+import HowToEarn from './Rewards/HowToEarn';
 
 
 const Stack = createStackNavigator();
@@ -67,6 +68,7 @@ const HomeStack = () => {
       <Stack.Screen name="Browser" component={InApp} /> 
       <Stack.Screen name="Coupon" component={Coupon} /> 
       <Stack.Screen name="EditProfile" component={EditProfile} /> 
+      <Stack.Screen name="HowToEarn" component={HowToEarn} /> 
     </Stack.Navigator>
   );
 }

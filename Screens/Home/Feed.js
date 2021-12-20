@@ -1,5 +1,5 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch } from 'react-native'
+import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView } from 'react-native'
 import { colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
@@ -22,6 +22,8 @@ import * as WebBrowser from 'expo-web-browser';
 import { width } from '../Exports/Constants';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
+import { home } from '../../Styles/Home';
+import  Modal  from 'react-native-modal'
 
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
@@ -385,6 +387,7 @@ const Feed = () => {
 
     const [feedData,setFeedData] = React.useState([])
     const [userInfo,setUserInfo] = React.useState(route?.params?.body ? route?.params?.body : {})
+    const [source,setSource] = React.useState(route?.params?.source ? route?.params?.source : "")
     const [userSummary,setUserSummary] = React.useState({})
     const [refresh,setRefresh] = React.useState(false)
     const [categoryCarousel, setCategoryCarousel] = React.useState(["Laptop", "Mobile", "TV", "Phone", "Books", "Series", "Swimsuit"])
@@ -393,6 +396,8 @@ const Feed = () => {
     const [expoToken , setExpoToken] = React.useState("")
 
     const [toggled, setToggled] = React.useState(false);
+
+    const [modalVisible,setModalVisible] = React.useState(false)
 
     const [pageNumber,setPageNumber] = React.useState(0)
     const scrollY = React.useRef(new Animated.Value(0));
@@ -411,6 +416,14 @@ const Feed = () => {
        });
 
     React.useEffect(()=>{
+        console.log("source" , source)
+        if(source == "Onboarding") {
+            setSource("")
+            setModalVisible(true)
+        } else {
+            setSource("")
+        }
+        
         Animated.timing(progress, {
             toValue: 1,
             duration: 2000,
@@ -522,8 +535,31 @@ const Feed = () => {
       //  console.log(id, name)
     }
 
+    const onContextModalClose = () => {
+        setModalVisible(false)
+    }
+
     return (
         <View style = {{ backgroundColor : 'white', flex : 1,}}>
+            <Modal 
+                isVisible={modalVisible}
+                deviceWidth={Dimensions.get('screen').width}
+                deviceHeight={Dimensions.get('screen').height}
+                onBackdropPress={onContextModalClose}
+                onSwipeComplete={onContextModalClose}
+                swipeDirection="left"
+                style = {{marginHorizontal : 20 , marginVertical : 40}}
+                >
+                <ScrollView style = {{flexDirection : 'row' , flexWrap : 'wrap' , }}>
+                    <Text style = {{fontWeight : 'bold', textAlign :'center'}}>Welcome to Candid Community</Text>
+                    <Text style = {home.modalText}>Couple of tips to use this app</Text>
+                    <Text style = {home.modalText}>1. Be Authentic. Only recommend products that you used and liked. </Text>
+                    <Text style = {home.modalText}>2. Like authentic content of others and dislike fake reviews. This will make our community helpful for everyone</Text>
+                    <Text style = {home.modalText}>3. Keep it legal, and avoid posting illegal content or soliciting or facilitating illegal or prohibited transactions. Failure to do so will lead to account ban </Text>
+                    <Text style = {home.modalText}>4. Do not post or encourage the posting of sexual or suggestive content involving minors. Failure to do so will lead to account ban </Text>
+                    <Text style = {{fontWeight : 'bold', textAlign :'center'}}> Have Fun with Candid Community </Text>
+                </ScrollView>
+            </Modal>
             <Animated.View 
             style = {{ transform: [{translateY}],
                 backgroundColor : 'white', flex : 1 ,
@@ -546,7 +582,7 @@ const Feed = () => {
                         <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
                     </View>
             </Animated.View>
-          
+
             {/* {categoryCarousel.length ? 
                <View style = {{marginTop : headerHeight, height : 50}}>
                     <UpdatedCarousel DATA = {categoryCarousel} onClickItem = {onClickCategory} />

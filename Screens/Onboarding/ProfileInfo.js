@@ -317,17 +317,17 @@ const ProfileInfo = () => {
       data: userbody
       })
       .then(res => {
+        axios({
+          method: 'post',
+          url: URL + '/rewards/earn',
+          data: userPoints
+          }).then(res=>{
+            console.log(res)
+          }).catch((e)=>{
+            console.log(e)
+        })
         if(refereeId && refereeId != "" ) 
         {
-            axios({
-              method: 'post',
-              url: URL + '/rewards/earn',
-              data: userPoints
-              }).then(res=>{
-                console.log(res)
-              }).catch((e)=>{
-                console.log(e)
-            })
             axios({
               method: 'post',
               url: URL + '/rewards/earn',
