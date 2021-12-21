@@ -11,6 +11,7 @@ import { color } from 'react-native-reanimated'
 import axios from 'axios'
 import { URL } from '../Exports/Config'
 import { LoadingPage } from '../Exports/Pages'
+import * as Amplitude from 'expo-analytics-amplitude';
 
 
 const Redemptions = () => {
@@ -40,6 +41,7 @@ const Redemptions = () => {
         // coins_value : 10000,cash_value : 1000}])
 
     React.useEffect(()=>{
+        Amplitude.logEventAsync('REDEMPTIONS')
         Animated.timing(progress, {
             toValue: 1,
             duration: 10000,

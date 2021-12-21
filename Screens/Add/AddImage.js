@@ -16,6 +16,7 @@ import {MaterialCommunityIcons} from 'react-native-vector-icons'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
+import * as Amplitude from 'expo-analytics-amplitude';
 
 const AddImage = () => {
     const [source,setSource] = React.useState(true)
@@ -52,6 +53,7 @@ const AddImage = () => {
     }; 
 
     React.useEffect(()=> {
+        Amplitude.logEventAsync('ADD IMAGE')
         console.log("image screeen", contextName)
         setBody({...body,context_name : contextName})
         pickImage()

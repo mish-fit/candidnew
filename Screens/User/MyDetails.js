@@ -13,6 +13,8 @@ import {Menu,MenuOptions,MenuOption,MenuTrigger,} from 'react-native-popup-menu'
 import LottieView from 'lottie-react-native'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import {Avatar} from 'react-native-paper'
+import * as Amplitude from 'expo-analytics-amplitude';
+
 
 const FriendsCarousel = ({DATA , onClickItem}) => {
     const [data,setData] = React.useState([...DATA])
@@ -284,6 +286,7 @@ const MyDetails = () => {
     const [isFollowing,setFollowing] = React.useState([])
 
     React.useEffect(() => {
+            Amplitude.logEventAsync('MyDetails')
             const a = []
             Animated.timing(progress, {
                 toValue: 1,
@@ -394,6 +397,7 @@ const MyDetails = () => {
     }
     
     const deletePostItem = (id) => {
+        Amplitude.logEventWithPropertiesAsync('DELETE POST',{"feed_id" : item.feed_id})
         setFeedData(feedData.filter((item, index)=> item.feed_id != id))
     }
 
@@ -405,10 +409,12 @@ const MyDetails = () => {
 
     const goToUser = (id, name , following) => {
     //    console.log(id, name , following)
+        Amplitude.logEventWithPropertiesAsync('GO TO USER FROM DETAILS',{homeUserName : userInfo.user_name, userName : name , userId : id , isFollowing : following})
         navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : name , userId : id , isFollowing : following})
     }
 
     const followUser = ({id,name, index}) => {
+        Amplitude.logEventWithPropertiesAsync('FOLLOW USER IN MY DETAILS',{"user_name": userInfo.user_name,"user_id": userInfo.user_id,"following_user_id": id,"following_user_name": name})
         let newArr = [...isFollowing]; // copying the old datas array
         newArr[index] = true // replace e.target.value with whatever you want to change it to
         setFollowing(newArr)

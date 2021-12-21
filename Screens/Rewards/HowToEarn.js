@@ -17,6 +17,9 @@ import Hyperlink from 'react-native-hyperlink'
 import { ScrollView } from 'react-native-gesture-handler'
 import Markdown from 'react-native-markdown-display';
 import HTMLView from 'react-native-htmlview';
+import * as Amplitude from 'expo-analytics-amplitude';
+
+
 
 const HowToEarn = () => {
     
@@ -30,6 +33,7 @@ const HowToEarn = () => {
     const [statements,setStatements] = React.useState("With candid community, you can earn money by recommeding products and asking your network to buy from those. For every purchase, you will be rewarded based on the ongoing affiliate rate on that item. Sit at home, relax and earn money!!")
 
     React.useEffect(()=>{
+        Amplitude.logEventAsync('HOW TO EARN')     
         axios.get(URL + "/rewards/howtoearn", {timeout : 5000})
         .then(res => res.data).then(function(responseData) {
             console.log(responseData)

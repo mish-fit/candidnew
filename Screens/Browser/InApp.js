@@ -5,7 +5,7 @@ import {useNavigation, useRoute} from '@react-navigation/native'
 import { add } from '../../Styles/Add';
 import {AntDesign} from 'react-native-vector-icons'
 import { colorsArray } from '../Exports/Colors';
-
+import * as Amplitude from 'expo-analytics-amplitude';
 
 const InApp = () => {
 

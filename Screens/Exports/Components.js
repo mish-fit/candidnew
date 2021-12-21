@@ -4,6 +4,7 @@ import {Animated, View, Text,TouchableOpacity, Easing, Dimensions} from 'react-n
 import { colorsArray } from './Colors'
 import { RandomContext } from './Context'
 import LottieView from 'lottie-react-native';
+import * as Amplitude from 'expo-analytics-amplitude';
 
 export const RewardsComponent = ({rewards, source, userSummary, userInfo}) => {
     const progress = React.useRef(new Animated.Value(0)).current
@@ -12,6 +13,7 @@ export const RewardsComponent = ({rewards, source, userSummary, userInfo}) => {
 
 
     React.useEffect(()=>{
+        
         Animated.timing(progress, {
             toValue: 1,
             duration: 2000,
@@ -22,7 +24,10 @@ export const RewardsComponent = ({rewards, source, userSummary, userInfo}) => {
     return (
         <TouchableOpacity 
             style = {{marginRight : 30 , flexDirection : 'row-reverse', }}
-            onPress = {()=>navigation.navigate("MyRewards", {source : source})}
+            onPress = {()=>{
+                Amplitude.logEventWithPropertiesAsync("Clicked on Rewards section ", {source : source})
+                navigation.navigate("MyRewards", {source : source})
+                }}
             >
                 <View style = {{justifyContent : 'center', marginLeft : 5, marginRight : 10,}}>
                     <Text style = {{color : colorsArray[randomNo-1], fontSize : 15 , fontWeight : '700'}}>{rewards}</Text>
@@ -47,6 +52,7 @@ export const EmptyComponent = () => {
 
 
     React.useEffect(()=>{
+        Amplitude.logEventAsync("Empty Component Shown")
         Animated.timing(progress, {
             toValue: 1,
             duration: 2000,

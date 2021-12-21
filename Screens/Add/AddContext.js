@@ -10,7 +10,7 @@ import axios from 'axios'
 import {URL} from '../Exports/Config'
 import { add } from '../../Styles/Add'
 import {Avatar} from 'react-native-paper'
-
+import * as Amplitude from 'expo-analytics-amplitude';
 
 const AddContext = () => {
 
@@ -39,6 +39,7 @@ const AddContext = () => {
     const [searchLoading,setSearchLoading] = React.useState(false)
 
     React.useEffect(()=>{
+        Amplitude.logEventAsync('ADD CONTEXT')
         setBody({...body, category_name : categoryName , category_id : categoryId})
         Animated.timing(progress, {
             toValue: 1,
@@ -61,6 +62,7 @@ const AddContext = () => {
     },[])
 
     const onClickSearchItemChild = (name) => {
+        Amplitude.logEventWithPropertiesAsync('ADDED NEW CONTEXT', {context_name : context_name })
         setSearchTextProduct(name)
         console.log(name)
         navigation.navigate("AddImage", {body : body , context_name : name })

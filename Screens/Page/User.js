@@ -18,6 +18,7 @@ import axios from 'axios';
 import { width } from '../Exports/Constants';
 import {Avatar} from 'react-native-paper'
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import * as Amplitude from 'expo-analytics-amplitude';
 
 const FeedItemComponent = ({item,id, userInfo}) => {
     const [randomNo, userId] = React.useContext(RandomContext)
@@ -97,12 +98,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
         try {   
             Linking.openURL(buyURL)
         } catch (error) {
+            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
             alert("Browser not reachable")
         }
     };
 
     const buyItem = (buyURL) => {
-        
+        Amplitude.logEventWithPropertiesAsync("BUY URL", { "user_id": userId,"feed_id": item.feed_id,"feed_user_id" : item.user_id,"user_name": userInfo.user_name})
+     
      //   console.log(buyURL)
         redirect(buyURL)
         setBuys(buys+1)
@@ -246,6 +249,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
         try {   
             Linking.openURL(buyURL)
         } catch (error) {
+            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
             alert("Browser not reachable")
         }
     };
@@ -285,7 +289,9 @@ const FeedItemSummaryComponent = ({item,id}) => {
                     
                 </View>
                 <TouchableOpacity 
-                onPress = {()=>redirect(item.buy_url)}
+                onPress = {()=>{
+                    Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , user_name : item.user_name , product_name : item.product_name})
+                    redirect(item.buy_url)}}
                 style = {{
                     backgroundColor : 'white' , 
                     alignItems : 'center' , 
@@ -381,6 +387,7 @@ const User = () => {
     }
 
     React.useEffect(()=>{
+        Amplitude.logEventAsync('USER PAGE')     
         Animated.timing(progress, {
             toValue: 1,
             duration: 2000,
@@ -565,7 +572,7 @@ const User = () => {
                         style = {{marginLeft : 20, flex : 1 , justifyContent :'center', alignItems :'center' }}
                         disabled
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 40, color : colorsArray[randomNo-1]}}>{followingUserName}</Text>
+                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : "#555"}}>{followingUserName}</Text>
                     </TouchableOpacity>
                     <Pressable 
                     onPress = {followUser}

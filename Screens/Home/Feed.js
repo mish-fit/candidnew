@@ -110,12 +110,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
         try {   
             Linking.openURL(buyURL)
         } catch (error) {
+            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
             alert("Browser not reachable")
+
         }
     };
 
     const buyItem = (buyURL) => {
-        
+        Amplitude.logEventWithPropertiesAsync("BUY URL", { "user_id": userId,"feed_id": item.feed_id,"feed_user_id" : item.user_id,"user_name": userInfo.user_name})
      //   console.log(buyURL)
         redirect(buyURL)
         setBuys(buys+1)
@@ -161,7 +163,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                             navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : item.user_name , userId : item.user_id , isFollowing : item.isFollowing}
                         
                         )}}>
-                            <Text style = {{fontSize : 15 , fontWeight : 'bold'}}>{item.user_name}</Text>
+                            <Text style = {{fontSize : 15 , fontWeight : 'bold' , color : "#555"}}>{item.user_name}</Text>
                         </TouchableOpacity> 
                         { item.isFollowing ? null :
                         tempFollow ?
@@ -175,7 +177,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </View>
                
                     <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flex : 1, }}>
-                        <Text style = {{fontSize : 12 , color : colorsArray[colorNo] , }}>{item.product_name}</Text>
+                        <Text style = {{fontSize : 12 , color : "#555" , }}>{item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -250,8 +252,7 @@ const UpdatedCarousel = ({DATA , onClickItem }) => {
        
         const inputRange = [
             ITEM_SIZE*(index-1),
-            ITEM_SIZE*(index),
-            ITEM_SIZE*(index+1),   
+            ITEM_SIZE*(index)
         ]
         const opacityInputRange = [
             -1,
@@ -260,7 +261,7 @@ const UpdatedCarousel = ({DATA , onClickItem }) => {
         ]
         const scale = scrollX.interpolate({
             inputRange,
-            outputRange : [1,1,0]
+            outputRange : [1,1]
         })
         const opacity = scrollX.interpolate({
             inputRange : opacityInputRange,
@@ -269,9 +270,9 @@ const UpdatedCarousel = ({DATA , onClickItem }) => {
   
         return(
             item.category_name ? 
-            <Animated.View style={[{borderRadius : 20 , justifyContent : 'center', alignItems : 'center',padding : 5 , paddingHorizontal : 10, marginHorizontal : 5 , marginVertical : 5 ,borderWidth : 1,borderColor : colorsArray[(randomNo+index)%(colorsArray.length-1)]}  , {transform : [{scale}]}]}>
+            <Animated.View style={[{borderRadius : 20 , justifyContent : 'center', alignItems : 'center',padding : 5 , paddingHorizontal : 10, marginHorizontal : 5 , marginVertical : 5 ,borderWidth : 1,borderColor : "#888"}  , {transform : [{scale}]}]}>
                 <TouchableOpacity style = {[{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
-                    <Text style={[{margin:1 ,fontSize : 15 , color : colorsArray[(randomNo+index)%(colorsArray.length-1)]}]}>{item.category_name.length > 20 ? item.category_name.substring(0,20) + "..." : item.category_name}</Text>
+                    <Text style={[{margin:1 ,fontSize : 15 , color : "#444"}]}>{item.category_name.length > 20 ? item.category_name.substring(0,20) + "..." : item.category_name}</Text>
                 </TouchableOpacity>
             </Animated.View> : null
         )
@@ -531,6 +532,7 @@ const Feed = () => {
     }
 
     const onClickCategory = (id,name) => {
+        Amplitude.logEventWithPropertiesAsync("CLICKED ON CATEGORY",{categoryId : id, categoryName : name , userName : userInfo.user_name })
         navigation.navigate("CategoryPage",{categoryId : id, categoryName : name , userName : userInfo.user_name })
       //  console.log(id, name)
     }
@@ -569,16 +571,22 @@ const Feed = () => {
               
                     <TouchableOpacity
                         style = {{marginLeft : 20, flex : 1 }}
-                        onPress = {()=>navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
+                        onPress = {()=>{
+                            Amplitude.logEventAsync("Clicked on My Details on Home")
+                            navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
+                            }
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 25, color : colorsArray[randomNo-1]}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
+                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : "black"}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
                     </TouchableOpacity>
-                    <View style = {{alignItems : 'center', flexDirection : 'row-reverse' }}>
-                        <TouchableOpacity 
+                    <View style = {{alignItems : 'center', flexDirection : 'row-reverse' , marginRight : 20 }}>
+                        {/* <TouchableOpacity 
                                 style = {{padding : 2 , paddingLeft : 5 , paddingRight : 5, marginRight : 20}}
-                                onPress = {()=>navigation.navigate("SearchByCategory")} >
+                                onPress = {()=>{
+                                    Amplitude.logEventAsync("Clicked on Search on Home")
+                                    navigation.navigate("SearchByCategory")} 
+                                    }>
                             <AntDesign name = "search1" size = {24} color = 'red' /> 
-                        </TouchableOpacity> 
+                        </TouchableOpacity>  */}
                         <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
                     </View>
             </Animated.View>
@@ -622,7 +630,10 @@ const Feed = () => {
                         <Switch
                             trackColor={{ true: theme , false: "white" }}
                             thumbColor={!toggled ? theme : 'white'}
-                            onValueChange={()=>setToggled(!toggled)}
+                            onValueChange={()=>{
+                                Amplitude.logEventAsync("HOME FEED TOGGLE")
+                                setToggled(!toggled)}
+                                }
                             value={toggled}
                         />
                     </View>

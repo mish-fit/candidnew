@@ -1,6 +1,6 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, FlatList,Dimensions, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable } from 'react-native'
-import { colorsArray } from '../Exports/Colors'
+import { PermissionsAndroid,Animated, FlatList,Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, ScrollView } from 'react-native'
+import { colorsArray, theme } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
@@ -11,11 +11,13 @@ import {dataRetrieve, URL} from '../Exports/Config'
 import {homeFeed} from "../FakeData/HomeFeed"
 import Contacts from 'react-native-contacts';
 import  Modal  from 'react-native-modal'
-
+import {Avatar} from 'react-native-paper'
 
 
 import * as Permissions from 'expo-permissions'
 import axios from 'axios';
+import * as Amplitude from 'expo-analytics-amplitude';
+
 // import { FlatList } from 'react-native-gesture-handler';
 // import { categories } from '../FakeData/SearchByCategory';
 
@@ -42,28 +44,54 @@ const FeedItemComponent = ({item,id}) => {
         setDislike(!dislike)
     }
 
+    const redirect = async (buyURL) => {
+        try {   
+            Linking.openURL(buyURL)
+        } catch (error) {
+            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
+            alert("Browser not reachable")
+        }
+    };
+
+
 
     return(
         <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
-                <View style = {{marginTop : 10 ,marginLeft : 30 , flexDirection : 'row', justifyContent : 'space-between'}}>
-                    <View style = {{flexDirection : 'row'}}>
-                    <TouchableOpacity>
-                        <Text style = {{fontSize : 15 , fontWeight : 'bold'}}>{item.user_name}</Text>
-                    </TouchableOpacity>
-                    { item.isFollowing ? null :
-                    tempFollow ?
-                    <View>
-                        <Text style = {{color : '#AAA', marginLeft : 10 }}>Following</Text>
-                    </View> :
-                    <TouchableOpacity onPress = {followUser}>
-                        <Text style = {{color : 'skyblue', marginLeft : 10 }}>Follow</Text>
-                    </TouchableOpacity>
-                    }
-                    </View>
-                   
+                <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
+                    <View style = {{marginRight : 10}}>
+                    {item.user_image && item.user_image != "None" && item.user_image != "" ?
+                        <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                        <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
+                        source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                        size={40}/> }  
+                    </View>  
+                    <View style = {{flex : 1}}>
+                        <View style = {{flexDirection : 'row', marginLeft : 5}}>
+                            <TouchableOpacity onPress = {()=> {
+                            //   console.log(" user info ",userInfo, " item " , item)
+                                navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : item.user_name , userId : item.user_id , isFollowing : item.isFollowing}
+                            
+                            )}}>
+                                <Text style = {{fontSize : 15 , fontWeight : 'bold'}}>{item.user_name}</Text>
+                            </TouchableOpacity> 
+                            { item.isFollowing ? null :
+                            tempFollow ?
+                            <View>
+                                <Text style = {{color : '#AAA', marginLeft : 10 }}>Following</Text>
+                            </View> :
+                            <TouchableOpacity onPress = {followUser}>
+                                <Text style = {{color : 'skyblue', marginLeft : 10 }}>Follow</Text>
+                            </TouchableOpacity>
+                            }
+                        </View>
+                
+                        <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
+                            <Text style = {{fontSize : 12 , color : "#555" }}>{item.product_name}</Text>
+                        </View>
+                    </View> 
                 </View>
                 <View style = {{marginTop : 5 ,marginLeft : 30 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                    <Text style = {{ fontSize : 12 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                    <Text style = {{ fontSize : 12 , color : theme }}>{item.product_name}</Text>
                 </View>
                 <View style = {{marginHorizontal : 30 , marginVertical : 5,flexDirection : 'row' , justifyContent : 'space-between'}}>
                     <View style = {{ paddingHorizontal: 5, paddingVertical : 2, backgroundColor :  "#888" , borderRadius : 10, }}>
@@ -75,14 +103,19 @@ const FeedItemComponent = ({item,id}) => {
                     </View>
                 </View>
                 <View style = {{marginTop : 10, justifyContent : 'center', alignItems : 'center' }}>
-                    <Image source = {{uri : item.image}} 
+                    <Image source = {{uri : item.feed_summary_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
-                    <TouchableOpacity style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
+                    <TouchableOpacity 
+                    onPress = {()=>{
+                        Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , category_name : item.category_name , product_name : item.product_name})
+                        redirect(item.buy_url)
+                    }}
+                    style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
                     </TouchableOpacity>
                 </View>
@@ -174,6 +207,7 @@ const ByCategory = () => {
     }
 
     React.useEffect(()=>{
+        Amplitude.logEventAsync('SEARCH BY CATEGORY')
         Animated.timing(progress, {
             toValue: 1,
             duration: 2000,
@@ -207,7 +241,7 @@ const ByCategory = () => {
         {
             axios.get(URL + "/feedsummary/bycategory",{params:{user_id : userId.slice(1,13) , category_id : JSON.stringify(categoriesRequest)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-            //    console.log("context",responseData)
+                console.log("context",responseData)
                 setFeedData(responseData)
                 setModalVisible(false)
             })
@@ -253,27 +287,32 @@ const ByCategory = () => {
                 swipeDirection="left"
                 style = {{marginHorizontal : 10 , marginVertical : 10}}
                 >
-                <View style = {{flexDirection : 'row' , flexWrap : 'wrap' , }}>
+                <ScrollView >
+                <Pressable onPress = {onContextModalClose} style = {{backgroundColor : "white", padding : 5}}>
+                    <Text style = {{textAlign : 'center' , fontWeight :'bold' , color : theme}}>OK</Text>
+                </Pressable>
+                <View style = {{flexDirection : 'row' , flexWrap : 'wrap' }}>
                 {categories.map((item,index)=>{
                     return(
                     categoriesChecked[index]  == true ?
                             <Pressable 
                             android_ripple = {{color : 'black'}}
                             onPress = {()=> categoryCheckFunc(index, item.category_id ,false)}
-                            style = {{backgroundColor : 'green' , flexDirection : 'row' , borderRadius : 20 , padding : 10 , alignItems : 'center', margin : 10 }}>
+                            style = {{backgroundColor : 'green' , flexDirection : 'row' , borderRadius : 20 , padding : 5 , alignItems : 'center', margin : 10 , justifyContent : 'space-between',   }}>
                                 <Text style = {{color : 'white', marginRight : 10 }}>{item.category_name}</Text>
                                 <AntDesign name = "check" size = {15} color = 'white' />
                             </Pressable>:
                             <Pressable 
                             onPress = {()=> categoryCheckFunc(index, item.category_id, true)}
                             android_ripple = {{color : 'green'}}
-                            style = {{backgroundColor : 'white', flexDirection : 'row' , borderRadius : 20 , borderWidth : 1, borderColor : 'green', padding : 10 , margin : 10 }}>
+                            style = {{backgroundColor : 'white', flexDirection : 'row' , borderRadius : 20 , borderWidth : 1, borderColor : 'green', padding : 5 , margin : 10,justifyContent : 'space-between',  }}>
                                 <Text style = {{color : 'red' , marginRight : 10}}>{item.category_name}</Text>
                                 <AntDesign name = "plus" size = {15} color = 'green' />
                             </Pressable>
                 )                  
                 })}
                 </View>
+                </ScrollView>
             </Modal>
             <Animated.FlatList
                 keyExtractor = {(item,index)=>index.toString()}

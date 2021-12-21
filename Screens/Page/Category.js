@@ -22,6 +22,7 @@ import axios from 'axios';
 import { width } from '../Exports/Constants';
 import {Avatar} from 'react-native-paper'
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import * as Amplitude from 'expo-analytics-amplitude';
 
 const FeedItemComponent = ({item,id, userInfo}) => {
     const [randomNo, userId] = React.useContext(RandomContext)
@@ -101,12 +102,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
         try {   
             Linking.openURL(buyURL)
         } catch (error) {
+            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
             alert("Browser not reachable")
         }
     };
 
     const buyItem = (buyURL) => {
-        
+        Amplitude.logEventWithPropertiesAsync("BUY URL", { "user_id": userId,"feed_id": item.feed_id,"feed_user_id" : item.user_id,"user_name": userInfo.user_name})
+     
      //   console.log(buyURL)
         redirect(buyURL)
         setBuys(buys+1)
@@ -136,7 +139,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
 
     return(
-        <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
+        <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  flex : 1}}>
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{marginRight : 10}}>
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
@@ -145,7 +148,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
                 </View>  
-                <View>
+                <View style = {{flex : 1}}>
                     <View style = {{flexDirection : 'row', marginLeft : 5}}>
                         <TouchableOpacity onPress = {()=> {
                          //   console.log(" user info ",userInfo, " item " , item)
@@ -166,7 +169,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </View>
                
                     <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{fontWeight : 'bold', fontSize : 20 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                        <Text style = {{fontSize : 12 , color : "#555" }}>{item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -253,6 +256,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
         try {   
             Linking.openURL(buyURL)
         } catch (error) {
+            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
             alert("Browser not reachable")
         }
     };
@@ -271,14 +275,17 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
             </View>  
             <View style = {{ justifyContent : 'space-between', borderTopRightRadius : 20 , borderBottomRightRadius : 20 , flexShrink : 1,}}>
                 <View style = {{paddingTop : 5 ,paddingLeft : 5 , flexDirection : 'row', flexWrap : 'wrap' , flexShrink : 1,}}>
-                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 15 , color : colorsArray[colorNo+1] }}>{item.product_name}</Text>
+                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name}</Text>
                 </View>
                 <View style = {{paddingHorizontal: 5, paddingVertical : 2,  flexShrink : 1}}>
                     <Text style = {{fontSize : 13, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_recommendations} friends recommended this</Text>
                     <TouchableOpacity style = {{justifyContent  : 'flex-end',  alignItems : 'flex-end', alignItems : 'center', justifyContent : 'center'}} onPress = {()=>contextClick(item.product_id)}><Text style = {{fontSize : 10, fontStyle : 'italic',flexShrink : 1, borderBottomWidth : 1 , borderBottomColor : 'red',}}>Split by context</Text></TouchableOpacity>
                 </View>
                 <TouchableOpacity 
-                onPress = {()=>redirect(item.buy_url)}
+                onPress = {()=>{
+                    Amplitude.logEventWithPropertiesAsync("BUY URL FROM CATEGORY FEED SUMMARY", { product_name : item.product_name})
+                    redirect(item.buy_url)}
+                    }
                 style = {{
                     backgroundColor : 'white' , 
                     alignItems : 'center' , 
@@ -374,6 +381,7 @@ const Category = () => {
     }
 
     React.useEffect(()=>{
+        Amplitude.logEventWithPropertiesAsync('CATEGORY PAGE',{category_id : JSON.stringify(categoryArray), user_id : userId.slice(1,13)})  
         Animated.timing(progress, {
             toValue: 1,
             duration: 2000,
@@ -388,7 +396,7 @@ const Category = () => {
             console.log(categoryArray, userId)
             axios.get(URL + "/feedsummary/bycategory",{params:{category_id : JSON.stringify(categoryArray), user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log(responseData)
+               // console.log(responseData)
                 setFeedSummary(responseData)
                 setFollowing(responseData[0].isFollowing)
             })
@@ -402,7 +410,7 @@ const Category = () => {
             page : pageNumber,
             user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log(responseData)
+              //  console.log(responseData)
                 setFeedData(responseData)
             })
             .catch(function(error) {
@@ -531,7 +539,7 @@ const Category = () => {
         {
             axios.get(URL + "/feedsummary/bycategory/context",{params:{category_id : categoryId , context_id : JSON.stringify(contextsRequest)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-             //   console.log("context",responseData)
+             //   console.log("context",responseData[0])
                 setFeedData(responseData)
                 
                 setFilterContextModalVisible(false)
@@ -544,7 +552,14 @@ const Category = () => {
         }     
     }
 
-
+    const redirect = async (buyURL) => {
+        try {   
+            Linking.openURL(buyURL)
+        } catch (error) {
+            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
+            alert("Browser not reachable")
+        }
+    };
 
 
     return (
@@ -641,7 +656,12 @@ const Category = () => {
                         }}>
                             <Text style = {{fontWeight : 'bold', flex : 1,}}>{item.user_name}</Text>
                             <Text style = {{flex : 1, }}>{item.context_name}</Text>
-                            <TouchableOpacity style = {{borderRadius: 10 , backgroundColor : 'red' , paddingHorizontal : 10 , paddingVertical : 5,}}>
+                            <TouchableOpacity 
+                            onPress = {()=>{
+                                Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , user_name : item.user_name , product_name : item.product_name})
+                                redirect(item.buy_url)
+                            }}
+                            style = {{borderRadius: 10 , backgroundColor : 'red' , paddingHorizontal : 10 , paddingVertical : 5,}}>
                                 <Text style = {{color : 'white'}}>BUY</Text>
                             </TouchableOpacity>
                     </View>

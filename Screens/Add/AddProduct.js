@@ -10,7 +10,7 @@ import axios from 'axios'
 import {URL} from '../Exports/Config'
 import { add } from '../../Styles/Add'
 import {Avatar} from 'react-native-paper'
-
+import * as Amplitude from 'expo-analytics-amplitude';
 
 const AddProduct = () => {
 
@@ -50,6 +50,7 @@ const AddProduct = () => {
     })
 
     React.useEffect(()=>{
+        Amplitude.logEventAsync('ADD PRODUCT')
         Animated.timing(progress, {
             toValue: 1,
             duration: 10000,
@@ -81,6 +82,7 @@ const AddProduct = () => {
     },[])
 
     const onClickSearchItemChild = (product_name) => {
+        Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : product_name })
         setSearchTextProduct(product_name)
     //    console.log(product_name)
         navigation.navigate("AddCategory", {body : body , product_name : product_name})

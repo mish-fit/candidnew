@@ -11,6 +11,7 @@ import { useSmsUserConsent } from '@eabdullazyanov/react-native-sms-user-consent
 
 import {width , height } from '../Exports/Constants'
 import { theme } from "../Exports/Colors";
+import * as Amplitude from 'expo-analytics-amplitude';
 
 export default function Login() {
     const [code, setCode] = React.useState();
@@ -53,6 +54,7 @@ export default function Login() {
   const retrievedCode = useSmsUserConsent();
 
   React.useEffect(() => {
+    Amplitude.logEventAsync('LOGIN SCREEN')
   //  console.log("Code",retrievedCode)
     if (retrievedCode) {
       setCode(retrievedCode);
@@ -126,11 +128,13 @@ export default function Login() {
 
 
 const onSubmit = async () => {
+    
     setOtpClick(true)
     try {
       const credential = firebase.auth.PhoneAuthProvider.credential(verificationId,otpnumber);
       await firebase.auth().signInWithCredential(credential);
       navigation.navigate("HomeTab" , {userId : phoneNumber})
+      Amplitude.logEventAsync('OTP SUBMITTED')
     //  console.log("it logged in")
     } catch (err) {
     //    console.log(err)

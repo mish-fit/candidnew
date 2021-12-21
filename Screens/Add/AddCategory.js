@@ -10,6 +10,7 @@ import axios from 'axios'
 import {URL} from '../Exports/Config'
 import { add } from '../../Styles/Add'
 import {Avatar} from 'react-native-paper'
+import * as Amplitude from 'expo-analytics-amplitude';
 
 
 const AddCategory = () => {
@@ -38,6 +39,7 @@ const AddCategory = () => {
     const [searchLoading,setSearchLoading] = React.useState(false)
 
     React.useEffect(()=>{
+        Amplitude.logEventAsync('ADD CATEGORY')
         setBody({...body, product_name : productName})
         Animated.timing(progress, {
             toValue: 1,
@@ -60,6 +62,7 @@ const AddCategory = () => {
     },[])
 
     const onClickSearchItemChild = (category_id , category_name) => {
+        Amplitude.logEventWithPropertiesAsync('ADDED NEW CATEGORY', {category_name : category_name })
         setSearchTextProduct(category_name)
     //    console.log(category_name)
         navigation.navigate("AddContext", {body : body, category_name : category_name , category_id : category_id})

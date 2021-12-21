@@ -11,7 +11,7 @@ import {URL} from '../Exports/Config'
 import { add } from '../../Styles/Add'
 import {Avatar} from 'react-native-paper'
 import { KeyboardAvoidingView } from 'native-base'
-
+import * as Amplitude from 'expo-analytics-amplitude';
 
 
 const AddComment = () => {
@@ -35,7 +35,7 @@ const AddComment = () => {
  
 
     React.useEffect(()=>{
-        
+        Amplitude.logEventAsync('ADD COMMENT')
     
     },[])
 

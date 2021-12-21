@@ -23,6 +23,7 @@ import { s3URL, uploadImageOnS3 } from '../Exports/S3';
 import LottieView from 'lottie-react-native';
 import 'react-native-get-random-values'
 import { nanoid , customAlphabet} from 'nanoid'
+import * as Amplitude from 'expo-analytics-amplitude';
 
 
 
@@ -69,6 +70,8 @@ const EditProfile = () => {
   };
 
     useEffect(() => {
+      Amplitude.logEventWithPropertiesAsync('EDIT PROFILE',{user_id : userId.slice(1,13) })
+        
         console.log(userId)
        const getUserInfo = () => {
         axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout:5000})

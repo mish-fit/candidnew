@@ -24,6 +24,7 @@ import LottieView from 'lottie-react-native';
 
 import 'react-native-get-random-values'
 import { nanoid , customAlphabet} from 'nanoid'
+import * as Amplitude from 'expo-analytics-amplitude';
 
 
 
@@ -153,6 +154,7 @@ const ProfileInfo = () => {
 
 
     useEffect(() => {
+      Amplitude.logEventAsync("NEW USER PROFILE INFO")
       const registerNotification = async () => {
         registerForExpoPushNotificationsAsync().then(token => {
          // console.log("expo token", token)
@@ -258,6 +260,7 @@ const ProfileInfo = () => {
     }
 
     const onSubmitOnboarding = () =>{
+        Amplitude.logEventAsync("NEW USER PROFILE SUBMITTED")
         setSubmitted(true)
         if(profileImageChange) {
           uploadImageOnS3(phoneNumber.slice(1,13) + "/profile",image) 

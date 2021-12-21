@@ -11,7 +11,7 @@ import axios from 'axios'
 import { URL } from '../Exports/Config'
 import moment from 'moment'
 import { mySummaryStyle } from '../../Styles/MySummary'
-
+import * as Amplitude from 'expo-analytics-amplitude';
 
 const BurnItemComponent = ({item , id}) => {
 
@@ -56,7 +56,8 @@ const MyRedeems = ({user_id}) => {
   
     const [burnRewards,setBurnRewards] = React.useState([])
     
-    React.useEffect(()=>{            
+    React.useEffect(()=>{  
+            Amplitude.logEventAsync('MY REDEEMS')          
             axios.get(URL + "/rewards/user/burn",{params:{user_id : user_id}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
        // console.log(responseData)

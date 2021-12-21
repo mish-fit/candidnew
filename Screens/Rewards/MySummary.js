@@ -15,6 +15,8 @@ import moment from 'moment'
 import { mySummaryStyle } from '../../Styles/MySummary'
 import MyEarns from './MyEarns'
 import MyRedeems from './MyRedeems'
+import * as Amplitude from 'expo-analytics-amplitude';
+
 
 const Tab = createMaterialTopTabNavigator()
 const Tabs = ({user_id}) => {

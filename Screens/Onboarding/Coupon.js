@@ -7,6 +7,7 @@ import { theme, themeLight, themeLightest } from '../Exports/Colors';
 import LottieView from 'lottie-react-native';
 import axios from 'axios'
 import { URL } from '../Exports/Config';
+import * as Amplitude from 'expo-analytics-amplitude';
 
 
 
@@ -31,10 +32,12 @@ const Coupon = () => {
     },[])
 
     const next = () => {
+        Amplitude.logEventWithPropertiesAsync('COUPON ADDED', {phoneNumber : phoneNumber , coupon : coupon , refereeName : username , refereeId : refereeId , coinsValue : coinsValue   })
         navigation.navigate("ProfileInfo",{phoneNumber : phoneNumber , coupon : coupon , refereeName : username , refereeId : refereeId , coinsValue : coinsValue   })
     }
 
     const skip = () => {
+      Amplitude.logEventWithPropertiesAsync('COUPON SKIPPED')
       navigation.navigate("ProfileInfo",{phoneNumber : phoneNumber , coupon : "" , refereeName : "" , refereeId : "" , coinsValue : ""  })
   }
 
