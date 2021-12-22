@@ -120,6 +120,14 @@ const MyEarns = ({user_id}) => {
         </View> 
     )
 
+    const emptyComponent = () => {
+        return(
+            <View style = {{padding : 20 }}>
+                <Text> You haven't earned any coins yet. Click on "How to Earn" to learn exciting ways to get rewards</Text>
+            </View>
+        )
+    }
+
 
 
     return (
@@ -131,6 +139,7 @@ const MyEarns = ({user_id}) => {
                 data = {earnRewards}
                 renderItem = {EarnItem}
                 showsVerticalScrollIndicator = {false}
+                ListEmptyComponent={emptyComponent}
                 />
         </View>
     )

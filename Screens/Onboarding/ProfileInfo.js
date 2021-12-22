@@ -153,8 +153,13 @@ const ProfileInfo = () => {
   
 
 
-    useEffect(() => {
-      Amplitude.logEventAsync("NEW USER PROFILE INFO")
+    React.useEffect(() => {
+      try {
+        Amplitude.logEventAsync("NEW USER PROFILE INFO")
+      } catch(e) {
+        console.log("Amplitude new user", e)
+      }
+      
       const registerNotification = async () => {
         registerForExpoPushNotificationsAsync().then(token => {
          // console.log("expo token", token)
@@ -167,12 +172,28 @@ const ProfileInfo = () => {
           AsyncStorage.setItem('deviceToken', token )
         });
       }
+      try {
         registerNotification()
+      } catch(e) {
+        console.log("Register Notification", e)
+      }
+        
 
     
-      const getContacts = () => {
-
-          Contacts.getAll().then(contacts => {
+      const getContacts = async () => {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+            {
+              title: "Contacts Access",
+              message: "Now get your friends' recommendations at your fingertips",
+              buttonNeutral: "Ask Me Later",
+              buttonNegative: "Cancel",
+              buttonPositive: "OK"
+            }
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            Contacts.getAll().then(contacts => {
               const a = []
               setDbPhoneNumbers([])
               setDbContacts([])
@@ -207,7 +228,7 @@ const ProfileInfo = () => {
               .then(res => {
                 //console.log("Contacts res", res)
               }).catch((e) => {
-                //console.log("Contacts error", e)
+                console.log("Contacts error", e)
               })
             }
             else {
@@ -215,9 +236,21 @@ const ProfileInfo = () => {
             }
         
           })
+          } else {
+            console.log("Contacts permission denied");
+          }
+        } catch (err) {
+          console.log(err);
+        }
+          
       }
       
-      getContacts()
+      try {
+        getContacts()
+      } catch(e) {
+        console.log("Get contacts Notification", e)
+      }
+      
 
 
     //  console.log("USER DETAILS USE EFFECT" , route.params.userDetails)
@@ -232,7 +265,13 @@ const ProfileInfo = () => {
             //
         });
        }
-       getUserInfo()
+
+       try {
+        getUserInfo()
+       } catch(e) {
+        console.log("Get user info", e)
+       }
+       
        
     }, [refresh])
 
@@ -349,7 +388,7 @@ const ProfileInfo = () => {
                   navigation.navigate("Home", {source : "Onboarding", body : userbody})
                   }, 300);        
           }).catch((e) => {
-              ToastAndroid.show("Error updating details. Please try later")
+              ToastAndroid.show("Error updating details. Please try later", ToastAndroid.SHORT)
               setSubmitted(false)
           })
 

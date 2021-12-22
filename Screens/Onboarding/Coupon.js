@@ -32,13 +32,27 @@ const Coupon = () => {
     },[])
 
     const next = () => {
+
+      try {
         Amplitude.logEventWithPropertiesAsync('COUPON ADDED', {phoneNumber : phoneNumber , coupon : coupon , refereeName : username , refereeId : refereeId , coinsValue : coinsValue   })
         navigation.navigate("ProfileInfo",{phoneNumber : phoneNumber , coupon : coupon , refereeName : username , refereeId : refereeId , coinsValue : coinsValue   })
+      } 
+      catch(e) {
+        console.log(e)
+      }
     }
 
     const skip = () => {
-      Amplitude.logEventWithPropertiesAsync('COUPON SKIPPED')
-      navigation.navigate("ProfileInfo",{phoneNumber : phoneNumber , coupon : "" , refereeName : "" , refereeId : "" , coinsValue : ""  })
+    
+      
+      try {
+        Amplitude.logEventWithPropertiesAsync('COUPON SKIPPED')
+        navigation.navigate("ProfileInfo",{phoneNumber : phoneNumber , coupon : "" , refereeName : "" , refereeId : "" , coinsValue : ""  })
+      }
+      catch(e) {
+        console.log(e)
+      }
+      
   }
 
     const couponCodeRefresh = () => {

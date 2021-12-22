@@ -41,6 +41,7 @@ const Redemptions = () => {
         // coins_value : 10000,cash_value : 1000}])
 
     React.useEffect(()=>{
+        setMyRewardsCoins(userSummary.coins_available)
         Amplitude.logEventAsync('REDEMPTIONS')
         Animated.timing(progress, {
             toValue: 1,
@@ -104,7 +105,7 @@ const Redemptions = () => {
                     style = {{marginRight : 30}}
                     onPress = {()=>navigation.navigate("MyDetails")}
                     >
-                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : colorsArray[randomNo-1]}}>{userInfo.user_name}</Text>
+                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : "#555"}}>{userInfo.user_name}</Text>
                 </TouchableOpacity>
                 <View style = {{marginLeft : 20, flexDirection : 'row', alignItems : 'center'}}>
                     <TouchableOpacity 
@@ -141,7 +142,7 @@ const Redemptions = () => {
                         <View style = {{flex : 1 , justifyContent : 'center', alignItems : 'center' }}> 
                             <View style = {{flex : 1 , alignItems : 'center' , justifyContent : 'center'}}>
                                 <Text style = {{
-                                    color : myRewardsCoins < item.coins_value ? "#888" : colorsArray[(randomNo+1+index)%(colorsArray.length-1)] ,
+                                    color : myRewardsCoins < item.coins_value ? "#888" : "#222" ,
                                     fontSize : 40,
                                     fontWeight : 'bold'
                                 }}>{item.coins_value}</Text>

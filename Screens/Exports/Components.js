@@ -44,6 +44,28 @@ export const RewardsComponent = ({rewards, source, userSummary, userInfo}) => {
     )
 }
 
+export const GiftComponent = () => {
+    const progress = React.useRef(new Animated.Value(0)).current
+    React.useEffect(()=>{  
+        Animated.timing(progress, {
+            toValue: 1,
+            duration: 2000,
+            easing: Easing.linear,
+            useNativeDriver : true
+          },).start();
+    },[])
+    return ( 
+        <View style = {{justifyContent : 'center'}}>
+        <LottieView
+        progress = {progress}
+        style={{width : 200 , height : 200}}
+        source={require('../../assets/animation/gift.json')}
+        />
+        </View>
+    )
+}
+
+
 
 export const EmptyComponent = () => {
     const progress = React.useRef(new Animated.Value(0)).current

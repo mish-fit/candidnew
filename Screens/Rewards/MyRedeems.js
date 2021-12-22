@@ -76,6 +76,15 @@ const MyRedeems = ({user_id}) => {
         </View> 
     )
 
+    const emptyComponent = () => {
+        return(
+            <View style = {{padding : 20 }}>
+                <Text> You haven't earned any coins yet. Click on "How to Earn" to learn exciting ways to get rewards</Text>
+            </View>
+        )
+    }
+
+
     return (
         <View>
             <FlatList
@@ -85,6 +94,7 @@ const MyRedeems = ({user_id}) => {
                 data = {burnRewards}
                 renderItem = {BurnItem}
                 showsVerticalScrollIndicator = {false}
+                ListEmptyComponent={emptyComponent}
                 />
         </View>
     )

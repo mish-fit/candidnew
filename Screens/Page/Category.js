@@ -687,7 +687,7 @@ const Category = () => {
             />
             <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
-            style = {{width: 60 , height : 60 , 
+            style = {{width: 50 , height : 50 , 
             backgroundColor : colorsArray[randomNo+1], 
             borderRadius : 60 , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , right : 20  }}>
                 <View>

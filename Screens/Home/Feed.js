@@ -5,7 +5,7 @@ import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation, useRoute , useIsFocused} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { RewardsComponent } from '../Exports/Components';
+import { GiftComponent, RewardsComponent } from '../Exports/Components';
 import Constants from 'expo-constants'
 import {dataRetrieve, URL} from '../Exports/Config'
 import {homeFeed} from "../FakeData/HomeFeed"
@@ -550,16 +550,24 @@ const Feed = () => {
                 onBackdropPress={onContextModalClose}
                 onSwipeComplete={onContextModalClose}
                 swipeDirection="left"
-                style = {{marginHorizontal : 20 , marginVertical : 40}}
+                style = {{marginHorizontal : 20 , marginVertical : 120 , borderRadius : 20}}
                 >
-                <ScrollView style = {{flexDirection : 'row' , flexWrap : 'wrap' , }}>
-                    <Text style = {{fontWeight : 'bold', textAlign :'center'}}>Welcome to Candid Community</Text>
-                    <Text style = {home.modalText}>Couple of tips to use this app</Text>
-                    <Text style = {home.modalText}>1. Be Authentic. Only recommend products that you used and liked. </Text>
-                    <Text style = {home.modalText}>2. Like authentic content of others and dislike fake reviews. This will make our community helpful for everyone</Text>
-                    <Text style = {home.modalText}>3. Keep it legal, and avoid posting illegal content or soliciting or facilitating illegal or prohibited transactions. Failure to do so will lead to account ban </Text>
-                    <Text style = {home.modalText}>4. Do not post or encourage the posting of sexual or suggestive content involving minors. Failure to do so will lead to account ban </Text>
-                    <Text style = {{fontWeight : 'bold', textAlign :'center'}}> Have Fun with Candid Community </Text>
+                <ScrollView style = {{backgroundColor : 'white' , borderRadius : 30 , padding : 20}}>
+                    <Text style = {{fontWeight : 'bold', textAlign :'center', color : theme, fontSize : 30}}>Congratulations</Text>
+                    <Text style = {{textAlign : 'center' , fontSize : 20}}>You just earned 500 coins</Text>
+                    <View style = {{justifyContent :'center', alignItems : 'center'}}>
+                        <GiftComponent />
+                    </View>
+                    <Text style = {{fontWeight : 'bold', textAlign :'center' , fontSize : 20,marginTop : 40}}>Welcome to Candid Community</Text>
+                    <View style = {{justifyContent : 'center', alignItems : 'center'}}>
+                        <TouchableOpacity style = {home.modalButton} onPress = {()=>navigation.navigate("MyRewards")}>
+                            <Text style = {home.modalButtonText}>Go To Rewards Section</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style = {home.modalButton} onPress = {()=>navigation.navigate("HowToEarn")}>
+                            <Text style = {home.modalButtonText}>Read Community Guidelines</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
                 </ScrollView>
             </Modal>
             <Animated.View 

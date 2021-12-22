@@ -11,7 +11,7 @@ export const add = StyleSheet.create({
     dropDownText : {color : 'black'},
     heading : {
         fontWeight : 'bold',
-        color : theme,
+        color : "#555",
         fontSize : 18
     },
     element : {
@@ -23,7 +23,7 @@ export const add = StyleSheet.create({
         height : 50 , 
         position: 'absolute',  zIndex: 100, width: '100%',  left: 0,right: 0,
         flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'},
-    headerBack : {width: 40 , height : 40 , marginLeft : 20,
+    headerBack : {width: 40 , height : 40 , marginLeft : 0,
         borderRadius : 60 , justifyContent : 'center', alignItems : 'center' },
     headerTitle : {marginRight : 40,flex : 1 , justifyContent :'center', alignItems :'center'},
     headerTitleText : {fontWeight : 'bold', fontSize : 20, color : '#333'},
