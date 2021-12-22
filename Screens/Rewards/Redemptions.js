@@ -1,6 +1,6 @@
 import React from 'react'
 import {Animated, Easing,  StyleSheet, Text, View , TouchableOpacity, Dimensions, Image, ToastAndroid, Alert} from 'react-native'
-import { colorsArray } from '../Exports/Colors'
+import { colorsArray, theme } from '../Exports/Colors'
 import { RewardsComponent } from '../Exports/Components'
 import { RandomContext } from '../Exports/Context'
 import {Button,Box,Heading,VStack,Center,NativeBaseProvider} from "native-base"
@@ -117,7 +117,7 @@ const Redemptions = () => {
                       //  autoPlay
                         />
                     </TouchableOpacity>
-                    <Text style = {{marginLeft : 5 , fontSize : 35, fontWeight : 'bold' , color : colorsArray[randomNo+1] }}>{userSummary ? userSummary.coins_available : "0" }</Text>
+                    <Text style = {{marginLeft : 5 , fontSize : 20, fontWeight : 'bold' , color : theme }}>{userSummary && userSummary.coins_available ? userSummary.coins_available : "0" }</Text>
                 </View>
             </View>
             <View style = {{flex : 1, backgroundColor : 'white', width: '100%' }}>
@@ -186,7 +186,7 @@ const Redemptions = () => {
                 }
                 </View>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 60 , height : 60 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />

@@ -3,7 +3,7 @@ import React from 'react'
 import { StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView} from 'react-native'
 import {AntDesign , FontAwesome5} from 'react-native-vector-icons'
 import { RandomContext } from '../Exports/Context'
-import { colorsArray } from '../Exports/Colors'
+import { backArrow, colorsArray } from '../Exports/Colors'
 import LottieView from 'lottie-react-native';
 import {theme} from '../Exports/Colors'
 import axios from 'axios'
@@ -81,11 +81,11 @@ const AddProduct = () => {
         });
     },[])
 
-    const onClickSearchItemChild = (product_name) => {
+    const onClickSearchItemChild = (product_name, product_id) => {
         Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : product_name })
         setSearchTextProduct(product_name)
     //    console.log(product_name)
-        navigation.navigate("AddCategory", {body : body , product_name : product_name})
+        navigation.navigate("AddCategory", {body : body , product_name : product_name , product_id : product_id})
     }
 
     const searchProduct = (text) => {
@@ -110,19 +110,19 @@ const AddProduct = () => {
 
 
     return (
-        <View style = {{flex : 1,}}>
+        <View style = {{flex : 1, backgroundColor : 'white'}}>
             <Animated.View 
             style = {add.headerView}>
                     <TouchableOpacity 
                     onPress = {()=>navigation.goBack()}
                     style = {add.headerBack}>
-                        <AntDesign name = "arrowleft" size = {30} color = {colorsArray[randomNo]}/>
+                        <AntDesign name = "arrowleft" size = {30} color = {backArrow}/>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style = {add.headerTitle}
                         disabled
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : colorsArray[randomNo-1]}}>Add Product</Text>
+                        <Text style = {add.headerTitleText}>Add Product</Text>
                     </TouchableOpacity>
             </Animated.View>
             <View style = {{margin : 10 ,marginTop : 60,}}>
@@ -147,19 +147,19 @@ const AddProduct = () => {
                         />
                         <TouchableOpacity 
                             style = {{padding : 2 , paddingLeft : 10 , paddingRight : 10,}}
-                            onPress = {()=>onClickSearchItemChild(searchTextProduct)} >
+                            onPress = {()=>onClickSearchItemChild(searchTextProduct,0)} >
                             <AntDesign name = "plus" size = {24} color = {theme} />
                         </TouchableOpacity>
                     </View>
                 </View>
-                <ScrollView style = {add.dropDownList}>
+                <ScrollView style = {add.dropDownList} contentContainerStyle = {{paddingBottom : 60}}>
                 { searchArray.length ?
                 searchArray.map((item,index)=>{
                     return(
                         <TouchableOpacity 
                                     key = {index.toString()}
                                     style = {add.dropDownItem}
-                                    onPress = {()=>onClickSearchItemChild(item.product_name)} >
+                                    onPress = {()=>onClickSearchItemChild(item.product_name,item.product_id)} >
                             {item.product_image && item.product_image != "None" && item.product_image != "" ?
                             <Image source = {{uri : item.product_image}} style = {add.dropDownItemImage}/> :
                             <Avatar.Image style = {add.dropDownItemAvatar}
@@ -174,7 +174,7 @@ const AddProduct = () => {
                 : null}
                 </ScrollView>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 60 , height : 60 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />

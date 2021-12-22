@@ -3,7 +3,7 @@ import React from 'react'
 import { StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, ImageBackground, Dimensions} from 'react-native'
 import {AntDesign , FontAwesome5} from 'react-native-vector-icons'
 import { RandomContext } from '../Exports/Context'
-import { background, colorsArray } from '../Exports/Colors'
+import { backArrow, background, colorsArray } from '../Exports/Colors'
 import LottieView from 'lottie-react-native';
 import {theme} from '../Exports/Colors'
 import axios from 'axios'
@@ -130,13 +130,13 @@ const AddImage = () => {
                     <TouchableOpacity 
                     onPress = {()=>navigation.goBack()}
                     style = {add.headerBack}>
-                        <AntDesign name = "arrowleft" size = {30} color = {colorsArray[randomNo]}/>
+                        <AntDesign name = "arrowleft" size = {30} color = {backArrow}/>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style = {add.headerTitle}
                         disabled
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : colorsArray[randomNo-1]}}>Rate the Product</Text>
+                        <Text style = {add.headerTitleText}>Rate the Product</Text>
                     </TouchableOpacity>
             </View>
             <View style={{marginTop : 70,}}>

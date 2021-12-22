@@ -3,7 +3,7 @@ import React from 'react'
 import { StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView} from 'react-native'
 import {AntDesign , FontAwesome5} from 'react-native-vector-icons'
 import { RandomContext } from '../Exports/Context'
-import { background, colorsArray } from '../Exports/Colors'
+import { backArrow, background, colorsArray } from '../Exports/Colors'
 import LottieView from 'lottie-react-native';
 import {theme} from '../Exports/Colors'
 import axios from 'axios'
@@ -39,6 +39,7 @@ const AddContext = () => {
     const [searchLoading,setSearchLoading] = React.useState(false)
 
     React.useEffect(()=>{
+        console.log("categoyr name ", categoryName)
         Amplitude.logEventAsync('ADD CONTEXT')
         setBody({...body, category_name : categoryName , category_id : categoryId})
         Animated.timing(progress, {
@@ -48,21 +49,22 @@ const AddContext = () => {
             useNativeDriver : true
             },).start();
 
-        axios.get(URL + "/search/context", {params:{context_text : "" , category_id : categoryId }} , {timeout : 3000})
+        axios.get(URL + "/search/context", {params:{context_text : "" , category_name : categoryName }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-         //   console.log("SearchArray",responseData)
+            console.log("SearchArray",responseData)
             setSearchLoading(false)
             setSearchArray(responseData)
         //    console.log("Reached Here response")
         })
         .catch(function(error) {
             setSearchLoading(false)
-        //    console.log("Reached Here error")
+            console.log(error)
         });
     },[])
 
+
     const onClickSearchItemChild = (name) => {
-        Amplitude.logEventWithPropertiesAsync('ADDED NEW CONTEXT', {context_name : context_name })
+        Amplitude.logEventWithPropertiesAsync('ADDED NEW CONTEXT', {context_name : name })
         setSearchTextProduct(name)
         console.log(name)
         navigation.navigate("AddImage", {body : body , context_name : name })
@@ -73,7 +75,7 @@ const AddContext = () => {
         setSearchTextProduct(text)
         setSearchLoading(true)
         
-        axios.get(URL + "/search/context", {params:{context_text : text , category_id : body.category_id}} , {timeout : 3000})
+        axios.get(URL + "/search/context", {params:{context_text : text , category_name : body.category_name}} , {timeout : 3000})
           .then(res => res.data).then(function(responseData) {
             //  console.log("SearchArray",responseData)
               setSearchLoading(false)
@@ -96,13 +98,13 @@ const AddContext = () => {
                     <TouchableOpacity 
                     onPress = {()=>navigation.goBack()}
                     style = {add.headerBack}>
-                        <AntDesign name = "arrowleft" size = {30} color = {colorsArray[randomNo]}/>
+                        <AntDesign name = "arrowleft" size = {30} color = {backArrow}/>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style = {add.headerTitle}
                         disabled
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : colorsArray[randomNo-1]}}>
+                        <Text style = {add.headerTitleText}>
                             Add Context
                         </Text>
                     </TouchableOpacity>
@@ -135,7 +137,7 @@ const AddContext = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <ScrollView style = {add.dropDownList}>
+                <ScrollView style = {add.dropDownList} contentContainerStyle = {{paddingBottom : 60}}>
                 { searchArray.length ?
                 searchArray.map((item,index)=>{
                     return(
@@ -157,7 +159,7 @@ const AddContext = () => {
                 : null}
                 </ScrollView>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 60 , height : 60 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />

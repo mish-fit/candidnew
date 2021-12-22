@@ -1,5 +1,5 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable } from 'react-native'
+import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking } from 'react-native'
 import { colorsArray, theme, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
@@ -23,6 +23,7 @@ import { width } from '../Exports/Constants';
 import {Avatar} from 'react-native-paper'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
+import { add } from '../../Styles/Add';
 
 const FeedItemComponent = ({item,id, userInfo}) => {
     const [randomNo, userId] = React.useContext(RandomContext)
@@ -245,6 +246,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
     }
 
     React.useEffect(() => {
+        
         setColorNo((randomNo+id)%(colorsArray.length-1))
     },[])
 
@@ -253,11 +255,12 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
     }
 
     const redirect = async (buyURL) => {
+        
         try {   
             Linking.openURL(buyURL)
         } catch (error) {
             Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
-            alert("Browser not reachable")
+            alert("Sorry ! Link invalid")
         }
     };
 
@@ -580,7 +583,7 @@ const Category = () => {
                         style = {{marginLeft : 20, flex : 1 , justifyContent :'center', alignItems :'center' }}
                         disabled
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 40, color : colorsArray[randomNo-1]}}>{categoryName}</Text>
+                        <Text style = {add.headerTitleText}>{categoryName}</Text>
                     </TouchableOpacity>
                     <Pressable 
                     onPress = {followCategory}

@@ -3,7 +3,7 @@ import { colorsArray, theme, themeLight, themeLightest } from '../Screens/Export
 
 
 export const add = StyleSheet.create({
-    dropDownList : {marginBottom : 20},
+    dropDownList : {marginBottom : 20,},
     dropDownItem : {marginTop : 10 , padding : 5, flexDirection : 'row' , borderWidth : 1, borderRadius : 10 , borderColor : '#EEE' },
     dropDownView : { justifyContent : 'center', marginLeft : 10,flex : 1, },
     dropDownItemImage : {width : 30, height : 30 , borderRadius : 30 , marginLeft : 5 },
@@ -26,6 +26,7 @@ export const add = StyleSheet.create({
     headerBack : {width: 40 , height : 40 , marginLeft : 20,
         borderRadius : 60 , justifyContent : 'center', alignItems : 'center' },
     headerTitle : {marginRight : 40,flex : 1 , justifyContent :'center', alignItems :'center'},
+    headerTitleText : {fontWeight : 'bold', fontSize : 20, color : '#333'},
     headingFixed : {fontSize : 14 ,  color : 'black'},
     headingFixedLight : {fontSize : 15 , color : themeLight},
     headingFixedLightest : {fontSize : 13 , color : 'white', fontStyle :'italic',},

@@ -611,7 +611,7 @@ const Feed = () => {
             />
             <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
-            style = {{width: 60 , height : 60 , 
+            style = {{width: 50 , height : 50 , 
             backgroundColor : colorsArray[randomNo+1], 
             borderRadius : 60 , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , right : 20  }}>
                 <View>

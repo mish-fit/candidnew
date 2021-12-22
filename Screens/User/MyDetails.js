@@ -64,7 +64,7 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
             <Animated.FlatList
             data={data}
             renderItem={renderItem}
-            keyExtractor={item => item.user_id.toString()}
+            keyExtractor={item => item.following_user_id.toString()}
             horizontal = {true}
             style = {{width : Dimensions.get('screen').width*0.94}}
             contentContainerStyle = {home.mainViewCarouselScrollableItem}
@@ -136,7 +136,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                     <TouchableOpacity 
                     disabled = {isFollowing[index]}
                     onPress = {itemFollow}
-                    style = {{backgroundColor : themeLight , borderRadius : 5, height : 25, justifyContent :'center', alignItems :'center' }}>
+                    style = {{backgroundColor : isFollowing[index]? "#888" : themeLight , borderRadius : 5, height : 25, justifyContent :'center', alignItems :'center' }}>
                         <Text style={{fontSize : 10 , color : 'white', alignSelf : 'center'}}>{isFollowing[index]?  "Following" : "Follow"}</Text>
                     </TouchableOpacity>
                 </TouchableOpacity>
@@ -355,7 +355,7 @@ const MyDetails = () => {
                         style = {{marginLeft : 30}}
                         onPress = {()=>ToastAndroid.show("This is your trust score. More Authentic Content, More the trust score and more rewards",ToastAndroid.LONG)}
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 40, color : colorsArray[(randomNo-1)%(colorsArray.length-1)]}}>{userSummary ? userSummary.trust_score : "100"}% <Text style = {{fontSize : 15}}>Trust</Text></Text>
+                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : theme}}>{userSummary && userSummary.coins_available? userSummary.trust_score : "100"}% <Text style = {{fontSize : 15}}>Trust</Text></Text>
                     </TouchableOpacity>
                     <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "User" />
                 </View>
@@ -413,7 +413,7 @@ const MyDetails = () => {
         navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : name , userId : id , isFollowing : following})
     }
 
-    const followUser = ({id,name, index}) => {
+    const followUser = (id,name, index) => {
         Amplitude.logEventWithPropertiesAsync('FOLLOW USER IN MY DETAILS',{"user_name": userInfo.user_name,"user_id": userInfo.user_id,"following_user_id": id,"following_user_name": name})
         let newArr = [...isFollowing]; // copying the old datas array
         newArr[index] = true // replace e.target.value with whatever you want to change it to
@@ -453,7 +453,7 @@ const MyDetails = () => {
             ListEmptyComponent = {EmptyComponent}
             />
 
-            <View style = {{position : 'absolute', left : 20 , bottom : 20 , width : 60 , height : 60 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            <View style = {{position : 'absolute', left : 20 , bottom : 20 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />
@@ -461,7 +461,7 @@ const MyDetails = () => {
             </View>
             <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
-            style = {{width: 60 , height : 60 , 
+            style = {{width: 50 , height : 50 , 
             backgroundColor : colorsArray[randomNo+1], 
             borderRadius : 60 , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 20 , right : 20  }}>
                 <View>

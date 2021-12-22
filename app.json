@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash2.png",
       "resizeMode": "cover",
-      "backgroundColor": "#774F9E"
+      "backgroundColor": "#D7354A"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -25,7 +25,7 @@
       "versionCode" : 10,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#D7354A"
       },
       "package": "com.candid.app",
       "googleServicesFile": "./google-services.json",

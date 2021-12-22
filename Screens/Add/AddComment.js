@@ -3,7 +3,7 @@ import React from 'react'
 import { StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, ImageBackground, Dimensions, Keyboard, ToastAndroid} from 'react-native'
 import {AntDesign , FontAwesome5} from 'react-native-vector-icons'
 import { RandomContext } from '../Exports/Context'
-import { background, colorsArray } from '../Exports/Colors'
+import { backArrow, background, colorsArray } from '../Exports/Colors'
 import LottieView from 'lottie-react-native';
 import {theme} from '../Exports/Colors'
 import axios from 'axios'
@@ -103,13 +103,13 @@ const AddComment = () => {
                     <TouchableOpacity 
                     onPress = {()=>navigation.goBack()}
                     style = {add.headerBack}>
-                        <AntDesign name = "arrowleft" size = {30} color = {colorsArray[randomNo]}/>
+                        <AntDesign name = "arrowleft" size = {30} color = {backArrow}/>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style = {add.headerTitle}
                         disabled
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : colorsArray[randomNo-1]}}>
+                        <Text style = {add.headerTitleText}>
                             Review
                         </Text>
                     </TouchableOpacity>
@@ -133,7 +133,7 @@ const AddComment = () => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 60 , height : 60 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />

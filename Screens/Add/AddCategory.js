@@ -3,7 +3,7 @@ import React from 'react'
 import { StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView} from 'react-native'
 import {AntDesign , FontAwesome5} from 'react-native-vector-icons'
 import { RandomContext } from '../Exports/Context'
-import { background, colorsArray } from '../Exports/Colors'
+import { backArrow, background, colorsArray } from '../Exports/Colors'
 import LottieView from 'lottie-react-native';
 import {theme} from '../Exports/Colors'
 import axios from 'axios'
@@ -24,6 +24,7 @@ const AddCategory = () => {
 
     const [body, setBody] = React.useState(route?.params?.body ? route?.params?.body : {} )
     const [productName, setProductName] = React.useState(route?.params?.product_name ? route?.params?.product_name : "")
+    const [productId, setProductId] = React.useState(route?.params?.product_id ? route?.params?.product_id : 0)
 
 
     const [randomNo,userId] = React.useContext(RandomContext)
@@ -47,6 +48,21 @@ const AddCategory = () => {
             easing: Easing.linear,
             useNativeDriver : true
             },).start();
+
+        axios.get(URL + "/search/category/byproduct", {params:{product_id : productId }} , {timeout : 3000})
+        .then(res => res.data).then(function(responseData) {
+           console.log("search category by product",responseData)
+            setSearchLoading(false)
+            if(responseData.length) {
+                setSearchTextProduct(responseData[0].category_name)
+            }
+            
+        //    console.log("Reached Here response")
+        })
+        .catch(function(error) {
+            setSearchLoading(false)
+        //    console.log("Reached Here error")
+        });
 
         axios.get(URL + "/search/category", {params:{product_text : "" }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
@@ -96,13 +112,13 @@ const AddCategory = () => {
                     <TouchableOpacity 
                     onPress = {()=>navigation.goBack()}
                     style = {add.headerBack}>
-                        <AntDesign name = "arrowleft" size = {30} color = {colorsArray[randomNo]}/>
+                        <AntDesign name = "arrowleft" size = {30} color = {backArrow}/>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style = {add.headerTitle}
                         disabled
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : colorsArray[randomNo-1]}}>Add Category</Text>
+                        <Text style = {add.headerTitleText}>Add Category</Text>
                     </TouchableOpacity>
             </Animated.View>
             <View style = {{margin : 10 ,marginTop : 60,}}>
@@ -128,7 +144,7 @@ const AddCategory = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <ScrollView style = {add.dropDownList}>
+                <ScrollView style = {add.dropDownList} contentContainerStyle = {{paddingBottom : 60}}>
                 { searchArray.length ?
                 searchArray.map((item,index)=>{
                     return(
@@ -150,7 +166,7 @@ const AddCategory = () => {
                 : null}
                 </ScrollView>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 60 , height : 60 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />

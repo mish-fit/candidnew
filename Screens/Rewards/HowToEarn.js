@@ -33,6 +33,12 @@ const HowToEarn = () => {
     const [statements,setStatements] = React.useState("With candid community, you can earn money by recommeding products and asking your network to buy from those. For every purchase, you will be rewarded based on the ongoing affiliate rate on that item. Sit at home, relax and earn money!!")
 
     React.useEffect(()=>{
+        Animated.timing(progress, {
+            toValue: 1,
+            duration: 2000,
+            easing: Easing.linear,
+            useNativeDriver : true
+              },).start()
         Amplitude.logEventAsync('HOW TO EARN')     
         axios.get(URL + "/rewards/howtoearn", {timeout : 5000})
         .then(res => res.data).then(function(responseData) {
@@ -51,7 +57,7 @@ const HowToEarn = () => {
                     style = {{marginRight : 30}}
                     onPress = {()=>navigation.navigate("MyDetails")}
                     >
-                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : theme}}>{userInfo.user_name}</Text>
+                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : "#555"}}>{userInfo.user_name}</Text>
                 </TouchableOpacity>
                 <View style = {{marginLeft : 20, flexDirection : 'row', alignItems : 'center'}}>
                     <TouchableOpacity 
@@ -64,7 +70,7 @@ const HowToEarn = () => {
                       //  autoPlay
                         />
                     </TouchableOpacity>
-                    <Text style = {{marginLeft : 5 , fontSize : 35, fontWeight : 'bold' , color : theme}}>{userSummary ? userSummary.coins_available : "0" }</Text>
+                    <Text style = {{marginLeft : 5 , fontSize : 20, fontWeight : 'bold' , color : theme}}>{userSummary && userSummary.coins_available ? userSummary.coins_available : "0" }</Text>
                 </View>
             </View>
             <ScrollView style = {{padding : 20 }} contentContainerStyle = {{paddinBottom : 10}}>
