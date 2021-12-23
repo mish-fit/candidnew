@@ -7,14 +7,25 @@ import { RandomProvider } from './Screens/Exports/Context';
 import Navigator from './Screens/Navigator';
 import { NativeBaseProvider, Box } from 'native-base';
 import { MenuProvider } from 'react-native-popup-menu';
-
+import Crashes from 'appcenter-crashes';
+import Analytics from 'appcenter-analytics';
+import AppCenter from 'appcenter';
 import * as firebase from "firebase";
 
 import { firebaseConfig, dataRetrieve, URL } from './Screens/Exports/Config';
 import { LoadingPage } from './Screens/Exports/Pages';
 import axios from 'axios'
 
+import codePush from 'react-native-code-push';
+
 import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
+import * as Amplitude from 'expo-analytics-amplitude';
+try {
+    Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
+}
+catch {
+    console.log("No Amplitude Tracking")
+}
 
 try {
   firebase.initializeApp(firebaseConfig);
@@ -23,8 +34,10 @@ try {
   // ignore app already initialized error in snack
 }
 
+const codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
 
-export default function App() {
+
+const App = () => {
 
   const [randomNo , setRandomNo] = React.useState(Math.floor(Math.random()*3+1))
   const [userId,setUserId] = React.useState("")
@@ -35,11 +48,15 @@ export default function App() {
   const [userDetails,setUserDetails] = React.useState({})
 
   React.useEffect( () => {
+    Crashes.setEnabled(true);
+    Analytics.trackEvent("App Open");
     const getData = async () => {
       firebase.auth().onAuthStateChanged(user => {
         if (user != null) {
+          AppCenter.setUserId(user.phoneNumber);
          // console.log("firebase",user)
-          
+          Amplitude.setUserIdAsync(user.phoneNumber)
+          Amplitude.logEventWithPropertiesAsync('USER_VISIT', {"userPhoneNumber": user.phoneNumber})
           setLoggedIn(true)
           setUserId(user.phoneNumber)
           axios.get(URL + "/user/info", {params:{user_id : user.phoneNumber.slice(1,13) }} , {timeout:5000})
@@ -105,6 +122,8 @@ ReceiveSharingIntent.getReceivedFiles(files => {
     </View>
   );
 }
+
+export default codePush(codePushOptions)(App);
 
 const styles = StyleSheet.create({
   container: {

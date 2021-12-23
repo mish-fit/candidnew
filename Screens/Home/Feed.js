@@ -1,11 +1,11 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch } from 'react-native'
+import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView } from 'react-native'
 import { colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation, useRoute , useIsFocused} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { RewardsComponent } from '../Exports/Components';
+import { GiftComponent, RewardsComponent } from '../Exports/Components';
 import Constants from 'expo-constants'
 import {dataRetrieve, URL} from '../Exports/Config'
 import {homeFeed} from "../FakeData/HomeFeed"
@@ -14,7 +14,7 @@ import {Avatar} from 'react-native-paper'
 import * as firebase from "firebase";
 import * as Notifications from 'expo-notifications'
 import * as Permissions from 'expo-permissions'
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackActions } from '@react-navigation/native';
@@ -22,6 +22,8 @@ import * as WebBrowser from 'expo-web-browser';
 import { width } from '../Exports/Constants';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
+import { home } from '../../Styles/Home';
+import  Modal  from 'react-native-modal'
 
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
@@ -108,12 +110,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
         try {   
             Linking.openURL(buyURL)
         } catch (error) {
+            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
             alert("Browser not reachable")
+
         }
     };
 
     const buyItem = (buyURL) => {
-        
+        Amplitude.logEventWithPropertiesAsync("BUY URL", { "user_id": userId,"feed_id": item.feed_id,"feed_user_id" : item.user_id,"user_name": userInfo.user_name})
      //   console.log(buyURL)
         redirect(buyURL)
         setBuys(buys+1)
@@ -152,14 +156,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
                 </View>  
-                <View>
+                <View style = {{flex : 1,}}>
                     <View style = {{flexDirection : 'row', marginLeft : 5}}>
                         <TouchableOpacity onPress = {()=> {
                          //   console.log(" user info ",userInfo, " item " , item)
                             navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : item.user_name , userId : item.user_id , isFollowing : item.isFollowing}
                         
                         )}}>
-                            <Text style = {{fontSize : 15 , fontWeight : 'bold'}}>{item.user_name}</Text>
+                            <Text style = {{fontSize : 15 , fontWeight : 'bold' , color : "#555"}}>{item.user_name}</Text>
                         </TouchableOpacity> 
                         { item.isFollowing ? null :
                         tempFollow ?
@@ -172,8 +176,8 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         }
                     </View>
                
-                    <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{fontWeight : 'bold', fontSize : 20 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                    <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flex : 1, }}>
+                        <Text style = {{fontSize : 12 , color : "#555" , }}>{item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -192,7 +196,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
-                            height: Dimensions.get('screen').width * 0.69,
+                            height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
@@ -227,7 +231,12 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </TouchableOpacity>
                 </View >
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
-                    <Text>{item.comment}</Text>
+                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
+                        <Text>
+                            {item.comment.length > 280 ? item.comment.substring(0,150) : item.comment}
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 280 ? " ... Read More" : ""}</Text>
+                        </Text>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
         
@@ -248,8 +257,7 @@ const UpdatedCarousel = ({DATA , onClickItem }) => {
        
         const inputRange = [
             ITEM_SIZE*(index-1),
-            ITEM_SIZE*(index),
-            ITEM_SIZE*(index+1),   
+            ITEM_SIZE*(index)
         ]
         const opacityInputRange = [
             -1,
@@ -258,7 +266,7 @@ const UpdatedCarousel = ({DATA , onClickItem }) => {
         ]
         const scale = scrollX.interpolate({
             inputRange,
-            outputRange : [1,1,0]
+            outputRange : [1,1]
         })
         const opacity = scrollX.interpolate({
             inputRange : opacityInputRange,
@@ -267,9 +275,9 @@ const UpdatedCarousel = ({DATA , onClickItem }) => {
   
         return(
             item.category_name ? 
-            <Animated.View style={[{borderRadius : 20 , justifyContent : 'center', alignItems : 'center',padding : 5 , paddingHorizontal : 10, marginHorizontal : 5 , marginVertical : 5 ,borderWidth : 1,borderColor : colorsArray[(randomNo+index)%(colorsArray.length-1)]}  , {transform : [{scale}]}]}>
+            <Animated.View style={[{borderRadius : 20 , justifyContent : 'center', alignItems : 'center',padding : 5 , paddingHorizontal : 10, marginHorizontal : 5 , marginVertical : 5 ,borderWidth : 1,borderColor : "#888"}  , {transform : [{scale}]}]}>
                 <TouchableOpacity style = {[{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
-                    <Text style={[{margin:1 ,fontSize : 15 , color : colorsArray[(randomNo+index)%(colorsArray.length-1)]}]}>{item.category_name.length > 20 ? item.category_name.substring(0,20) + "..." : item.category_name}</Text>
+                    <Text style={[{margin:1 ,fontSize : 15 , color : "#444"}]}>{item.category_name.length > 20 ? item.category_name.substring(0,20) + "..." : item.category_name}</Text>
                 </TouchableOpacity>
             </Animated.View> : null
         )
@@ -385,6 +393,7 @@ const Feed = () => {
 
     const [feedData,setFeedData] = React.useState([])
     const [userInfo,setUserInfo] = React.useState(route?.params?.body ? route?.params?.body : {})
+    const [source,setSource] = React.useState(route?.params?.source ? route?.params?.source : "")
     const [userSummary,setUserSummary] = React.useState({})
     const [refresh,setRefresh] = React.useState(false)
     const [categoryCarousel, setCategoryCarousel] = React.useState(["Laptop", "Mobile", "TV", "Phone", "Books", "Series", "Swimsuit"])
@@ -393,6 +402,8 @@ const Feed = () => {
     const [expoToken , setExpoToken] = React.useState("")
 
     const [toggled, setToggled] = React.useState(false);
+
+    const [modalVisible,setModalVisible] = React.useState(false)
 
     const [pageNumber,setPageNumber] = React.useState(0)
     const scrollY = React.useRef(new Animated.Value(0));
@@ -411,6 +422,14 @@ const Feed = () => {
        });
 
     React.useEffect(()=>{
+        console.log("source" , source)
+        if(source == "Onboarding") {
+            setSource("")
+            setModalVisible(true)
+        } else {
+            setSource("")
+        }
+        
         Animated.timing(progress, {
             toValue: 1,
             duration: 2000,
@@ -518,12 +537,44 @@ const Feed = () => {
     }
 
     const onClickCategory = (id,name) => {
+        Amplitude.logEventWithPropertiesAsync("CLICKED ON CATEGORY",{categoryId : id, categoryName : name , userName : userInfo.user_name })
         navigation.navigate("CategoryPage",{categoryId : id, categoryName : name , userName : userInfo.user_name })
       //  console.log(id, name)
     }
 
+    const onContextModalClose = () => {
+        setModalVisible(false)
+    }
+
     return (
         <View style = {{ backgroundColor : 'white', flex : 1,}}>
+            <Modal 
+                isVisible={modalVisible}
+                deviceWidth={Dimensions.get('screen').width}
+                deviceHeight={Dimensions.get('screen').height}
+                onBackdropPress={onContextModalClose}
+                onSwipeComplete={onContextModalClose}
+                swipeDirection="left"
+                style = {{marginHorizontal : 20 , marginVertical : 120 , borderRadius : 20}}
+                >
+                <ScrollView style = {{backgroundColor : 'white' , borderRadius : 30 , padding : 20}}>
+                    <Text style = {{fontWeight : 'bold', textAlign :'center', color : theme, fontSize : 30}}>Congratulations</Text>
+                    <Text style = {{textAlign : 'center' , fontSize : 20}}>You just earned 500 coins</Text>
+                    <View style = {{justifyContent :'center', alignItems : 'center'}}>
+                        <GiftComponent />
+                    </View>
+                    <Text style = {{fontWeight : 'bold', textAlign :'center' , fontSize : 20,marginTop : 40}}>Welcome to Candid Community</Text>
+                    <View style = {{justifyContent : 'center', alignItems : 'center'}}>
+                        <TouchableOpacity style = {home.modalButton} onPress = {()=>navigation.navigate("MyRewards")}>
+                            <Text style = {home.modalButtonText}>Go To Rewards Section</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style = {home.modalButton} onPress = {()=>navigation.navigate("HowToEarn")}>
+                            <Text style = {home.modalButtonText}>Read Community Guidelines</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
+                </ScrollView>
+            </Modal>
             <Animated.View 
             style = {{ transform: [{translateY}],
                 backgroundColor : 'white', flex : 1 ,
@@ -533,20 +584,26 @@ const Feed = () => {
               
                     <TouchableOpacity
                         style = {{marginLeft : 20, flex : 1 }}
-                        onPress = {()=>navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
+                        onPress = {()=>{
+                            Amplitude.logEventAsync("Clicked on My Details on Home")
+                            navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
+                            }
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 25, color : colorsArray[randomNo-1]}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
+                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : "black"}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
                     </TouchableOpacity>
-                    <View style = {{alignItems : 'center', flexDirection : 'row-reverse' }}>
-                        <TouchableOpacity 
+                    <View style = {{alignItems : 'center', flexDirection : 'row-reverse' , marginRight : 20 }}>
+                        {/* <TouchableOpacity 
                                 style = {{padding : 2 , paddingLeft : 5 , paddingRight : 5, marginRight : 20}}
-                                onPress = {()=>navigation.navigate("SearchByCategory")} >
+                                onPress = {()=>{
+                                    Amplitude.logEventAsync("Clicked on Search on Home")
+                                    navigation.navigate("SearchByCategory")} 
+                                    }>
                             <AntDesign name = "search1" size = {24} color = 'red' /> 
-                        </TouchableOpacity> 
+                        </TouchableOpacity>  */}
                         <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
                     </View>
             </Animated.View>
-          
+
             {/* {categoryCarousel.length ? 
                <View style = {{marginTop : headerHeight, height : 50}}>
                     <UpdatedCarousel DATA = {categoryCarousel} onClickItem = {onClickCategory} />
@@ -558,7 +615,7 @@ const Feed = () => {
             ref = {ref}
             style = {{marginBottom : 40}}
             contentContainerStyle = {{}}
-            data = {toggled ? feedData : feedData.filter((item,index)=>item.rating>3)}
+            data = {toggled ? feedData.filter((item,index)=>item.rating >3) : feedData}
             renderItem = {FeedItem}
             onScroll = {handleScroll}
             showsVerticalScrollIndicator = {false}
@@ -567,7 +624,7 @@ const Feed = () => {
             />
             <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
-            style = {{width: 60 , height : 60 , 
+            style = {{width: 50 , height : 50 , 
             backgroundColor : colorsArray[randomNo+1], 
             borderRadius : 60 , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , right : 20  }}>
                 <View>
@@ -580,18 +637,21 @@ const Feed = () => {
             justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
                 <View style = {{flexDirection : 'row'}}>
                     <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 18,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>Positive Reviews</Text>
+                        <Text style = {{color : theme, fontSize : 15,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>All Reviews</Text>
                     </View>
                     <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
                         <Switch
                             trackColor={{ true: theme , false: "white" }}
                             thumbColor={!toggled ? theme : 'white'}
-                            onValueChange={()=>setToggled(!toggled)}
+                            onValueChange={()=>{
+                                Amplitude.logEventAsync("HOME FEED TOGGLE")
+                                setToggled(!toggled)}
+                                }
                             value={toggled}
                         />
                     </View>
                     <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 18,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>All Reviews</Text>
+                        <Text style = {{color : theme, fontSize : 15,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Positive Reviews</Text>
                     </View>
                 </View>
             </View>

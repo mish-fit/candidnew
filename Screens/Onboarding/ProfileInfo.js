@@ -22,7 +22,14 @@ import { theme } from '../Exports/Colors';
 import { s3URL, uploadImageOnS3 } from '../Exports/S3';
 import LottieView from 'lottie-react-native';
 
+import 'react-native-get-random-values'
+import { nanoid , customAlphabet} from 'nanoid'
+import * as Amplitude from 'expo-analytics-amplitude';
+
+
+
 const ProfileInfo = () => {
+  const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6)
 
   const navigation = useNavigation()
   const route = useRoute()
@@ -42,6 +49,9 @@ const ProfileInfo = () => {
   const [userName,setUserName] = React.useState(route.params?.username ? route.params?.username  : "")
   const [userId] = React.useContext(RandomContext)
   const [phoneNumber,setPhoneNumber] = React.useState(route.params?.phoneNumber ? route.params?.phoneNumber : "")
+  const [refereeName,setRefereeName] = React.useState(route.params?.refereeName ? route.params?.refereeName : "")
+  const [refereeId,setRefereeId] = React.useState(route.params?.refereeId ? route.params?.refereeId : "")
+  const [coinsValue,setCoinsValue] = React.useState(route.params?.coinsValue ? route.params?.coinsValue : "")
   const [userInfo,setUserInfo] = React.useState([])
   const [submitted,setSubmitted] = React.useState(false)
 
@@ -57,6 +67,8 @@ const ProfileInfo = () => {
 
   const [userNameAccepted,setUserNameAccepted] = React.useState(false)
   const [userNameRefreshBoolean,setUserNameRefreshBoolean] = React.useState(false)
+
+ 
 
   
   const [variable,setVariable] = React.useState(route.params?.variable ?  route.params?.variable : "new user")
@@ -139,10 +151,15 @@ const ProfileInfo = () => {
   
 
   
-  
 
 
-    useEffect(() => {
+    React.useEffect(() => {
+      try {
+        Amplitude.logEventAsync("NEW USER PROFILE INFO")
+      } catch(e) {
+        console.log("Amplitude new user", e)
+      }
+      
       const registerNotification = async () => {
         registerForExpoPushNotificationsAsync().then(token => {
          // console.log("expo token", token)
@@ -155,12 +172,28 @@ const ProfileInfo = () => {
           AsyncStorage.setItem('deviceToken', token )
         });
       }
+      try {
         registerNotification()
+      } catch(e) {
+        console.log("Register Notification", e)
+      }
+        
 
     
-      const getContacts = () => {
-
-          Contacts.getAll().then(contacts => {
+      const getContacts = async () => {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+            {
+              title: "Contacts Access",
+              message: "Now get your friends' recommendations at your fingertips",
+              buttonNeutral: "Ask Me Later",
+              buttonNegative: "Cancel",
+              buttonPositive: "OK"
+            }
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            Contacts.getAll().then(contacts => {
               const a = []
               setDbPhoneNumbers([])
               setDbContacts([])
@@ -195,7 +228,7 @@ const ProfileInfo = () => {
               .then(res => {
                 //console.log("Contacts res", res)
               }).catch((e) => {
-                //console.log("Contacts error", e)
+                console.log("Contacts error", e)
               })
             }
             else {
@@ -203,9 +236,21 @@ const ProfileInfo = () => {
             }
         
           })
+          } else {
+            console.log("Contacts permission denied");
+          }
+        } catch (err) {
+          console.log(err);
+        }
+          
       }
       
-      getContacts()
+      try {
+        getContacts()
+      } catch(e) {
+        console.log("Get contacts Notification", e)
+      }
+      
 
 
     //  console.log("USER DETAILS USE EFFECT" , route.params.userDetails)
@@ -220,7 +265,13 @@ const ProfileInfo = () => {
             //
         });
        }
-       getUserInfo()
+
+       try {
+        getUserInfo()
+       } catch(e) {
+        console.log("Get user info", e)
+       }
+       
        
     }, [refresh])
 
@@ -248,6 +299,7 @@ const ProfileInfo = () => {
     }
 
     const onSubmitOnboarding = () =>{
+        Amplitude.logEventAsync("NEW USER PROFILE SUBMITTED")
         setSubmitted(true)
         if(profileImageChange) {
           uploadImageOnS3(phoneNumber.slice(1,13) + "/profile",image) 
@@ -269,10 +321,37 @@ const ProfileInfo = () => {
           "city_name": "",
           "pin_code": 0 ,
           "twitter_user_name" : "",
-          "social_handles" : socialHandles
+          "social_handles" : socialHandles,
+          "coupon" : nanoid()
         }
-     // console.log("USER BODY",userbody)
-  
+      console.log("USER BODY",userbody)
+      
+     const userPoints = {
+      "user_id": phoneNumber.slice(1,13),
+      "user_name": userName,
+      "reward_type": "completed Onboarding",
+      "coins_value": coinsValue,
+      "reward_type_id": 1,
+      "engaged_post_id" : "", 
+      "engaged_user_id" : "",  
+      "engaged_user_name" : "", 
+      "engaged_product_name" : "" 
+    }
+    
+    const refereePoints = {
+      "user_id": refereeId,
+      "user_name": refereeName,
+      "reward_type": "Signed up using your referral code",
+      "coins_value": coinsValue,
+      "reward_type_id": 2,
+      "engaged_post_id" : "", 
+      "engaged_user_id" : "",  
+      "engaged_product_name" : "" ,
+      "engaged_user_name" : userName
+    }
+
+      console.log("USER POINTS",userPoints)
+      console.log("REFEREE POINTS",refereePoints)
 
       axios({
       method: 'post',
@@ -280,13 +359,36 @@ const ProfileInfo = () => {
       data: userbody
       })
       .then(res => {
-        //  console.log("USER", res)
+        axios({
+          method: 'post',
+          url: URL + '/rewards/earn',
+          data: userPoints
+          }).then(res=>{
+            console.log(res)
+          }).catch((e)=>{
+            console.log(e)
+        })
+        if(refereeId && refereeId != "" ) 
+        {
+            axios({
+              method: 'post',
+              url: URL + '/rewards/earn',
+              data: refereePoints
+              }).then(res=>{
+                console.log(res)
+              }).catch((e)=>{
+                console.log(e)
+            })
+        }
+          
+
+
           ToastAndroid.show("Hi " + userbody.user_name, ToastAndroid.LONG)
                   setTimeout(function(){
                   navigation.navigate("Home", {source : "Onboarding", body : userbody})
                   }, 300);        
           }).catch((e) => {
-              ToastAndroid.show("Error updating details. Please try later")
+              ToastAndroid.show("Error updating details. Please try later", ToastAndroid.SHORT)
               setSubmitted(false)
           })
 
@@ -298,7 +400,7 @@ const ProfileInfo = () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
           allowsEditing: true,
-          aspect: [4, 3],
+          aspect: [1, 1],
           quality: 1,
         });
     
@@ -319,8 +421,8 @@ const ProfileInfo = () => {
     }
 
     const userNameChange = (text) => {
-      setUserName(text.toLowerCase().replace(/[^a-zA-Z0-9]/g, ""))
-      axios.get(URL + "/isexists/username", {params:{user_name : text.toLowerCase().replace(/[^a-zA-Z0-9]/g, "") }} , {timeout:5000})
+      setUserName(text)
+      axios.get(URL + "/isexists/username", {params:{user_name : text}} , {timeout:5000})
       .then(res => res.data).then(function(responseData) {
           console.log("username" , userName , "Check", responseData)
           if(responseData.length == 0 && text.length > 4) {
@@ -378,8 +480,8 @@ const ProfileInfo = () => {
                     <AntDesign name = "checkcircle" color = "green" size = {20} /> :
                     <AntDesign name = "closecircle" color = "#888" size = {20} /> 
                     }
-                    </View>
                   </View>
+                </View>
                 <View style = {{flexDirection  : 'row'}}>
                   
                   <TextInput 
@@ -466,11 +568,11 @@ const ProfileInfo = () => {
                  alignItems:'flex-end'}}>
                 <TouchableOpacity 
                         onPress = {onSubmitOnboarding}
-                        disabled = {userName == ""}
+                        disabled = {!userNameAccepted}
                         style = {{
-                          backgroundColor : userName == "" ? "#DDD" :theme , width : 100, height : 40 , borderRadius : 10, 
+                          backgroundColor : !userNameAccepted ? "#DDD" :theme , width : 100, height : 40 , borderRadius : 10, 
                         flex : 1, justifyContent : 'center' , alignItems : 'center'}}>
-                    <Text style = {{color : userName == "" ? '#888' : 'white'}}>Submit</Text>
+                    <Text style = {{color : !userNameAccepted ? '#888' : 'white'}}>Submit</Text>
                 </TouchableOpacity>
               </View>                  
             </View>

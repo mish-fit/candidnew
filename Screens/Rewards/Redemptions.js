@@ -1,6 +1,6 @@
 import React from 'react'
 import {Animated, Easing,  StyleSheet, Text, View , TouchableOpacity, Dimensions, Image, ToastAndroid, Alert} from 'react-native'
-import { colorsArray } from '../Exports/Colors'
+import { colorsArray, theme } from '../Exports/Colors'
 import { RewardsComponent } from '../Exports/Components'
 import { RandomContext } from '../Exports/Context'
 import {Button,Box,Heading,VStack,Center,NativeBaseProvider} from "native-base"
@@ -11,6 +11,7 @@ import { color } from 'react-native-reanimated'
 import axios from 'axios'
 import { URL } from '../Exports/Config'
 import { LoadingPage } from '../Exports/Pages'
+import * as Amplitude from 'expo-analytics-amplitude';
 
 
 const Redemptions = () => {
@@ -22,7 +23,7 @@ const Redemptions = () => {
     const [userSummary,setUserSummary] = React.useState(route?.params?.userSummary)
     const [recentBurn,setRecentBurn] = React.useState(route?.params?.recentBurn)
 
-    const [myRewardsCoins,setMyRewardsCoins] = React.useState(7000)
+    const [myRewardsCoins,setMyRewardsCoins] = React.useState()
     const [randomNo] = React.useContext(RandomContext)
 
     const [pageLoading, setPageLoading] = React.useState(false)
@@ -40,6 +41,8 @@ const Redemptions = () => {
         // coins_value : 10000,cash_value : 1000}])
 
     React.useEffect(()=>{
+        setMyRewardsCoins(userSummary.coins_available)
+        Amplitude.logEventAsync('REDEMPTIONS')
         Animated.timing(progress, {
             toValue: 1,
             duration: 10000,
@@ -102,7 +105,7 @@ const Redemptions = () => {
                     style = {{marginRight : 30}}
                     onPress = {()=>navigation.navigate("MyDetails")}
                     >
-                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : colorsArray[randomNo-1]}}>{userInfo.user_name}</Text>
+                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : "#555"}}>{userInfo.user_name}</Text>
                 </TouchableOpacity>
                 <View style = {{marginLeft : 20, flexDirection : 'row', alignItems : 'center'}}>
                     <TouchableOpacity 
@@ -115,7 +118,7 @@ const Redemptions = () => {
                       //  autoPlay
                         />
                     </TouchableOpacity>
-                    <Text style = {{marginLeft : 5 , fontSize : 35, fontWeight : 'bold' , color : colorsArray[randomNo+1] }}>{userSummary ? userSummary.coins_available : "0" }</Text>
+                    <Text style = {{marginLeft : 5 , fontSize : 20, fontWeight : 'bold' , color : theme }}>{userSummary && userSummary.coins_available ? userSummary.coins_available : "0" }</Text>
                 </View>
             </View>
             <View style = {{flex : 1, backgroundColor : 'white', width: '100%' }}>
@@ -139,7 +142,7 @@ const Redemptions = () => {
                         <View style = {{flex : 1 , justifyContent : 'center', alignItems : 'center' }}> 
                             <View style = {{flex : 1 , alignItems : 'center' , justifyContent : 'center'}}>
                                 <Text style = {{
-                                    color : myRewardsCoins < item.coins_value ? "#888" : colorsArray[(randomNo+1+index)%(colorsArray.length-1)] ,
+                                    color : myRewardsCoins < item.coins_value ? "#888" : "#222" ,
                                     fontSize : 40,
                                     fontWeight : 'bold'
                                 }}>{item.coins_value}</Text>
@@ -184,7 +187,7 @@ const Redemptions = () => {
                 }
                 </View>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 60 , height : 60 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />

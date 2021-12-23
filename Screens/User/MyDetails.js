@@ -12,12 +12,15 @@ import { FlatList } from 'react-native-gesture-handler'
 import {Menu,MenuOptions,MenuOption,MenuTrigger,} from 'react-native-popup-menu';
 import LottieView from 'lottie-react-native'
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import {Avatar} from 'react-native-paper'
+import * as Amplitude from 'expo-analytics-amplitude';
+
 
 const FriendsCarousel = ({DATA , onClickItem}) => {
     const [data,setData] = React.useState([...DATA])
     const scrollX = React.useRef(new Animated.Value(0)).current
     
-    const ITEM_SIZE = 60
+    const ITEM_SIZE = 100
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
     
     const renderItem = ({item , index}) => {
@@ -27,35 +30,30 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
         }
        
         const inputRange = [
-            ITEM_SIZE*(index-3),
-            ITEM_SIZE*index,
-            ITEM_SIZE*(index+1),
-            ITEM_SIZE*(index+2),   
+            ITEM_SIZE*(index-1),
+            ITEM_SIZE*(index),
+            
         ]
-        const opacityInputRange = [
-            -1,
-            0,
-            ITEM_SIZE*index,
-            ITEM_SIZE*(index+1),   
-        ]
+       
         const scale = scrollX.interpolate({
             inputRange,
-            outputRange : [1,1,0.5,0]
+            outputRange : [1,1]
         })
-        const opacity = scrollX.interpolate({
-            inputRange : opacityInputRange,
-            outputRange : [1,1,1,0]
-        })
+      
   
         return(
             <Animated.View style={[home.mainViewCarouselScrollableItemContainer,{borderWidth : 0}  , {transform : [{scale}]}]}>
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
-                    <View style = {{flex: 1  , width : 100, backgroundColor : background}}>
-                      <Image source = {{uri : item.user_profile_image ? item.user_profile_image : "No Image"}} 
-                          style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 40 , width : 80, height : 80 , marginLeft : 10} ]} />
+                    <View style = {{flex: 1  , width : ITEM_SIZE, backgroundColor : background}}>
+                     {item.user_profile_image ? 
+                     <Image source = {{uri : item.user_profile_image}} 
+                          style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : ITEM_SIZE-20 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
+                   : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
+                    source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.following_user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                    size={ITEM_SIZE-40}/> }
                     </View>
                     <View style = {{backgroundColor : background , height : 45 , borderRadius : 5, }}>
-                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.user_name.length > 30 ? item.user_name.substring(0,20) + "..." : item.user_name}</Text>
+                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.following_user_name.length > 30 ? item.following_user_name.substring(0,20) + "..." : item.following_user_name}</Text>
                     </View>
                 </TouchableOpacity>
             </Animated.View>
@@ -66,7 +64,7 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
             <Animated.FlatList
             data={data}
             renderItem={renderItem}
-            keyExtractor={item => item.user_id.toString()}
+            keyExtractor={item => item.following_user_id.toString()}
             horizontal = {true}
             style = {{width : Dimensions.get('screen').width*0.94}}
             contentContainerStyle = {home.mainViewCarouselScrollableItem}
@@ -88,7 +86,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
         console.log("Following",isFollowing)
     },[])
 
-    const ITEM_SIZE = 60
+    const ITEM_SIZE = 100
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
 
     const renderItem = ({item , index}) => {
@@ -102,10 +100,9 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
         }
         
         const inputRange = [
-            ITEM_SIZE*(index-3),
-            ITEM_SIZE*index,
-            ITEM_SIZE*(index+1),
-            ITEM_SIZE*(index+2),   
+            ITEM_SIZE*(index-1),
+            ITEM_SIZE*(index),
+           
         ]
         const opacityInputRange = [
             -1,
@@ -115,7 +112,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
         ]
         const scale = scrollX.interpolate({
             inputRange,
-            outputRange : [1,1,0.5,0]
+            outputRange : [1,1]
         })
         const opacity = scrollX.interpolate({
             inputRange : opacityInputRange,
@@ -125,9 +122,13 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
         return(
             <Animated.View style={[home.mainViewCarouselScrollableItemContainer,{borderWidth : 0}  , {transform : [{scale}]}]}>
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
-                    <View style = {{flex: 1  , width : 100, backgroundColor : background }}>
-                        <Image source = {{uri : item.user_profile_image ? item.user_profile_image : "No Image"}} 
-                            style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 40 , width : 80, height : 80 , marginLeft : 10} ]} />
+                    <View style = {{flex: 1  , width : ITEM_SIZE, backgroundColor : background }}>
+                    {item.user_profile_image ? 
+                     <Image source = {{uri : item.user_profile_image}} 
+                          style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : ITEM_SIZE-20 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
+                   : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
+                    source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                    size={ITEM_SIZE-40}/> }
                     </View>
                     <View style = {{backgroundColor : background , borderRadius : 5,alignItems : 'center', justifyContent : 'center' }}>
                         <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.user_name.length > 20 ? item.user_name.substring(0,20) + "..." : item.user_name}</Text>
@@ -135,7 +136,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                     <TouchableOpacity 
                     disabled = {isFollowing[index]}
                     onPress = {itemFollow}
-                    style = {{backgroundColor : themeLight , borderRadius : 5, height : 25, justifyContent :'center', alignItems :'center' }}>
+                    style = {{backgroundColor : isFollowing[index]? "#888" : themeLight , borderRadius : 5, height : 25, justifyContent :'center', alignItems :'center' }}>
                         <Text style={{fontSize : 10 , color : 'white', alignSelf : 'center'}}>{isFollowing[index]?  "Following" : "Follow"}</Text>
                     </TouchableOpacity>
                 </TouchableOpacity>
@@ -155,7 +156,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                 [{nativeEvent :  {contentOffset : {x : scrollX}}}],
                 {useNativeDriver : true}
             )}
-            snapToInterval = {ITEM_SIZE+5}
+            snapToInterval = {ITEM_SIZE}
             showsHorizontalScrollIndicator = {false}
             />
     )
@@ -215,7 +216,7 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
         <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'space-between'}}>
                 <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                    <Text style = {{fontWeight : 'bold', fontSize : 20 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                    <Text style = {{fontSize : 12 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
                 </View>
                 <Menu style = {{}}>
                     <MenuTrigger>
@@ -243,7 +244,7 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
                 <Image source = {{uri : item.feed_image}} 
                     style = {{
                         width : Dimensions.get('screen').width * 0.92,
-                        height: Dimensions.get('screen').width * 0.69,
+                        height: Dimensions.get('screen').width * 0.92,
                         borderRadius : 40, 
                     }} 
                 />
@@ -285,6 +286,7 @@ const MyDetails = () => {
     const [isFollowing,setFollowing] = React.useState([])
 
     React.useEffect(() => {
+            Amplitude.logEventAsync('MyDetails')
             const a = []
             Animated.timing(progress, {
                 toValue: 1,
@@ -322,7 +324,7 @@ const MyDetails = () => {
 
             axios.get(URL + "/user/followingusers",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-              //  console.log("MY FIENDS",responseData)
+                console.log("MY FIENDS",responseData)
                 setMyFriends(responseData)
             })
             .catch(function(error) {
@@ -353,7 +355,7 @@ const MyDetails = () => {
                         style = {{marginLeft : 30}}
                         onPress = {()=>ToastAndroid.show("This is your trust score. More Authentic Content, More the trust score and more rewards",ToastAndroid.LONG)}
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 40, color : colorsArray[(randomNo-1)%(colorsArray.length-1)]}}>{userSummary ? userSummary.trust_score : "100"}% <Text style = {{fontSize : 15}}>Trust</Text></Text>
+                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : theme}}>{userSummary && userSummary.coins_available? userSummary.trust_score : "100"}% <Text style = {{fontSize : 15}}>Trust</Text></Text>
                     </TouchableOpacity>
                     <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "User" />
                 </View>
@@ -395,6 +397,7 @@ const MyDetails = () => {
     }
     
     const deletePostItem = (id) => {
+        Amplitude.logEventWithPropertiesAsync('DELETE POST',{"feed_id" : item.feed_id})
         setFeedData(feedData.filter((item, index)=> item.feed_id != id))
     }
 
@@ -406,10 +409,12 @@ const MyDetails = () => {
 
     const goToUser = (id, name , following) => {
     //    console.log(id, name , following)
+        Amplitude.logEventWithPropertiesAsync('GO TO USER FROM DETAILS',{homeUserName : userInfo.user_name, userName : name , userId : id , isFollowing : following})
         navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : name , userId : id , isFollowing : following})
     }
 
-    const followUser = ({id,name, index}) => {
+    const followUser = (id,name, index) => {
+        Amplitude.logEventWithPropertiesAsync('FOLLOW USER IN MY DETAILS',{"user_name": userInfo.user_name,"user_id": userInfo.user_id,"following_user_id": id,"following_user_name": name})
         let newArr = [...isFollowing]; // copying the old datas array
         newArr[index] = true // replace e.target.value with whatever you want to change it to
         setFollowing(newArr)
@@ -448,7 +453,7 @@ const MyDetails = () => {
             ListEmptyComponent = {EmptyComponent}
             />
 
-            <View style = {{position : 'absolute', left : 20 , bottom : 20 , width : 60 , height : 60 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            <View style = {{position : 'absolute', left : 20 , bottom : 20 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />
@@ -456,7 +461,7 @@ const MyDetails = () => {
             </View>
             <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
-            style = {{width: 60 , height : 60 , 
+            style = {{width: 50 , height : 50 , 
             backgroundColor : colorsArray[randomNo+1], 
             borderRadius : 60 , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 20 , right : 20  }}>
                 <View>

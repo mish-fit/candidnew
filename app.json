@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "candidapp",
+    "name": "Candid",
     "owner": "kandurisv",
     "slug": "candidapp",
     "scheme": "candid",
@@ -8,9 +8,9 @@
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/splash2.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#D7354A"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -25,7 +25,7 @@
       "versionCode" : 10,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#D7354A"
       },
       "package": "com.candid.app",
       "googleServicesFile": "./google-services.json",

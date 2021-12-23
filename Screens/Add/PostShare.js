@@ -6,7 +6,7 @@ import { RandomContext } from '../Exports/Context'
 import LottieView from 'lottie-react-native';
 import  Modal  from 'react-native-modal'
 import { borderStyle } from 'styled-system'
-
+import * as Amplitude from 'expo-analytics-amplitude';
 
 
 const PostShare = () => {
@@ -20,6 +20,7 @@ const PostShare = () => {
 
 
     React.useEffect(()=>{
+        Amplitude.logEventAsync('ADD SHARE POST')
         Animated.timing(progress, {
             toValue: 1,
             duration: 2000,
@@ -34,10 +35,10 @@ const PostShare = () => {
     }
 
     const share = async () => {
-        //Amplitude.logEventWithPropertiesAsync('REFERRAL', {userId : userId})
+        Amplitude.logEventWithPropertiesAsync('REFERRAL', {userId : body.user_name })
         try {
             const result = await Share.share({
-              message: 'Shop from the amazing products I recommended on https://www.taiqui.app/' + body.user_id.slice(9,10) + body.user_id.slice(1,2)  + body.user_name.replace(' ','+') + body.user_id.slice(2,3) + body.user_id.slice(8,9)   
+              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/' + body.user_name   
             });
             if (result.action === Share.sharedAction) {
               if (result.activityType) {

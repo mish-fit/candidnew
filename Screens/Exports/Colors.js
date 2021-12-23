@@ -3,11 +3,18 @@
 // ]
 
 export const colorsArray = [
-    "#774F9E","#774F9E","#774F9E","#774F9E","#774F9E"
+    "#D7354A","#D7354A","#D7354A","#D7354A","#D7354A"
 ]
 
 export const background = "white"
 export const borderColor = "black"
-export const theme = "#774F9E"
+
+export const theme = "#D7354A"
 export const themeLight = "#B87AF5"
-export const themeLightest = "#DEC5F7"
+export const themeLightest = "#E3CFD6"
+
+export const alttheme = "#774F9E"
+export const altthemeLight = "#B87AF5"
+export const altthemeLightest = "#DEC5F7"
+
+export const backArrow = "#333"

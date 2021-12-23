@@ -11,7 +11,7 @@ import axios from 'axios'
 import { URL } from '../Exports/Config'
 import moment from 'moment'
 import { mySummaryStyle } from '../../Styles/MySummary'
-
+import * as Amplitude from 'expo-analytics-amplitude';
 
 
 
@@ -100,7 +100,8 @@ const MyEarns = ({user_id}) => {
     
    
 
-    React.useEffect(()=>{            
+    React.useEffect(()=>{    
+            Amplitude.logEventAsync('MY EARNS')        
             axios.get(URL + "/rewards/user/earn",{params:{user_id : user_id}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
            //     console.log(responseData)
@@ -119,6 +120,14 @@ const MyEarns = ({user_id}) => {
         </View> 
     )
 
+    const emptyComponent = () => {
+        return(
+            <View style = {{padding : 20 }}>
+                <Text> You haven't earned any coins yet. Click on "How to Earn" to learn exciting ways to get rewards</Text>
+            </View>
+        )
+    }
+
 
 
     return (
@@ -130,6 +139,7 @@ const MyEarns = ({user_id}) => {
                 data = {earnRewards}
                 renderItem = {EarnItem}
                 showsVerticalScrollIndicator = {false}
+                ListEmptyComponent={emptyComponent}
                 />
         </View>
     )

@@ -3,7 +3,7 @@ import { colorsArray, theme, themeLight, themeLightest } from '../Screens/Export
 
 
 export const add = StyleSheet.create({
-    dropDownList : {marginBottom : 20},
+    dropDownList : {marginBottom : 20,},
     dropDownItem : {marginTop : 10 , padding : 5, flexDirection : 'row' , borderWidth : 1, borderRadius : 10 , borderColor : '#EEE' },
     dropDownView : { justifyContent : 'center', marginLeft : 10,flex : 1, },
     dropDownItemImage : {width : 30, height : 30 , borderRadius : 30 , marginLeft : 5 },
@@ -11,7 +11,7 @@ export const add = StyleSheet.create({
     dropDownText : {color : 'black'},
     heading : {
         fontWeight : 'bold',
-        color : theme,
+        color : "#555",
         fontSize : 18
     },
     element : {
@@ -23,10 +23,11 @@ export const add = StyleSheet.create({
         height : 50 , 
         position: 'absolute',  zIndex: 100, width: '100%',  left: 0,right: 0,
         flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'},
-    headerBack : {width: 40 , height : 40 , marginLeft : 20,
+    headerBack : {width: 40 , height : 40 , marginLeft : 0,
         borderRadius : 60 , justifyContent : 'center', alignItems : 'center' },
     headerTitle : {marginRight : 40,flex : 1 , justifyContent :'center', alignItems :'center'},
-    headingFixed : {fontSize : 20 , fontWeight : 'bold', color : theme},
+    headerTitleText : {fontWeight : 'bold', fontSize : 20, color : '#333'},
+    headingFixed : {fontSize : 14 ,  color : 'black'},
     headingFixedLight : {fontSize : 15 , color : themeLight},
     headingFixedLightest : {fontSize : 13 , color : 'white', fontStyle :'italic',},
     elementFixed : {
@@ -47,7 +48,7 @@ export const add = StyleSheet.create({
         marginTop : 5,
         borderRadius : 20,
         padding : 5 ,
-        paddingLeft : 10,
+        paddingLeft : 5,
         backgroundColor : '#AAA',
         borderRadius : 10,
     },

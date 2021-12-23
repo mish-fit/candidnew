@@ -3,7 +3,7 @@ import React from 'react'
 import { StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, ImageBackground, Dimensions} from 'react-native'
 import {AntDesign , FontAwesome5} from 'react-native-vector-icons'
 import { RandomContext } from '../Exports/Context'
-import { background, colorsArray } from '../Exports/Colors'
+import { backArrow, background, colorsArray } from '../Exports/Colors'
 import LottieView from 'lottie-react-native';
 import {theme} from '../Exports/Colors'
 import axios from 'axios'
@@ -14,6 +14,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { s3URL, uploadImageOnS3 } from '../Exports/S3'
 import {MaterialCommunityIcons} from 'react-native-vector-icons'
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import 'react-native-get-random-values'
+import { nanoid } from 'nanoid'
+import * as Amplitude from 'expo-analytics-amplitude';
 
 const AddImage = () => {
     const [source,setSource] = React.useState(true)
@@ -30,12 +33,13 @@ const AddImage = () => {
     const [contextId,setContextId] = React.useState(0)
     const [postImage,setPostImage] = React.useState("")
     const [postImageShown,setPostImageShown] = React.useState("")
+    const [imageId,setImageId] = React.useState(nanoid(10))
     
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
           allowsEditing: true,
-          aspect: [4, 3],
+          aspect: [1, 1],
           quality: 1,
         });
 
@@ -43,13 +47,15 @@ const AddImage = () => {
     
         if (!result.cancelled) {
             setPostImageShown(result.uri)
-            setBody({...body,feed_image : s3URL + "post/"+ userId.slice(1,13) + "/" + body.category_name.replace(" ","+") + "/" + body.product_name.replace(" ","+")  });
-            uploadImageOnS3("post/"+ userId.slice(1,13) + "/" + body.category_name.replace(" ","+") + "/" + body.product_name.replace(" ","+") ,result.uri)
+            setBody({...body,feed_image : s3URL + "post/"+ imageId  });
+            uploadImageOnS3("post/"+ imageId)
         }
     }; 
 
     React.useEffect(()=> {
-        setBody({...body,context_name : route?.params?.context_name})
+        Amplitude.logEventAsync('ADD IMAGE')
+        console.log("image screeen", contextName)
+        setBody({...body,context_name : contextName})
         pickImage()
 
         axios.get(URL + "/isexists/product", {params:{product_name : body.product_name , category_id : body.category_id}} , {timeout : 3000})
@@ -124,13 +130,13 @@ const AddImage = () => {
                     <TouchableOpacity 
                     onPress = {()=>navigation.goBack()}
                     style = {add.headerBack}>
-                        <AntDesign name = "arrowleft" size = {30} color = {colorsArray[randomNo]}/>
+                        <AntDesign name = "arrowleft" size = {30} color = {backArrow}/>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style = {add.headerTitle}
                         disabled
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : colorsArray[randomNo-1]}}>Rate the Product</Text>
+                        <Text style = {add.headerTitleText}>Rate the Product</Text>
                     </TouchableOpacity>
             </View>
             <View style={{marginTop : 70,}}>
@@ -152,7 +158,7 @@ const AddImage = () => {
                             <Text style = {add.headingFixedLight}>{body.category_name}</Text>
                         </View>
                         <View style={add.elementFixedLightest}>
-                            <Text style = {add.headingFixedLightest}>{body.context_name}</Text>
+                            <Text style = {add.headingFixedLightest}>{contextName}</Text>
                         </View>
                     </View>
                 </View>
@@ -162,7 +168,7 @@ const AddImage = () => {
                         { postImageShown && postImageShown != "None" && postImageShown != ""?
                         <ImageBackground source = {{uri : postImageShown}} 
                         style = {{width : Dimensions.get('screen').width * 0.92 , 
-                        height :  Dimensions.get('screen').width * 0.69 , 
+                        height :  Dimensions.get('screen').width * 0.92 , 
                         marginLeft : Dimensions.get('screen').width * 0.01 , 
                         marginRight : Dimensions.get('screen').width * 0.01  }} 
                         imageStyle={{ borderRadius: 20}}

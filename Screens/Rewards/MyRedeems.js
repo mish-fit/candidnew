@@ -11,7 +11,7 @@ import axios from 'axios'
 import { URL } from '../Exports/Config'
 import moment from 'moment'
 import { mySummaryStyle } from '../../Styles/MySummary'
-
+import * as Amplitude from 'expo-analytics-amplitude';
 
 const BurnItemComponent = ({item , id}) => {
 
@@ -56,7 +56,8 @@ const MyRedeems = ({user_id}) => {
   
     const [burnRewards,setBurnRewards] = React.useState([])
     
-    React.useEffect(()=>{            
+    React.useEffect(()=>{  
+            Amplitude.logEventAsync('MY REDEEMS')          
             axios.get(URL + "/rewards/user/burn",{params:{user_id : user_id}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
        // console.log(responseData)
@@ -75,6 +76,15 @@ const MyRedeems = ({user_id}) => {
         </View> 
     )
 
+    const emptyComponent = () => {
+        return(
+            <View style = {{padding : 20 }}>
+                <Text> You haven't earned any coins yet. Click on "How to Earn" to learn exciting ways to get rewards</Text>
+            </View>
+        )
+    }
+
+
     return (
         <View>
             <FlatList
@@ -84,6 +94,7 @@ const MyRedeems = ({user_id}) => {
                 data = {burnRewards}
                 renderItem = {BurnItem}
                 showsVerticalScrollIndicator = {false}
+                ListEmptyComponent={emptyComponent}
                 />
         </View>
     )

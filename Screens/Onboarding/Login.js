@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from "react";
-import { Animated,Easing, Text, View, TextInput, Button, TouchableOpacity, Platform, ToastAndroid , Keyboard , ImageBackground, Dimensions , ScrollView, Image} from "react-native";
+import { Animated,Easing, Text, View, TextInput, Button, Linking, TouchableOpacity, Platform, ToastAndroid , Keyboard , ImageBackground, Dimensions , ScrollView, Image, Pressable} from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import * as firebase from "firebase";
 import { useNavigation } from '@react-navigation/native';
@@ -11,6 +11,11 @@ import { useSmsUserConsent } from '@eabdullazyanov/react-native-sms-user-consent
 
 import {width , height } from '../Exports/Constants'
 import { theme } from "../Exports/Colors";
+import * as Amplitude from 'expo-analytics-amplitude';
+import Hyperlink from 'react-native-hyperlink'
+import {Ionicons} from 'react-native-vector-icons'
+import { add } from "react-native-reanimated";
+import { loginStyle } from "../../Styles/Login";
 
 export default function Login() {
     const [code, setCode] = React.useState();
@@ -53,6 +58,7 @@ export default function Login() {
   const retrievedCode = useSmsUserConsent();
 
   React.useEffect(() => {
+    Amplitude.logEventAsync('LOGIN SCREEN')
   //  console.log("Code",retrievedCode)
     if (retrievedCode) {
       setCode(retrievedCode);
@@ -126,11 +132,13 @@ export default function Login() {
 
 
 const onSubmit = async () => {
+    
     setOtpClick(true)
     try {
       const credential = firebase.auth.PhoneAuthProvider.credential(verificationId,otpnumber);
       await firebase.auth().signInWithCredential(credential);
       navigation.navigate("HomeTab" , {userId : phoneNumber})
+      Amplitude.logEventAsync('OTP SUBMITTED')
     //  console.log("it logged in")
     } catch (err) {
     //    console.log(err)
@@ -150,9 +158,8 @@ const getSMSMessage = async () => {
 }
 
 
-
   return (
-    
+   
     <ScrollView 
       contentContainerStyle={{}}
       style={{flex : 1}}>
@@ -165,17 +172,18 @@ const getSMSMessage = async () => {
           title='Prove you are human!'
           cancelLabel='Close'
         />
-        <View style = {{justifyContent : 'center' , flex : 1 , alignItems : 'center',  backgroundColor : theme,}}>
+      
+     
+        <View style = {{justifyContent : 'center' ,  alignItems : 'center',  backgroundColor : theme,}}>
           <Image
             source = {require("../../assets/icon.png")}
             style = {{marginTop : height*0.1 ,marginBottom : height*0.1 ,width : width*0.7 , height : width*0.7 , borderRadius : width*0.7}}
             />
         </View>
         <View style={[{justifyContent : 'center', alignItems : 'center', marginTop : height*0.05, }]}>
-          <Text style={[{fontSize : 20}]}>Enter phone number</Text>
+          <Text style={[{fontSize : 20}]}>Enter phone number 1</Text>
         </View>
       <View style = {{
-       
         flexDirection : 'row', 
         marginTop : 20, 
         marginHorizontal : 10 , 
@@ -198,13 +206,24 @@ const getSMSMessage = async () => {
         </View>
       </View>
       <TouchableOpacity
-        style = {{ marginHorizontal : 20, marginTop : 20 , borderWidth : 1 , borderRadius : 10 ,  padding : 10, backgroundColor : loginClick ? "#888" : theme, justifyContent : 'center', alignItems : 'center'}}
+        style = {{ marginHorizontal : 20, marginTop : 20 ,  borderRadius : 10 ,  padding : 10, backgroundColor : loginClick ? "#888" : theme, justifyContent : 'center', alignItems : 'center'}}
         onPress={onPressLogin}
         disabled={loginClick}
         >
           <Text style = {{color : 'white'}}>GET OTP</Text>
-        </TouchableOpacity> 
-      <View style = {{}} />
+        </TouchableOpacity>
+        <View style = {{justifyContent : 'center', alignItems : 'center', marginHorizontal : 10 , marginBottom : 10 , marginTop : 100}}>
+        <Text style = {{fontSize : 12}}>
+          <Ionicons name = "shield-checkmark-outline" size = {20} color = "green" /> 100% Safe. We don't use any private information 
+        </Text>
+        <Hyperlink  linkStyle={ { color: '#2980b9', fontSize: 12 } }
+                    linkText={ url => url === 'https://www.getcandid.app/termsandconditions' ? 'Terms and Conditions' : url === 'https://www.getcandid.app/privacypolicy' ?  'Privacy Policy' : url}>
+          <Text style={ { fontSize: 12, textAlign :'center' } }>
+           By continuing, you agree to our https://www.getcandid.app/termsandconditions and https://www.getcandid.app/privacypolicy
+          </Text>
+        </Hyperlink>
+      </View>
+      {/* <View style = {{}} /> */}
       </View>
       ) : (
       <View style = {{}}>
@@ -232,7 +251,7 @@ const getSMSMessage = async () => {
       
      
       </View>
-       <TouchableOpacity style = {{ marginHorizontal : 20, marginTop : 20 , borderWidth : 1 , borderRadius : 10 ,  padding : 10, backgroundColor : otpClick ?"#888" :  theme , justifyContent : 'center', alignItems : 'center'}}
+       <TouchableOpacity style = {{ marginHorizontal : 20, marginTop : 20 ,  borderRadius : 10 ,  padding : 10, backgroundColor : otpClick ?"#888" :  theme , justifyContent : 'center', alignItems : 'center'}}
         disabled = {otpClick}
         onPress = {onSubmit} 
         >
@@ -262,5 +281,6 @@ const getSMSMessage = async () => {
     </View>
       )}
     </ScrollView>
-  );
+   
+     );
 }

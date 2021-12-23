@@ -1,5 +1,5 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable } from 'react-native'
+import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking } from 'react-native'
 import { colorsArray, theme, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
@@ -18,6 +18,7 @@ import axios from 'axios';
 import { width } from '../Exports/Constants';
 import {Avatar} from 'react-native-paper'
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import * as Amplitude from 'expo-analytics-amplitude';
 
 const FeedItemComponent = ({item,id, userInfo}) => {
     const [randomNo, userId] = React.useContext(RandomContext)
@@ -97,12 +98,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
         try {   
             Linking.openURL(buyURL)
         } catch (error) {
+            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
             alert("Browser not reachable")
         }
     };
 
     const buyItem = (buyURL) => {
-        
+        Amplitude.logEventWithPropertiesAsync("BUY URL", { "user_id": userId,"feed_id": item.feed_id,"feed_user_id" : item.user_id,"user_name": userInfo.user_name})
+     
      //   console.log(buyURL)
         redirect(buyURL)
         setBuys(buys+1)
@@ -141,7 +144,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
                 </View>  
-                <View>
+                <View style = {{flex : 1}}>
                     <View style = {{flexDirection : 'row', marginLeft : 5}}>
                         <TouchableOpacity onPress = {()=> {
                          //   console.log(" user info ",userInfo, " item " , item)
@@ -162,7 +165,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </View>
                
                     <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{fontWeight : 'bold', fontSize : 20 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                        <Text style = {{fontSize : 12 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -181,7 +184,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
-                            height: Dimensions.get('screen').width * 0.69,
+                            height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
@@ -246,6 +249,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
         try {   
             Linking.openURL(buyURL)
         } catch (error) {
+            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
             alert("Browser not reachable")
         }
     };
@@ -256,36 +260,38 @@ const FeedItemSummaryComponent = ({item,id}) => {
             <View style = {{ justifyContent : 'center', alignItems : 'center' , }}>
                 <Image source = {{uri : item.feed_image}} 
                     style = {{
-                        width : Dimensions.get('screen').width * 0.460,
-                        height: Dimensions.get('screen').width * 0.345,
+                        width : Dimensions.get('screen').width * 0.46,
+                        height: Dimensions.get('screen').width * 0.46,
                         borderTopLeftRadius : 20 , borderBottomLeftRadius : 20 ,
                     }} 
                 />
             </View>  
             <View style = {{ justifyContent : 'space-between', borderTopRightRadius : 20 , borderBottomRightRadius : 20 , flexShrink : 1, flex : 1}}>
                 <View style = {{paddingTop : 5 ,paddingLeft : 5 , flexDirection : 'row', flexWrap : 'wrap' , flexShrink : 1,}}>
-                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 15 , color : colorsArray[colorNo+1] }}>{item.product_name}</Text>
+                    <Text style = {{ flexShrink : 1, fontSize : 12 , color : colorsArray[colorNo+1] }}>{item.product_name}</Text>
                 </View>
                 <View style = {{paddingHorizontal: 5, paddingVertical : 2,  flexShrink : 1}}>
                     <View style = {{flexDirection : 'row', justifyContent : 'space-between', }}>
                         <TouchableOpacity 
                         style = {{alignItems : 'center', justifyContent : 'center'}} >
-                            <Text style = {{fontSize : 15, fontStyle : 'italic',flexShrink : 1, backgroundColor : '#DDD' , borderRadius : 10, padding : 3}}>
+                            <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1, backgroundColor : '#DDD' , borderRadius : 10, padding : 3}}>
                                 {item.category_name}
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity 
                         style = {{alignItems : 'center', justifyContent : 'center'}} >
-                            <Text style = {{fontSize : 15, fontStyle : 'italic',flexShrink : 1, borderColor : '#DDD' , borderWidth : 1, borderRadius : 10, padding : 3}}>
+                            <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1, borderColor : '#DDD' , borderWidth : 1, borderRadius : 10, padding : 3}}>
                                 {item.context_name}
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style = {{fontSize : 13, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_count_buys > 0 ? item.feed_count_buys + " friends bought this" : ""}</Text>
+                    <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_count_buys > 0 ? item.feed_count_buys + " friends bought this" : ""}</Text>
                     
                 </View>
                 <TouchableOpacity 
-                onPress = {()=>redirect(item.buy_url)}
+                onPress = {()=>{
+                    Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , user_name : item.user_name , product_name : item.product_name})
+                    redirect(item.buy_url)}}
                 style = {{
                     backgroundColor : 'white' , 
                     alignItems : 'center' , 
@@ -381,6 +387,7 @@ const User = () => {
     }
 
     React.useEffect(()=>{
+        Amplitude.logEventAsync('USER PAGE')     
         Animated.timing(progress, {
             toValue: 1,
             duration: 2000,
@@ -565,7 +572,7 @@ const User = () => {
                         style = {{marginLeft : 20, flex : 1 , justifyContent :'center', alignItems :'center' }}
                         disabled
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 40, color : colorsArray[randomNo-1]}}>{followingUserName}</Text>
+                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : "#555"}}>{followingUserName}</Text>
                     </TouchableOpacity>
                     <Pressable 
                     onPress = {followUser}

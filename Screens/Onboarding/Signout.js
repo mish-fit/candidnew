@@ -4,6 +4,7 @@ import { useNavigation , useRoute } from '@react-navigation/native';
 import * as firebase from "firebase";
 import { theme, background  } from '../Exports/Colors';
 import { firebaseConfig } from '../Exports/Config';
+import * as Amplitude from 'expo-analytics-amplitude';
 
 
 
@@ -21,6 +22,7 @@ const Signout = () => {
   const route = useRoute()
 
   const signoutToHome = () => {
+        Amplitude.logEventAsync('SIGN OUT')
         firebase.auth().signOut().then(() => {
             navigation.navigate("Auth")
             ToastAndroid.show("Signed Out succesfully !!", ToastAndroid.SHORT)
