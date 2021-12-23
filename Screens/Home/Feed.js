@@ -14,7 +14,7 @@ import {Avatar} from 'react-native-paper'
 import * as firebase from "firebase";
 import * as Notifications from 'expo-notifications'
 import * as Permissions from 'expo-permissions'
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackActions } from '@react-navigation/native';
@@ -231,7 +231,12 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </TouchableOpacity>
                 </View >
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
-                    <Text>{item.comment}</Text>
+                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
+                        <Text>
+                            {item.comment.length > 280 ? item.comment.substring(0,150) : item.comment}
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 280 ? " ... Read More" : ""}</Text>
+                        </Text>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
         
