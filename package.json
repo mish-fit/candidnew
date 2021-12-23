@@ -44,6 +44,7 @@
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
     "react-native-android-sms-listener": "^0.8.0",
+    "react-native-code-push": "^7.0.4",
     "react-native-contacts": "^7.0.2",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-get-random-values": "^1.7.1",

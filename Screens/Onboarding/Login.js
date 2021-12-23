@@ -181,7 +181,7 @@ const getSMSMessage = async () => {
             />
         </View>
         <View style={[{justifyContent : 'center', alignItems : 'center', marginTop : height*0.05, }]}>
-          <Text style={[{fontSize : 20}]}>Enter phone number</Text>
+          <Text style={[{fontSize : 20}]}>Enter phone number 1</Text>
         </View>
       <View style = {{
         flexDirection : 'row', 
