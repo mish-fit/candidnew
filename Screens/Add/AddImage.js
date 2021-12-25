@@ -48,11 +48,12 @@ const AddImage = () => {
         if (!result.cancelled) {
             setPostImageShown(result.uri)
             setBody({...body,feed_image : s3URL + "post/"+ imageId  });
-            uploadImageOnS3("post/"+ imageId)
+            uploadImageOnS3("post/"+ imageId , result.uri)
         }
     }; 
 
     React.useEffect(()=> {
+        console.log("IMAGE SCREEN", contextName)
         Amplitude.logEventAsync('ADD IMAGE')
         console.log("image screeen", contextName)
         setBody({...body,context_name : contextName})

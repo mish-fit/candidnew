@@ -123,7 +123,7 @@ const MyEarns = ({user_id}) => {
     const emptyComponent = () => {
         return(
             <View style = {{padding : 20 }}>
-                <Text> You haven't earned any coins yet. Click on "How to Earn" to learn exciting ways to get rewards</Text>
+                <Text>You haven't earned any coins yet. Click on "How to Earn" to learn exciting ways to get rewards</Text>
             </View>
         )
     }

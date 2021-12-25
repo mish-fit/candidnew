@@ -16,7 +16,7 @@ import { firebaseConfig, dataRetrieve, URL } from './Screens/Exports/Config';
 import { LoadingPage } from './Screens/Exports/Pages';
 import axios from 'axios'
 
-import codePush from 'react-native-code-push';
+// import codePush from 'react-native-code-push';
 
 import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import * as Amplitude from 'expo-analytics-amplitude';
@@ -34,7 +34,7 @@ try {
   // ignore app already initialized error in snack
 }
 
-const codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
+//const codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
 
 
 const App = () => {
@@ -123,7 +123,7 @@ ReceiveSharingIntent.getReceivedFiles(files => {
   );
 }
 
-export default codePush(codePushOptions)(App);
+export default App;
 
 const styles = StyleSheet.create({
   container: {

@@ -29,6 +29,10 @@ import Coupon from './Onboarding/Coupon';
 import EditProfile from './User/EditProfile';
 import HowToEarn from './Rewards/HowToEarn';
 import Post from './Home/Post';
+import FeedAlt from './Home/FeedAlt';
+import CategoryAlt from './Page/CategoryAlt';
+import Product from './Page/Product';
+import Search from './Home/Search';
 
 
 const Stack = createStackNavigator();
@@ -49,7 +53,8 @@ const HomeStack = () => {
     <Stack.Navigator 
       screenOptions={{headerShown: false}}
       initialRouteName = {userId === "" ? "Auth" : "Blank"}>
-      <Stack.Screen name="Home" component={Feed} />
+      <Stack.Screen name="Home1" component={Feed} />
+      <Stack.Screen name="Home" component={FeedAlt} />
       <Stack.Screen name="AddPost" component={AddProduct} />
       <Stack.Screen name="AddCategory" component={AddCategory} />
       <Stack.Screen name="AddContext" component={AddContext} />
@@ -62,6 +67,7 @@ const HomeStack = () => {
       <Stack.Screen name="SearchByCategory" component={ByCategory} /> 
       <Stack.Screen name="CategoryPage" component={Category} /> 
       <Stack.Screen name="UserPage" component={User} /> 
+      <Stack.Screen name="ProductPage" component={Product} /> 
       <Stack.Screen name="Auth" component={AuthStack} /> 
       <Stack.Screen name="Signout" component={Signout} /> 
       <Stack.Screen name="ProfileInfo" component={ProfileInfo} /> 
@@ -71,6 +77,8 @@ const HomeStack = () => {
       <Stack.Screen name="EditProfile" component={EditProfile} /> 
       <Stack.Screen name="HowToEarn" component={HowToEarn} /> 
       <Stack.Screen name="Post" component={Post} /> 
+      <Stack.Screen name="CategoryAlt" component={CategoryAlt} /> 
+      <Stack.Screen name="Search" component={Search} /> 
     </Stack.Navigator>
   );
 }

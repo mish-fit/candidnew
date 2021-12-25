@@ -1,6 +1,6 @@
 import React from 'react'
 import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView } from 'react-native'
-import { colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
+import { alttheme, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation, useRoute , useIsFocused} from '@react-navigation/native';
@@ -24,6 +24,7 @@ import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
 import { home } from '../../Styles/Home';
 import  Modal  from 'react-native-modal'
+import { LoadingPage } from '../Exports/Pages';
 
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
@@ -176,9 +177,11 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         }
                     </View>
                
-                    <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flex : 1, }}>
-                        <Text style = {{fontSize : 12 , color : "#555" , }}>{item.product_name}</Text>
-                    </View>
+                    <TouchableOpacity 
+                    onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}
+                    style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flex : 1, }}>
+                        <Text style = {{fontSize : 12 , color : "#555" , }}>{item.product_name.length > 100 ? item.product_name.substring(0,60) + "..." : item.product_name }</Text>
+                    </TouchableOpacity>
                 </View> 
             </View>
                 <View style = {{marginHorizontal : 20 , marginVertical : 5,flexDirection : 'row' , justifyContent : 'space-between'}}>
@@ -394,7 +397,7 @@ const Feed = () => {
     const [feedData,setFeedData] = React.useState([])
     const [userInfo,setUserInfo] = React.useState(route?.params?.body ? route?.params?.body : {})
     const [source,setSource] = React.useState(route?.params?.source ? route?.params?.source : "")
-    const [userSummary,setUserSummary] = React.useState({})
+    const [userSummary,setUserSummary] = React.useState(route?.params?.userSummary ? route?.params?.userSummary : {})
     const [refresh,setRefresh] = React.useState(false)
     const [categoryCarousel, setCategoryCarousel] = React.useState(["Laptop", "Mobile", "TV", "Phone", "Books", "Series", "Swimsuit"])
 
@@ -404,6 +407,8 @@ const Feed = () => {
     const [toggled, setToggled] = React.useState(false);
 
     const [modalVisible,setModalVisible] = React.useState(false)
+    const [loading,setLoading] = React.useState(false)
+    const [error,setError] = React.useState(false)
 
     const [pageNumber,setPageNumber] = React.useState(0)
     const scrollY = React.useRef(new Animated.Value(0));
@@ -411,17 +416,18 @@ const Feed = () => {
         [{nativeEvent: {contentOffset: {y: scrollY.current}}}],
         {useNativeDriver: true},
       );
-      const scrollYClamped = Animated.diffClamp(scrollY.current, 0, headerHeight)
-      const translateY = scrollYClamped.interpolate({
+    const scrollYClamped = Animated.diffClamp(scrollY.current, 0, headerHeight)
+    const translateY = scrollYClamped.interpolate({
         inputRange: [0, headerHeight],
         outputRange: [0, -(headerHeight) ],
         });
-       const translateYNumber = React.useRef();
+    const translateYNumber = React.useRef();
        translateY.addListener(({value}) => {
          translateYNumber.current = value;
-       });
+    });
 
     React.useEffect(()=>{
+        setLoading(true)
         console.log("source" , source)
         if(source == "Onboarding") {
             setSource("")
@@ -461,10 +467,11 @@ const Feed = () => {
             
                     axios.get(URL + "/feed/home",{params:{user_id : user.phoneNumber.slice(1,13), page : pageNumber}} , {timeout : 5000})
                     .then(res => res.data).then(function(responseData) {
-                    //      console.log(responseData)
+                            setLoading(false)
                             setFeedData(responseData)
                     })
                     .catch(function(error) {
+                        setError(true)
                     });
             
                    
@@ -508,6 +515,7 @@ const Feed = () => {
                     navigation.navigate("Auth")
                 }})}
             else {
+                setLoading(false)
                 setFeedData(homeFeed)
             }
 
@@ -589,7 +597,7 @@ const Feed = () => {
                             navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
                             }
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : "black"}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
+                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : alttheme}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
                     </TouchableOpacity>
                     <View style = {{alignItems : 'center', flexDirection : 'row-reverse' , marginRight : 20 }}>
                         {/* <TouchableOpacity 
@@ -610,6 +618,7 @@ const Feed = () => {
                 </View> : null    
             } */}
         
+            {error ? <View><Text>Error loading the feed. Please try later!</Text></View> : loading ? <LoadingPage /> :
             <Animated.FlatList
             keyExtractor = {(item,index)=>index.toString()}
             ref = {ref}
@@ -619,9 +628,9 @@ const Feed = () => {
             renderItem = {FeedItem}
             onScroll = {handleScroll}
             showsVerticalScrollIndicator = {false}
-            ListHeaderComponent = {HeaderComponent}
-            ListHeaderComponentStyle = {{margin : 0 }}
+            
             />
+            }
             <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
             style = {{width: 50 , height : 50 , 
@@ -637,21 +646,22 @@ const Feed = () => {
             justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
                 <View style = {{flexDirection : 'row'}}>
                     <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 15,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>All Reviews</Text>
+                        <Text style = {{color : theme, fontSize : 15,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>Home</Text>
                     </View>
                     <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
                         <Switch
                             trackColor={{ true: theme , false: "white" }}
-                            thumbColor={!toggled ? theme : 'white'}
+                            thumbColor={'white'}
                             onValueChange={()=>{
                                 Amplitude.logEventAsync("HOME FEED TOGGLE")
-                                setToggled(!toggled)}
+                                navigation.navigate("Home")
                                 }
-                            value={toggled}
+                            }
+                            value={true}
                         />
                     </View>
                     <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 15,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Positive Reviews</Text>
+                        <Text style = {{color : theme, fontSize : 15,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Feed</Text>
                     </View>
                 </View>
             </View>

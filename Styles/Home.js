@@ -1,4 +1,8 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
+import { alttheme, themeLightest , background, borderColor, theme} from "../Screens/Exports/Colors";
+const width = Dimensions.get('screen').width
+const height = Dimensions.get('screen').height
+const TAB_BAR_HEIGHT = 10
 
 export const home = StyleSheet.create({
     modalText : {
@@ -18,5 +22,31 @@ export const home = StyleSheet.create({
     },
     modalButtonText : {
         color : 'white'
-    }
+    },
+    feedAltHeading : {marginLeft : 10 , fontWeight : 'bold', fontSize : 20, marginVertical : 10 , color : '#444'},
+    container : {
+        flex : 1 , 
+        backgroundColor : background
+    },
+    //ACTIVITY AND MODAL
+    modalContainer : {
+      flex : 1
+    },
+    modalView : {
+        flex: 1 , 
+        backgroundColor : background, 
+        width : width , 
+        height : height ,
+    },
+    modalHeading : {
+        fontSize : 18 , 
+        fontFamily : 'Roboto',
+        fontWeight : 'bold' 
+    },
+    modalText : { 
+        color : borderColor , 
+    },
+    
+
+
 })

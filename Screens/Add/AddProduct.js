@@ -46,7 +46,8 @@ const AddProduct = () => {
         "access_control": "Public",
         "feed_image": "",
         "buy_url": "",
-        "comment": ""
+        "comment": "",
+        "coupon" : ""
     })
 
     React.useEffect(()=>{
@@ -60,12 +61,12 @@ const AddProduct = () => {
 
         axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-        //    console.log("SearchArray",responseData)
-            setBody({...body, user_name : responseData[0].user_name})
+            console.log("SearchArray",responseData)
+            setBody({...body, user_name : responseData[0].user_name , coupon : responseData[0].coupon})
         })
         .catch(function(error) {
             setSearchLoading(false)
-        //    console.log("Reached Here error")
+            console.log(error)
         });
 
         axios.get(URL + "/search/product", {params:{product_text : "" }} , {timeout : 3000})
@@ -82,6 +83,7 @@ const AddProduct = () => {
     },[])
 
     const onClickSearchItemChild = (product_name, product_id) => {
+        console.log(body)
         Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : product_name })
         setSearchTextProduct(product_name)
     //    console.log(product_name)

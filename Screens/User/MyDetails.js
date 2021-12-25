@@ -168,6 +168,7 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
     const [colorNo,setColorNo] = React.useState(0) 
     const navigation = useNavigation()
     React.useEffect(() => {
+        console.log("item",item)
         setColorNo((randomNo+id)%(colorsArray.length-1))
     },[])
 
@@ -444,7 +445,7 @@ const MyDetails = () => {
             <FlatList
             keyExtractor = {(item,index)=>index.toString()}
             style = {{}}
-            contentContainerStyle = {{}}
+            contentContainerStyle = {{paddingBottom : 60}}
             data = {feedData}
             renderItem = {FeedItem}
             showsVerticalScrollIndicator = {false}
