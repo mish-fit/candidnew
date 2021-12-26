@@ -622,8 +622,8 @@ const Feed = () => {
             <Animated.FlatList
             keyExtractor = {(item,index)=>index.toString()}
             ref = {ref}
-            style = {{marginBottom : 40}}
-            contentContainerStyle = {{}}
+            style = {{marginBottom : 40 , }}
+            contentContainerStyle = {{paddingTop : 60,}}
             data = {toggled ? feedData.filter((item,index)=>item.rating >3) : feedData}
             renderItem = {FeedItem}
             onScroll = {handleScroll}

@@ -47,7 +47,7 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
     const renderItem = ({item , index}) => {
         
         const itemClick = (item) => {
-            onClickItem(item.user_id, item.user_name, true)
+            onClickItem(item.following_user_id, item.following_user_name, true)
         }
        
         const inputRange = [
@@ -154,8 +154,8 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={ITEM_SIZE-40}/> }
                     </View>
-                    <View style = {{backgroundColor : background , borderRadius : 5,alignItems : 'center', justifyContent : 'center' }}>
-                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 7 , color : borderColor}]}>{item.user_name.length > 20 ? item.user_name.substring(0,20) + "..." : item.user_name}</Text>
+                    <View style = {{backgroundColor : 'transparent' , borderRadius : 5,alignItems : 'center', justifyContent : 'center', height : 30, width : ITEM_SIZE }}>
+                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor , textAlign : 'center'}]}>{item.user_name.length > 20 ? item.user_name.substring(0,20) + "..." : item.user_name }</Text>
                     </View>
                     <TouchableOpacity 
                     disabled = {isFollowing[index]}
@@ -597,7 +597,7 @@ const onSearchHero = () => {
                 </TouchableOpacity>
               </TouchableOpacity>
             {heroBanner.length > 0 ?
-              <View style = {{width : Dimensions.get('screen').width - 10, height : Dimensions.get('screen').height*0.25 ,justifyContent : 'center', marginLeft : 5 , marginRight : 5, }}>
+              <View style = {{width : Dimensions.get('screen').width - 10, height : Dimensions.get('screen').height*0.25 ,justifyContent : 'center', marginLeft : 5 , marginRight : 5, marginBottom : 5,}}>
                 
               <Swiper 
                   horizontal
@@ -632,28 +632,28 @@ const onSearchHero = () => {
             
             
             
-            <Text style = {[home.feedAltHeading,{fontSize : 18,}]}>Critics in your network</Text>
+            <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>Critics in your network</Text>
             {myFriends.length ? 
-                <View style = {{marginRight : 10}}> 
+                <View style = {{marginRight : 10 , backgroundColor : "#FFF", marginBottom :5 }}> 
                     <FriendsCarousel DATA = {myFriends} onClickItem = {(id, name , following)=>goToUser(id , name , following)} />
                 </View> : null
             }
-            <Text style = {[home.feedAltHeading,{fontSize : 18,}]}>Top Critics</Text>
+            <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>Top Critics</Text>
             {peopleYouCanFollow.length ? 
-                <View style = {home.mainViewCarouselChild}>
+                <View style = {{marginRight : 10 , backgroundColor : "#FFF", marginBottom :5 }}>
                     <FollowingCarousel DATA = {peopleYouCanFollow} isFollowing = {isFollowing} onClickItem = {(id , name , following)=>goToUser(id, name , following)} onClickFollow = {(id, name,index)=>followUser(id, name,index)} />
                 </View>: null
             }
-            <Text style = {home.feedAltHeading}>Trending Products</Text>
+            <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>Trending Products</Text>
             {trendingProducts.length ? 
-                <View style = {home.mainViewCarouselChild}>
+                <View style = {{marginRight : 10 , backgroundColor : "#FFF", marginBottom :5 }}>
                     <TrendingProducts DATA = {trendingProducts} onClickItem = {(id , name )=>goToProduct(id, name )}  />
                 </View>: null
             }
             </View>
                 
-            <Text style = {home.feedAltHeading}>Explore</Text>
-            <View style = {{flexDirection : 'row', marginHorizontal : Dimensions.get('screen').width*0.01 , flexWrap : 'wrap' }}>
+            <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>Explore</Text>
+            <View style = {{flexDirection : 'row', marginHorizontal : Dimensions.get('screen').width*0.01 , flexWrap : 'wrap' , }}>
                 
                 {masterCategory.map((item,index)=>{
                     return(<Pressable key = {index.toString()} 

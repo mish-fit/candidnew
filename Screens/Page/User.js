@@ -165,7 +165,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </View>
                
                     <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{fontSize : 12 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                        <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -268,7 +268,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
             </View>  
             <View style = {{ justifyContent : 'space-between', borderTopRightRadius : 20 , borderBottomRightRadius : 20 , flexShrink : 1, flex : 1}}>
                 <View style = {{paddingTop : 5 ,paddingLeft : 5 , flexDirection : 'row', flexWrap : 'wrap' , flexShrink : 1,}}>
-                    <Text style = {{ flexShrink : 1, fontSize : 12 , color : colorsArray[colorNo+1] }}>{item.product_name}</Text>
+                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
                 </View>
                 <View style = {{paddingHorizontal: 5, paddingVertical : 2,  flexShrink : 1}}>
                     <View style = {{flexDirection : 'row', justifyContent : 'space-between', }}>
@@ -325,7 +325,7 @@ const User = () => {
     const progress = React.useRef(new Animated.Value(0)).current
     const ref = React.useRef(null)
   
-    const [headerHeight,setHeaderHeight] = React.useState(70)
+    const [headerHeight,setHeaderHeight] = React.useState(50)
     const [randomNo, userId] = React.useContext(RandomContext)
 
     const navigation = useNavigation()
@@ -447,7 +447,7 @@ const User = () => {
     </View> 
     )
 
-    const filterContextFunc = () => {
+    const filterCategoryFunc = () => {
         axios.get(URL + "/all/byuser/categories",{params:{user_id : followingUserId}} , {timeout : 5000})
         .then(res => res.data).then(function(responseData) {
             console.log("FeedProduct",responseData)
@@ -463,13 +463,24 @@ const User = () => {
     }
 
     const HeaderComponent = () => {
-        return(<View style = {{flex : 1 , }}>
-                <TouchableOpacity 
-                        onPress = {filterContextFunc}
-                        style = {{alignItems : 'flex-start', paddingLeft : 10, justifyContent :'center', borderWidth : 1, borderColor : "#EEE" , flex : 1 , borderRadius : 10 , marginLeft : 10 , marginRight : 10 , height  : 40  }}>
-                            <Text style = {{color : "#888", fontSize : 16, fontStyle : 'italic'}}>Filter by Category</Text>
-                </TouchableOpacity>
-        </View>)
+        return(
+        
+        <View style = {{flexDirection : 'row', paddingRight : 10 , paddingLeft : 10 ,  justifyContent : 'space-between'}}>
+            <View style = {{borderRadius : 10 , marginHorizontal : Dimensions.get('screen').width*0.05, alignItems : 'center' , justifyContent : 'center'}}>
+                <Text style = {{fontWeight : 'bold'}}>Filters</Text>
+            </View>
+            <TouchableOpacity
+            onPress={filterCategoryFunc}
+            style = {{width : Dimensions.get('screen').width*0.35,padding : 10 , borderRadius : 10 , marginRight : 10,   borderWidth : 2 , flexDirection: 'row', alignItems : 'center', justifyContent : 'space-between', paddingRight : 10 , backgroundColor :  !filterContextModalVisible ? "white" : "black"}}>
+                <Text style = {{fontWeight : 'bold', marginRight : 10 , color : filterContextModalVisible ? "white" : "black"}}>Categories</Text>
+                {filterContextModalVisible ?
+                <AntDesign name = "up" color = {"white"} size = {15} /> :
+                <AntDesign name = "down" color = {"black"} size = {15} />
+               } 
+            </TouchableOpacity> 
+        </View>
+        
+        )
     }
 
 
@@ -527,7 +538,7 @@ const User = () => {
     }
 
 
-    const onContextModalClose = () => {
+    const categoryApply = () => {
       //  console.log(categoryId, contextsRequest)
         if(contextsRequest.length) 
         {
@@ -586,7 +597,7 @@ const User = () => {
                             fontStyle : 'italic' }}>{isFollowing ? "Following" : "Follow"}</Text>
                     </Pressable>
             </Animated.View>
-            <Modal 
+            {/* <Modal 
                 isVisible={filterContextModalVisible}
                 deviceWidth={Dimensions.get('screen').width}
                 deviceHeight={Dimensions.get('screen').height}
@@ -616,15 +627,59 @@ const User = () => {
                 )                  
                 })}
                 </View>
-            </Modal>
+            </Modal> */}
             
+            <Modal 
+                isVisible={filterContextModalVisible}
+                deviceWidth={Dimensions.get('screen').width}
+                deviceHeight={Dimensions.get('screen').height}
+                onBackdropPress={()=>setFilterContextModalVisible(false)}
+                onSwipeComplete={()=>setFilterContextModalVisible(false)}
+                swipeDirection="left"
+                style = {{backgroundColor : 'white',marginTop : 110 , marginBottom : Dimensions.get('screen').height*0.3, borderRadius : 30, }}
+                transparent
+                backdropOpacity={0.2}
+                >
+                <View style={{transform:[{rotateZ:'45deg'}],width:16,height:16,backgroundColor:'white',position : 'absolute' , top : -8, right : Dimensions.get('screen').width * 0.15}}></View>
+                <ScrollView contentContainerStyle = {{backgroundColor :'white', borderRadius : 30, width : Dimensions.get('screen').width*0.8,paddingBottom : 40, flexDirection : 'row', flexWrap : 'wrap' }}
+                style = {{flexDirection : 'row' , flexWrap : 'wrap' ,  flex : 1}}>
+                {contexts.length && contexts.map((item,index)=>{
+                    return(
+                    contextsChecked[index]  == true ?
+                            <Pressable 
+                            android_ripple = {{color : themeLightest}}
+                            onPress = {()=> contextCheckFunc(index, item.category_id ,false)}
+                            style = {{backgroundColor : themeLightest ,flexDirection : 'row' , borderWidth : 1, borderColor : themeLightest, borderRadius : 10 , padding : 5 , alignItems : 'center', margin : 10 ,paddingHorizontal : 10, }}>
+                                <Text style = {{color : theme,fontWeight : 'bold',}}>{item.category_name}</Text>
+                               
+                            </Pressable>:
+                            <Pressable 
+                            onPress = {()=> contextCheckFunc(index, item.category_id, true)}
+                            android_ripple = {{color : themeLightest}}
+                            style = {{backgroundColor : 'white', flexDirection : 'row' , borderRadius : 10 , borderWidth : 1, borderColor : '#EEE', padding : 5 , margin : 10,paddingHorizontal : 10, }}>
+                                <Text style = {{color : 'black' ,fontWeight : 'bold',}}>{item.category_name}</Text>
+                               
+                            </Pressable>
+                )                  
+                })}
+                <TouchableOpacity 
+                onPress={categoryApply}
+                style = {{borderRadius : 10 ,justifyContent:'center', alignItems : 'center', position : 'absolute' , bottom : 0 , borderTopColor : '#DDD' , borderTopWidth : 1 , height : 40, width : '100%' }}>
+                    <Text style = {{color : theme, fontWeight : 'bold'}}>Apply Filters</Text>
+                </TouchableOpacity>
+               
+                </ScrollView>
+                
+            </Modal>
+
+
             <Animated.FlatList
                 keyExtractor = {(item,index)=>index.toString()}
                 ref = {ref}
                 style = {{}}
                 contentContainerStyle = {{paddingTop : headerHeight}}
-                data = {!toggled ? feedSummary : feedData}
-                renderItem = {!toggled ? FeedItemSummary : FeedItem}
+                data = {feedData}
+                renderItem = {FeedItem}
                 onScroll = {handleScroll}
                 showsVerticalScrollIndicator = {false}
                 ListHeaderComponent = {HeaderComponent}
@@ -638,7 +693,7 @@ const User = () => {
                     <AntDesign name = "plus" size = {40} color = "white" />
                 </View>
             </TouchableOpacity>
-            <View 
+            {/* <View 
             style = {{width: width, height : 40,
             backgroundColor : themeLightest, 
             justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
@@ -658,7 +713,7 @@ const User = () => {
                         <Text style = {{color : theme, fontSize : 18,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Feed</Text>
                     </View>
                 </View>
-            </View>
+            </View> */}
         </View>
     )
 }

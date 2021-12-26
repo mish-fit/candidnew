@@ -638,7 +638,7 @@ const CategoryAlt = () => {
                 //transparent
                 backdropOpacity={0.1}
                 >
-                <View style={{transform:[{rotateZ:'45deg'}],width:16,height:16,backgroundColor:'white',position : 'absolute' , top : -8, right : Dimensions.get('screen').width * 0.55}}></View>
+                <View style={{transform:[{rotateZ:'45deg'}],width:16,height:16,backgroundColor:'white',position : 'absolute' , top : -8, right : Dimensions.get('screen').width * 0.15}}></View>
                 <ScrollView 
                 contentContainerStyle = {{backgroundColor :'white', borderRadius : 30, width : Dimensions.get('screen').width*0.8,paddingBottom : 40, flexDirection : 'row', flexWrap : 'wrap' }}
                 style = {{flexDirection : 'row' , flexWrap : 'wrap' ,  flex : 1}}>

@@ -1,9 +1,9 @@
 import React from 'react'
-import { Animated, Dimensions, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing, ToastAndroid, Alert, } from 'react-native'
-import { colorsArray , background , borderColor, theme, themeLight, themeLightest} from '../Exports/Colors'
+import { Animated, Dimensions, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing, ToastAndroid, Alert, Share, } from 'react-native'
+import { colorsArray , background , borderColor, theme, themeLight, themeLightest, backArrow} from '../Exports/Colors'
 import { RewardsComponent } from '../Exports/Components'
 import { RandomContext } from '../Exports/Context'
-import {AntDesign, Entypo} from 'react-native-vector-icons'
+import {AntDesign, Entypo, FontAwesome} from 'react-native-vector-icons'
 import {useNavigation, useRoute} from '@react-navigation/native'
 import axios from 'axios'
 import { URL } from '../Exports/Config'
@@ -12,8 +12,10 @@ import { FlatList } from 'react-native-gesture-handler'
 import {Menu,MenuOptions,MenuOption,MenuTrigger,} from 'react-native-popup-menu';
 import LottieView from 'lottie-react-native'
 import { Rating, AirbnbRating } from 'react-native-ratings';
-import {Avatar} from 'react-native-paper'
+import {Avatar,Title} from 'react-native-paper'
 import * as Amplitude from 'expo-analytics-amplitude';
+import { add } from '../../Styles/Add'
+import { fontWeight } from 'styled-system'
 
 
 const FriendsCarousel = ({DATA , onClickItem}) => {
@@ -217,7 +219,7 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
         <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'space-between'}}>
                 <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                    <Text style = {{fontSize : 12 , color : colorsArray[colorNo] }}>{item.product_name}</Text>
+                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
                 </View>
                 <Menu style = {{}}>
                     <MenuTrigger>
@@ -254,16 +256,18 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
                 style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
                     <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
                 </TouchableOpacity>
-                <AirbnbRating
-                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
-                        defaultRating = {item.rating}
-                        readOnly = {true}
-                        size={15}
-                        showRating = {false}
-                        isDisabled = {true}
-                        count = {5}
-                        unSelectedColor = "transparent"
-                        />
+                <View style = {{position : 'absolute', top : 10 , width : Dimensions.get('screen').width, backgroundColor : 'transparent',justifyContent : 'center', alignItems : 'center'}}>
+                    <AirbnbRating
+                            ratingContainerStyle = {{backgroundColor : 'transparent', flex : 1, marginHorizontal : 20}}
+                            defaultRating = {item.rating}
+                            readOnly = {true}
+                            size={30}
+                            showRating = {false}
+                            isDisabled = {true}
+                            count = {5}
+                            unSelectedColor = "transparent"
+                            />
+                </View>
             </View>  
             <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
                 <Text>{item.comment}</Text>
@@ -282,12 +286,15 @@ const MyDetails = () => {
     const [myFriends,setMyFriends] = React.useState([])
     const [peopleYouCanFollow,setPeopleYouCanFollow] = React.useState([])
     const [userSummary,setUserSummary] = React.useState([])
+    const [userEngagement,setUserEngagement] = React.useState([])
     const [userInfo, setUserInfo] = React.useState([])
+    const [userImage,setUserImage] = React.useState("")
     const [feedData,setFeedData] = React.useState([])
     const [isFollowing,setFollowing] = React.useState([])
 
     React.useEffect(() => {
             Amplitude.logEventAsync('MyDetails')
+            
             const a = []
             Animated.timing(progress, {
                 toValue: 1,
@@ -309,6 +316,7 @@ const MyDetails = () => {
             .then(res => res.data).then(function(responseData) {
               //  console.log("OUTPUT", responseData)
                 setUserInfo(responseData[0])
+                setUserImage(responseData[0].user_profile_image)
             })
             .catch(function(error) {
             //  console.log(error)
@@ -323,56 +331,167 @@ const MyDetails = () => {
               
             });
 
-            axios.get(URL + "/user/followingusers",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
+            axios.get(URL + "/user/engagement",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log("MY FIENDS",responseData)
-                setMyFriends(responseData)
+                console.log(responseData)
+                setUserEngagement(responseData[0])
             })
             .catch(function(error) {
               
             });
+
+            // axios.get(URL + "/user/followingusers",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
+            // .then(res => res.data).then(function(responseData) {
+            //     console.log("MY FIENDS",responseData)
+            //     setMyFriends(responseData)
+            // })
+            // .catch(function(error) {
+              
+            // });
         
-            axios.get(URL + "/user/getpeopletofollow",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
-                console.log(responseData)
-                setPeopleYouCanFollow(responseData)
-                responseData.map(()=>{
-                    console.log("a",a)
-                    console.log("following",isFollowing)
-                    a.push(false)
-                })
-            })
-            .then(()=>setFollowing(a))
-            .catch(function(error) {
+            // axios.get(URL + "/user/getpeopletofollow",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
+            // .then(res => res.data).then(function(responseData) {
+            //     console.log(responseData)
+            //     setPeopleYouCanFollow(responseData)
+            //     responseData.map(()=>{
+            //         console.log("a",a)
+            //         console.log("following",isFollowing)
+            //         a.push(false)
+            //     })
+            // })
+            // .then(()=>setFollowing(a))
+            // .catch(function(error) {
                 
-            });
+            // });
     },[])
+
+    const share = async () => {
+        console.log(userInfo)
+        Amplitude.logEventWithPropertiesAsync('SHARE PROFILE', {userName : userInfo.user_name })
+        try {
+            const result = await Share.share({
+              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/' + userInfo.user_name + " . Use my coupon code : " + userInfo.coupon 
+            });
+            if (result.action === Share.sharedAction) {
+              if (result.activityType) {
+             //     console.log(result.activityType)
+                } 
+              else {
+            //  console.log(result)
+            }
+            } 
+          } catch (error) {
+            console.log(error.message);
+          }
+        }
+
+
 
     const HeaderComponent = () => {
         return(
-            <View>
-                <View style = {{height : 70 , flexDirection : 'row', justifyContent : 'space-between', alignItems : 'center'}}>
-                    <TouchableOpacity
-                        style = {{marginLeft : 30}}
-                        onPress = {()=>ToastAndroid.show("This is your trust score. More Authentic Content, More the trust score and more rewards",ToastAndroid.LONG)}
-                        >
-                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : theme}}>{userSummary && userSummary.coins_available? userSummary.trust_score : "100"}% <Text style = {{fontSize : 15}}>Trust</Text></Text>
-                    </TouchableOpacity>
-                    <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "User" />
+                <View style = {{ paddingTop : 0}} >
+                    <View style = {{flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center', flex : 1, paddingTop : 10, paddingHorizontal : 10}}>
+                        <TouchableOpacity 
+                                onPress = {()=>navigation.goBack()}
+                                style = {{}}>
+                            <AntDesign name = "arrowleft" size = {30} color = {backArrow}/>
+                        </TouchableOpacity>
+                        <View style = {{justifyContent : 'center' , alignItems :'center' , flexDirection : 'row'}}>
+                            <TouchableOpacity style = {{marginRight : 15}} onPress = {share}> 
+                                <FontAwesome name = 'share' size = {15}/>
+                            </TouchableOpacity>
+                            <TouchableOpacity style = {{marginRight :15}} onPress = {()=>navigation.navigate("EditProfile")}> 
+                                <FontAwesome name = 'edit' size = {15}/>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style = {{flexDirection : 'row', justifyContent : 'center', paddingHorizontal : 10, borderBottomColor : "#EEE" , borderBottomWidth : 2, paddingVertical : 10,}}>
+                        <View style={{}}>
+                            { userImage && userImage != "None" && userImage != "" ?
+                             <Image source = {{uri : userImage + "?" + new Date()}} style = {{width : 100, height : 100 , borderRadius : 100 , }}/> :
+                             userInfo.user_name ? 
+                            <Avatar.Image 
+                                source={{
+                                    uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userInfo.user_name.replace(" ","+") + '&size=512&background=D7354A&color=fff'
+                                }}
+                                size={100}
+                            /> :
+                            <Avatar.Image 
+                            source={{
+                                uri: 'https://ui-avatars.com/api/?rounded=true&background=D7354A&color=fff&size=512'
+                            }}
+                            size={100}
+                            />
+                            }
+                            <View style={{flexDirection:'column', alignItems : 'center', justifyContent : 'center', width : 100}}>
+                                <Title style={{textAlign : 'center', fontSize : 13, fontWeight : 'bold'}}>{userInfo.user_name}</Title>
+                            </View>
+                        </View>
+                        <View style = {{flex : 1, marginLeft : 20, }}>
+                            <View style = {{flexDirection : 'row', justifyContent :'space-between', borderBottomColor : "#EEE", borderBottomWidth : 1, flex :1}}>
+                                <TouchableOpacity
+                                    style = {{}}
+                                    onPress = {()=>navigation.navigate("MyRewards", {source : "My Details"})}
+                                    >
+                                    <View style = {home.headingHeaderView}>
+                                        <Text style = {[home.headingHeader,{color : theme}]}>Reward Coins</Text>
+                                    </View>
+                                    <View style = {home.headingTitleView}>
+                                        <Text style = {home.headingTitle}>{userSummary && userSummary.coins_available? userSummary.coins_available : "0"}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style = {{}}
+                                    onPress = {()=>ToastAndroid.show("Post Authentic critics to get higher trust score and rewards",ToastAndroid.LONG)}
+                                    >
+                                    <View style = {home.headingHeaderView}>
+                                        <Text style = {[home.headingHeader,{color : theme}]}>Trust Score</Text>
+                                    </View>
+                                    <View style = {home.headingTitleView}>
+                                        <Text style = {home.headingTitle}>{userSummary && userSummary.trust_score? userSummary.trust_score : "100"}%</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View> 
+                            <View style = {{flexDirection : 'row', justifyContent : 'space-between', marginTop : 10, marginBottom : 10}}>
+                                <TouchableOpacity
+                                    style = {{}}
+                                    onPress = {()=>ToastAndroid.show("This is your trust score. More Authentic Content, More the trust score and more rewards",ToastAndroid.LONG)}
+                                    >
+                                    <View style = {home.headingTitleView}>
+                                        <Text style = {home.headingTitle}>{userEngagement && userEngagement.followers? userEngagement.followers : "0"}</Text>
+                                    </View>
+                                    <View style = {home.headingHeaderView}>
+                                        <Text style = {[home.headingHeader,{color : themeLightest}]}>Followers</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style = {{}}
+                                    onPress = {()=>ToastAndroid.show("This is your trust score. More Authentic Content, More the trust score and more rewards",ToastAndroid.LONG)}
+                                    >
+                                    <View style = {home.headingTitleView}>
+                                        <Text style = {home.headingTitle}>{userEngagement && userEngagement.count_feed? userEngagement.count_feed : "0"}</Text>
+                                    </View>
+                                    <View style = {home.headingHeaderView}>
+                                        <Text style = {[home.headingHeader,{color : themeLightest}]}>Posts</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style = {{}}
+                                    onPress = {()=>ToastAndroid.show("This is your trust score. More Authentic Content, More the trust score and more rewards",ToastAndroid.LONG)}
+                                    >
+                                    <View style = {home.headingTitleView}>
+                                        <Text style = {home.headingTitle}>{userEngagement && userEngagement.sales? userEngagement.sales : "0"}</Text>
+                                    </View>
+                                    <View style = {home.headingHeaderView}>
+                                        <Text style = {[home.headingHeader,{color : themeLightest}]}>Sales Made</Text>
+                                    </View>
+                                    
+                                </TouchableOpacity>
+                            </View>
+                        </View> 
+                    </View>
+                    
                 </View>
-                {myFriends.length ? 
-                <View style = {home.mainViewCarouselChild}> 
-                    <Text style = {home.mainViewCarouselChildHeading}>My Friends</Text>
-                    <FriendsCarousel DATA = {myFriends} onClickItem = {(id, name , following)=>goToUser(id , name , following)} />
-                </View> : null
-                }
-                {peopleYouCanFollow.length ? 
-                <View style = {home.mainViewCarouselChild}>
-                    <Text style = {home.mainViewCarouselChildHeading}>People To Follow</Text>
-                    <FollowingCarousel DATA = {peopleYouCanFollow} isFollowing = {isFollowing} onClickItem = {(id , name , following)=>goToUser(id, name , following)} onClickFollow = {(id, name,index)=>followUser(id, name,index)} />
-                </View>: null
-                }
-            </View>
         )
     }
 
@@ -390,7 +509,7 @@ const MyDetails = () => {
                 <View style = {{justifyContent : 'center', alignItems :'center'}}>
                     <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No Posts yet</Text>
                     <TouchableOpacity onPress = {()=>navigation.navigate("AddPost" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
-                        <Text style = {{marginTop : 10 , color : themeLight}}>Start recommending products and earn exciting rewards.</Text>
+                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Criticing</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -450,7 +569,7 @@ const MyDetails = () => {
             renderItem = {FeedItem}
             showsVerticalScrollIndicator = {false}
             ListHeaderComponent = {HeaderComponent}
-            ListHeaderComponentStyle = {{margin : 0 }}
+            ListHeaderComponentStyle = {{marginTop : 0 }}
             ListEmptyComponent = {EmptyComponent}
             />
 
@@ -711,6 +830,17 @@ const home = StyleSheet.create({
         marginTop : 10,
         fontFamily : 'Roboto',
     },
-
+    headingHeaderView :{justifyContent : 'center', alignItems : 'center'},
+    headingHeader : {
+        fontWeight : 'bold',
+        fontSize : 12 ,
+        color : "#CCC"
+    },
+    headingTitleView : {justifyContent : 'center', alignItems : 'center'},
+    headingTitle : {
+        textAlign : 'center',
+        fontSize : 16,
+        fontWeight : 'bold'
+    },
 
 })
