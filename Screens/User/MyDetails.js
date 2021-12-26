@@ -1,6 +1,6 @@
 import React from 'react'
 import { Animated, Dimensions, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing, ToastAndroid, Alert, Share, } from 'react-native'
-import { colorsArray , background , borderColor, theme, themeLight, themeLightest, backArrow} from '../Exports/Colors'
+import { colorsArray , background , borderColor, theme, themeLight, themeLightest, backArrow, alttheme} from '../Exports/Colors'
 import { RewardsComponent } from '../Exports/Components'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign, Entypo, FontAwesome} from 'react-native-vector-icons'
@@ -22,7 +22,7 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
     const [data,setData] = React.useState([...DATA])
     const scrollX = React.useRef(new Animated.Value(0)).current
     
-    const ITEM_SIZE = 100
+    const ITEM_SIZE = 50
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
     
     const renderItem = ({item , index}) => {
@@ -44,19 +44,23 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
       
   
         return(
-            <Animated.View style={[home.mainViewCarouselScrollableItemContainer,{borderWidth : 0}  , {transform : [{scale}]}]}>
-                <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
-                    <View style = {{flex: 1  , width : ITEM_SIZE, backgroundColor : background}}>
-                     {item.user_profile_image ? 
-                     <Image source = {{uri : item.user_profile_image}} 
-                          style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : ITEM_SIZE-20 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
-                   : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
-                    source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.following_user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
-                    size={ITEM_SIZE-40}/> }
+            <Animated.View style={{borderWidth : 0, flex : 1,  }  , {transform : [{scale}]}}>
+                <TouchableOpacity style = {{borderWidth : 0 , flex : 1, marginRight : 10,}} onPress = {() => {itemClick(item)}}>
+                    <View style = {{flex: 1  ,height : 60 , width : 60, }}>
+                        {item.user_profile_image && item.user_profile_image != "" ? 
+                        <Image source = {{uri : item.user_profile_image}} 
+                            style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 60,}} />
+                        : <Avatar.Image style = {{ }}
+                        source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                        size={ITEM_SIZE-40}/> }
                     </View>
-                    <View style = {{backgroundColor : background , height : 45 , borderRadius : 5, }}>
-                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.following_user_name.length > 30 ? item.following_user_name.substring(0,20) + "..." : item.following_user_name}</Text>
+                    <View style = {{backgroundColor : background , height : 30 ,width : ITEM_SIZE, }}>
+                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.user_name.length > 20 ? item.user_name.substring(0,20) + "..." : item.user_name}</Text>
                     </View>
+                    {item && item.count_posts && item.count_posts > 0 ?
+                    <View style = {{position : 'absolute' , top : 0 , right : 0 , backgroundColor : alttheme , borderRadius : 20, width : 20 , height : 20 , justifyContent : 'center' , alignItems : 'center' }}>
+                        <Text style={{fontSize : 8 , color : 'white'}}>{item.count_posts}</Text>
+                    </View> : null }
                 </TouchableOpacity>
             </Animated.View>
         )
@@ -68,8 +72,8 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
             renderItem={renderItem}
             keyExtractor={item => item.following_user_id.toString()}
             horizontal = {true}
-            style = {{width : Dimensions.get('screen').width*0.94}}
-            contentContainerStyle = {home.mainViewCarouselScrollableItem}
+            style = {{marginLeft : Dimensions.get('screen').width*0.03,width : Dimensions.get('screen').width*0.94 , paddingTop : 10 , marginRight : Dimensions.get('screen').width*0.03, }}
+            contentContainerStyle = {{justifyContent : 'center', alignItems : 'center'}}
             onScroll = {Animated.event(
                 [{nativeEvent :  {contentOffset : {x : scrollX}}}],
                 {useNativeDriver : true}
@@ -284,7 +288,7 @@ const MyDetails = () => {
     const progress = React.useRef(new Animated.Value(0)).current
 
     const [myFriends,setMyFriends] = React.useState([])
-    const [peopleYouCanFollow,setPeopleYouCanFollow] = React.useState([])
+    const [myFollowers,setMyFollowers] = React.useState([])
     const [userSummary,setUserSummary] = React.useState([])
     const [userEngagement,setUserEngagement] = React.useState([])
     const [userInfo, setUserInfo] = React.useState([])
@@ -324,7 +328,7 @@ const MyDetails = () => {
             
             axios.get(URL + "/user/summary",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log(responseData)
+            //    console.log(responseData)
                 setUserSummary(responseData[0])
             })
             .catch(function(error) {
@@ -333,11 +337,20 @@ const MyDetails = () => {
 
             axios.get(URL + "/user/engagement",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log(responseData)
+              //  console.log(responseData)
                 setUserEngagement(responseData[0])
             })
             .catch(function(error) {
-              
+             
+            });
+
+               axios.get(URL + "/user/myfollowers",{params:{user_id :userId.slice(1,13)}} , {timeout : 5000})
+            .then(res => res.data).then(function(responseData) {
+                console.log("MY FOLLOWERS",responseData)
+                setMyFollowers(responseData)
+            })
+            .catch(function(error) {
+                console.log(error)
             });
 
             // axios.get(URL + "/user/followingusers",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
@@ -490,7 +503,18 @@ const MyDetails = () => {
                             </View>
                         </View> 
                     </View>
-                    
+                    {myFollowers.length ? 
+                    <View>
+                    <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>My Followers</Text>
+                        
+                            <View style = {{backgroundColor:"#FFF", marginBottom :5 }}> 
+                                <FriendsCarousel DATA = {myFollowers} onClickItem = {(id, name , following)=>goToUser(id , name , following)} />
+                            </View> 
+                    </View>: null
+                        }
+                    <View>
+                        <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>My Posts</Text>
+                    </View>
                 </View>
         )
     }
@@ -560,7 +584,7 @@ const MyDetails = () => {
 
 
     return (
-        <View style = {{flex : 1 }}>
+        <View style = {{flex : 1,backgroundColor:"#FFF", }}>
             <FlatList
             keyExtractor = {(item,index)=>index.toString()}
             style = {{}}
