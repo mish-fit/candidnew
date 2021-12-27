@@ -25,14 +25,9 @@ const AddCategory = () => {
     const [body, setBody] = React.useState(route?.params?.body ? route?.params?.body : {} )
     const [productName, setProductName] = React.useState(route?.params?.product_name ? route?.params?.product_name : "")
     const [productId, setProductId] = React.useState(route?.params?.product_id ? route?.params?.product_id : 0)
-
-
     const [randomNo,userId] = React.useContext(RandomContext)
- 
-
     const [comment,setComment] = React.useState("")
-
-
+    const [plusDisable,setPlusDisable] = React.useState(true)
     const [inputFocus,setInputFocus] = React.useState(false)
     const [searchText,setSearchText] = React.useState("")
     const [searchTextProduct,setSearchTextProduct] = React.useState("")
@@ -40,8 +35,9 @@ const AddCategory = () => {
     const [searchLoading,setSearchLoading] = React.useState(false)
 
     React.useEffect(()=>{
+        console.log("Body in add category use effect", body , " product id and product name", productId, productName)
         Amplitude.logEventAsync('ADD CATEGORY')
-        setBody({...body, product_name : productName})
+   //     setBody({...body, product_id : productId, product_name : productName})
         Animated.timing(progress, {
             toValue: 1,
             duration: 10000,
@@ -55,25 +51,20 @@ const AddCategory = () => {
             setSearchLoading(false)
             if(responseData.length) {
                 setSearchTextProduct(responseData[0].category_name)
+                onClickSearchItemChild(responseData[0].category_id,responseData[0].category_name)
             }
-            
-        //    console.log("Reached Here response")
         })
         .catch(function(error) {
             setSearchLoading(false)
-        //    console.log("Reached Here error")
         });
 
         axios.get(URL + "/search/category", {params:{product_text : "" }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-        //   console.log("SearchArray",responseData)
             setSearchLoading(false)
             setSearchArray(responseData)
-        //    console.log("Reached Here response")
         })
         .catch(function(error) {
             setSearchLoading(false)
-        //    console.log("Reached Here error")
         });
     },[])
 
@@ -81,29 +72,24 @@ const AddCategory = () => {
         Amplitude.logEventWithPropertiesAsync('ADDED NEW CATEGORY', {category_name : category_name })
         setSearchTextProduct(category_name)
     //    console.log(category_name)
-        navigation.navigate("AddContext", {body : body, category_name : category_name , category_id : category_id})
+        navigation.navigate("AddContext", {body : body, product_id : productId, product_name : productName, category_name : category_name , category_id : category_id})
     }
 
     const searchProduct = (text) => {
-        
+        if(text.length) {
+            setPlusDisable(false)
+        }
         setSearchTextProduct(text)
         setSearchLoading(true)
-        
         axios.get(URL + "/search/category", {params:{category_text : text }} , {timeout : 3000})
           .then(res => res.data).then(function(responseData) {
-        //      console.log("SearchArray",responseData)
               setSearchLoading(false)
               setSearchArray(responseData)
-          //    console.log("Reached Here response")
         })
         .catch(function(error) {
               setSearchLoading(false)
-          //    console.log("Reached Here error")
         });
-
     }
-
-
 
     return (
         <View style = {{flex : 1, backgroundColor : background}}>
@@ -128,7 +114,6 @@ const AddCategory = () => {
                 </View>
                 </View>
                 <View style={add.element}>
-                    {/* <Text style = {add.heading}>Category Name</Text> */}
                     <View style = {{flexDirection : 'row', marginTop : 10, justifyContent : 'space-between', borderRadius : 10, borderWidth : 1, borderColor : '#DDD', paddingHorizontal : 5, paddingVertical : 5,}}>
                         <TextInput style = {{fontSize : 16}}
                             placeholder = "Add Category"
@@ -138,6 +123,7 @@ const AddCategory = () => {
                             onBlur = {()=>setInputFocus(false)}
                         />
                         <TouchableOpacity 
+                            disabled = {plusDisable}
                             style = {{padding : 2 , paddingLeft : 10 , paddingRight : 10,}}
                             onPress = {()=>onClickSearchItemChild(0,searchTextProduct)} >
                             <AntDesign name = "plus" size = {24} color = {theme} />

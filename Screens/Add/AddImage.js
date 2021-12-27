@@ -29,11 +29,15 @@ const AddImage = () => {
     const [comment,setComment] = React.useState("")
     const [productExists,setProductExists] = React.useState(true)
     const [contextExists,setContextExists] = React.useState(true)
-    const [productId,setProductId] = React.useState(0)
-    const [contextId,setContextId] = React.useState(0)
+    
+  
     const [postImage,setPostImage] = React.useState("")
     const [postImageShown,setPostImageShown] = React.useState("")
     const [imageId,setImageId] = React.useState(nanoid(10))
+    const [productId,setProductId] = React.useState("")
+    const [contextId,setContextId] = React.useState("")
+    const [isExistsProduct,setExistsProduct] = React.useState({})
+    const [isExistsContext,setExistsContext] = React.useState({})
     
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -55,15 +59,16 @@ const AddImage = () => {
     React.useEffect(()=> {
         console.log("IMAGE SCREEN", contextName)
         Amplitude.logEventAsync('ADD IMAGE')
-        console.log("image screeen", contextName)
-        setBody({...body,context_name : contextName})
+        console.log("body in add image screen", body)
+        // setBody({...body,context_name : contextName})
         pickImage()
 
         axios.get(URL + "/isexists/product", {params:{product_name : body.product_name , category_id : body.category_id}} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
             if(responseData.length) {
                 setProductExists(true)
-                setBody({...body,product_name : responseData[0].product_name,product_id:responseData[0].product_id})
+                setExistsProduct(responseData[0])
+                setProductId(responseData[0].product_id)
             } else {
                 setProductExists(false)
                 const addNewProductBody = {
@@ -77,8 +82,9 @@ const AddImage = () => {
                     data: addNewProductBody
                   }, {timeout : 5000})
                 .then(res => {
-                    console.log(res)
-                    setBody({...body, product_id : res})
+                    console.log("product id new created" , res.data )
+                    setExistsContext(addNewProductBody)
+                    setProductId(res.data)
                 })
                 .catch((e) => console.log(e))
             }
@@ -90,22 +96,30 @@ const AddImage = () => {
         axios.get(URL + "/isexists/context", {params:{context_name : contextName , category_id : body.category_id}} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
             if(responseData.length) {
+                console.log("context exists", responseData[0].context_name , responseData[0].context_id)
                 setContextExists(true)
-                setBody({...body,context_name :responseData[0].context_name, context_id:responseData[0].context_id})
+                setContextId(responseData[0].context_id)
+                setExistsContext(responseData[0])
+             //   setBody({...body,context_name :responseData[0].context_name, context_id:responseData[0].context_id})
             } else {
+               
                 setContextExists(false)
                 const addNewContextBody = {
                     "category_id": body.category_id,
                     "category_name": body.category_name,
-                    "context_name": body.context_name
+                    "context_name": contextName
                 }
+                console.log("context does not exists", addNewContextBody)
                 axios({
                     method: 'post',
                     url: URL + '/add/context',
                     data: addNewContextBody
                   }, {timeout : 5000})
                 .then(res => {
-                    setBody({...body, context_id : res})
+                    console.log("context id new created" , res.data )
+                    setExistsContext(addNewContextBody)
+                    setContextId(res.data)
+               //     setBody({...body, context_id : res.data, context_name : contextName})
                 })
                 .catch((e) => console.log(e))
 
@@ -119,8 +133,9 @@ const AddImage = () => {
     },[])
 
     const next = (rating) => {
+        console.log("Body ins next ", body , "post image " , postImageShown , "rating" , rating , "contextExists ", isExistsContext , "productExists ", isExistsProduct , "context id" , contextId , "product id" , productId)
         navigation.navigate("AddComment", {
-            body : body , postImageShown : postImageShown , rating : rating
+            body : body , contextId : contextId, productId : productId,  postImageShown : postImageShown , rating : rating  , contextExists : isExistsContext , productExists : isExistsProduct
         })
     }
 

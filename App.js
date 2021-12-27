@@ -46,6 +46,7 @@ const App = () => {
   const [isLoading,setLoading] = React.useState(true)
   const [loadingTimeWait,setLoadingTimeWait] = React.useState(false)
   const [userDetails,setUserDetails] = React.useState({})
+  const [error,setError] = React.useState(false)
 
   React.useEffect( () => {
     Crashes.setEnabled(true);
@@ -68,6 +69,7 @@ const App = () => {
             })
             .catch(function(error) {
             //  console.log(error)
+            
               setLoadingTimeWait(true)
               setLoading(false)
             });

@@ -597,7 +597,7 @@ const onSearchHero = () => {
                 </TouchableOpacity>
               </TouchableOpacity>
             {heroBanner.length > 0 ?
-              <View style = {{width : Dimensions.get('screen').width - 10, height : Dimensions.get('screen').height*0.25 ,justifyContent : 'center', marginLeft : 5 , marginRight : 5, marginBottom : 5,}}>
+              <View style = {{width : Dimensions.get('screen').width-5, height : Dimensions.get('screen').height*0.25 ,justifyContent : 'center',  marginRight : 5, marginBottom : 5,}}>
                 
               <Swiper 
                   horizontal
@@ -621,7 +621,7 @@ const onSearchHero = () => {
                       <Image 
                       key = {index}
                       source = {{uri:item.image}} 
-                      style = {{width : Dimensions.get('screen').width - 10, height : Dimensions.get('screen').height*0.25 }}/>
+                      style = {{width : Dimensions.get('screen').width-10 , height : Dimensions.get('screen').height*0.25 }}/>
                     </TouchableOpacity>  
                       )
                   })}  

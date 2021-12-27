@@ -1,6 +1,6 @@
 import React from 'react'
 import {Animated, Easing,  StyleSheet, Text, View , TouchableOpacity, Dimensions, Image, ToastAndroid, Alert} from 'react-native'
-import { colorsArray, theme } from '../Exports/Colors'
+import { alttheme, colorsArray, theme } from '../Exports/Colors'
 import { RewardsComponent } from '../Exports/Components'
 import { RandomContext } from '../Exports/Context'
 import {Button,Box,Heading,VStack,Center,NativeBaseProvider} from "native-base"
@@ -105,7 +105,7 @@ const Redemptions = () => {
                     style = {{marginRight : 30}}
                     onPress = {()=>navigation.navigate("MyDetails")}
                     >
-                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : "#555"}}>{userInfo.user_name}</Text>
+                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : alttheme}}>{userInfo.user_name}</Text>
                 </TouchableOpacity>
                 <View style = {{marginLeft : 20, flexDirection : 'row', alignItems : 'center'}}>
                     <TouchableOpacity 

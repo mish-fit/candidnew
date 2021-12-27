@@ -120,7 +120,7 @@ const MySummary = () => {
                     style = {{marginRight : 30}}
                     onPress = {()=>navigation.navigate("MyDetails")}
                     >
-                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : "#555"}}>{userInfo.user_name}</Text>
+                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : alttheme}}>{userInfo.user_name}</Text>
                 </TouchableOpacity>
                 <View style = {{marginLeft : 20, flexDirection : 'row', alignItems : 'center'}}>
                     <View style = {{justifyContent : 'center', marginLeft : 10}}>

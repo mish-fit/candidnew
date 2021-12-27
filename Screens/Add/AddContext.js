@@ -24,24 +24,21 @@ const AddContext = () => {
     const [body, setBody] = React.useState(route?.params?.body ? route?.params?.body : {} )
     const [categoryName, setCategoryName] = React.useState(route?.params?.category_name ? route?.params?.category_name : "")
     const [categoryId, setCategoryId] = React.useState(route?.params?.category_id ? route?.params?.category_id : "")
-
-
+    const [productName, setProductName] = React.useState(route?.params?.product_name ? route?.params?.product_name : "")
+    const [productId, setProductId] = React.useState(route?.params?.product_id ? route?.params?.product_id : "")
     const [randomNo,userId] = React.useContext(RandomContext)
- 
-
     const [comment,setComment] = React.useState("")
-
-
     const [inputFocus,setInputFocus] = React.useState(false)
     const [searchText,setSearchText] = React.useState("")
     const [searchTextProduct,setSearchTextProduct] = React.useState("")
     const [searchArray,setSearchArray] = React.useState([])
     const [searchLoading,setSearchLoading] = React.useState(false)
+    const [plusDisable,setPlusDisable] = React.useState(true)
 
     React.useEffect(()=>{
-        console.log("categoyr name ", categoryName)
+        console.log("Body in add context use effect", body , " product id and product name and category id and category name", productId, productName , categoryId , categoryName)
         Amplitude.logEventAsync('ADD CONTEXT')
-        setBody({...body, category_name : categoryName , category_id : categoryId})
+        setBody({...body, category_name : categoryName , category_id : categoryId , product_name : productName, product_id : productId})
         Animated.timing(progress, {
             toValue: 1,
             duration: 10000,
@@ -54,7 +51,6 @@ const AddContext = () => {
             console.log("SearchArray",responseData)
             setSearchLoading(false)
             setSearchArray(responseData)
-        //    console.log("Reached Here response")
         })
         .catch(function(error) {
             setSearchLoading(false)
@@ -71,7 +67,9 @@ const AddContext = () => {
     }
 
     const searchProduct = (text) => {
-        
+        if(text.length) {
+            setPlusDisable(false)
+        }
         setSearchTextProduct(text)
         setSearchLoading(true)
         
@@ -131,6 +129,7 @@ const AddContext = () => {
                             onBlur = {()=>setInputFocus(false)}
                         />
                         <TouchableOpacity 
+                            disabled = {plusDisable}
                             style = {{padding : 2 , paddingLeft : 10 , paddingRight : 10,}}
                             onPress = {()=>onClickSearchItemChild(searchTextProduct)} >
                             <AntDesign name = "plus" size = {24} color = {theme} />

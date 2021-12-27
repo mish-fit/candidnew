@@ -45,12 +45,13 @@ const AddProduct = () => {
         "product_name": "",
         "access_control": "Public",
         "feed_image": "",
-        "buy_url": "",
+        "buy_url": "www.amazon.in",
         "comment": "",
         "coupon" : ""
     })
 
     React.useEffect(()=>{
+        console.log("body in add product use effect", body)
         Amplitude.logEventAsync('ADD PRODUCT')
         Animated.timing(progress, {
             toValue: 1,
@@ -61,8 +62,8 @@ const AddProduct = () => {
 
         axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-            console.log("SearchArray",responseData)
-            setBody({...body, user_name : responseData[0].user_name , coupon : responseData[0].coupon})
+         
+            setBody({...body, user_name : responseData[0].user_name , coupon : responseData[0].coupon , user_image : responseData[0].user_profile_image})
         })
         .catch(function(error) {
             setSearchLoading(false)
@@ -83,7 +84,7 @@ const AddProduct = () => {
     },[])
 
     const onClickSearchItemChild = (product_name, product_id) => {
-        console.log(body)
+        console.log("body in add product select search", body)
         Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : product_name })
         setSearchTextProduct(product_name)
     //    console.log(product_name)
@@ -131,7 +132,7 @@ const AddProduct = () => {
                 <View style={add.element}>
                     <Text style = {add.heading}>Buy URL</Text>
                     <TextInput 
-                    placeholder = "Share Amazon/Flipkart/Myntra/Nykaa or D2C Brand Product Link"
+                    placeholder = "Share website link of the product. For supporting websites, visit How To Earn section "
                     value = {body.buy_url}
                     onChangeText = {(text)=>setBody({...body, buy_url : text})}
                     multiline
