@@ -383,7 +383,7 @@ const MyDetails = () => {
         Amplitude.logEventWithPropertiesAsync('SHARE PROFILE', {userName : userInfo.user_name })
         try {
             const result = await Share.share({
-              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/' + userInfo.user_name + " . Use my coupon code : " + userInfo.coupon 
+              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/user?user_name=' + userInfo.user_name + " . Use my coupon code : " + userInfo.coupon 
             });
             if (result.action === Share.sharedAction) {
               if (result.activityType) {

@@ -1,6 +1,6 @@
 export const dataRetrieve = 1
 
-export const URL = "https://fxlzwo42la.execute-api.ap-south-1.amazonaws.com/dev"
+export const URL = "https://fxlzwo42la.execute-api.ap-south-1.amazonaws.com/prod"
 
 export const firebaseConfig = {
     apiKey: 'AIzaSyCelzKVnbYY07aLtswA4EE9pF9mNeXJtRs',

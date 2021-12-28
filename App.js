@@ -11,7 +11,7 @@ import Crashes from 'appcenter-crashes';
 import Analytics from 'appcenter-analytics';
 import AppCenter from 'appcenter';
 import * as firebase from "firebase";
-
+import * as Linking from 'expo-linking';
 import { firebaseConfig, dataRetrieve, URL } from './Screens/Exports/Config';
 import { LoadingPage } from './Screens/Exports/Pages';
 import axios from 'axios'
@@ -36,8 +36,25 @@ try {
 
 //const codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
 
+const prefix = Linking.createURL('/')
+
+const config = {
+  screens: {
+    HomeStack: {
+      screens: {
+        UserLink: 'user',
+      },
+    }
+  }
+}
+
 
 const App = () => {
+
+  const linking = {
+    prefixes: ['https://www.getcandid.app/', 'exp://192.168.109.113:19000/', 'https://*.getcandid.app', 'candid://*'], 
+    config
+  }
 
   const [randomNo , setRandomNo] = React.useState(Math.floor(Math.random()*3+1))
   const [userId,setUserId] = React.useState("")
@@ -47,6 +64,8 @@ const App = () => {
   const [loadingTimeWait,setLoadingTimeWait] = React.useState(false)
   const [userDetails,setUserDetails] = React.useState({})
   const [error,setError] = React.useState(false)
+
+  const [buyLink,setBuyLink] = React.useState("")
 
   React.useEffect( () => {
     Crashes.setEnabled(true);
@@ -89,12 +108,12 @@ const App = () => {
     
 },[isLoading]);
 
-ReceiveSharingIntent.getReceivedFiles(files => {
-//  console.log("received intent", files)    
-},
-(error) =>{
-//  console.log(error);
-});
+// ReceiveSharingIntent.getReceivedFiles(files => {
+//   console.log("received intent", JSON.stringify(files))    
+// },
+// (error) =>{
+// //  console.log(error);
+// });
 
 
 
@@ -110,7 +129,7 @@ ReceiveSharingIntent.getReceivedFiles(files => {
       <MenuProvider>
       <RandomProvider value = {[randomNo, userId]}>
       <NativeBaseProvider>
-          <NavigationContainer>
+          <NavigationContainer linking={linking}>
               <Navigator />
           </NavigationContainer>
       </NativeBaseProvider>

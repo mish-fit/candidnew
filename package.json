@@ -29,6 +29,7 @@
     "expo-file-system": "~13.0.3",
     "expo-firebase-recaptcha": "~2.0.2",
     "expo-image-picker": "~11.0.3",
+    "expo-linking": "~2.4.2",
     "expo-notifications": "~0.13.3",
     "expo-permissions": "~13.0.3",
     "expo-splash-screen": "~0.13.3",
@@ -74,7 +75,8 @@
     "react-native-web": "0.17.1",
     "react-native-webview": "^11.15.0",
     "styled-components": "^5.3.3",
-    "styled-system": "^5.1.5"
+    "styled-system": "^5.1.5",
+    "url-regex": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

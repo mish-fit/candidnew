@@ -26,7 +26,8 @@ import { home } from '../../Styles/Home';
 import  Modal  from 'react-native-modal'
 import Swiper from 'react-native-swiper'
 import { LoadingPage } from '../Exports/Pages';
-
+import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
+const urlRegex = require('url-regex');
 
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
@@ -495,8 +496,25 @@ React.useEffect(()=>{
             setFeedData(homeFeed)
         }
 
+        
+            
   
 },[isFocused])
+
+const [secs,setSecs] = React.useState(5000)
+React.useEffect(()=>{
+    const timerId = setInterval(() => {
+      if (secs <= 0) {
+        setSecs(-1)
+      }
+      else setSecs(s => s - 1)
+    }, 5000)
+    return () => {
+        ReceiveSharingIntent.clearReceivedFiles()
+        clearInterval(timerId);
+        setSecs(5000)
+    }
+  },[secs])
 
 
 const goToUser = (id, name , following) => {
@@ -540,6 +558,16 @@ const onSearchHero = () => {
         ToastAndroid.show("Invalid Search Query", ToastAndroid.SHORT)
     });
     }
+
+ReceiveSharingIntent.getReceivedFiles(files => {
+    console.log("received intent", JSON.stringify(files))    
+    if(JSON.stringify(files).match(urlRegex())) {
+        navigation.navigate("AddPost", {buy_url : JSON.stringify(files).match(urlRegex())[0]})
+    }
+},
+(error) =>{
+//  console.log(error);
+});
       
 
     return (

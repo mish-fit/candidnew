@@ -1,4 +1,4 @@
-import { NavigationContainer , useNavigation } from '@react-navigation/native'
+import { NavigationContainer , useNavigation, useRoute } from '@react-navigation/native'
 import React from 'react'
 import { StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView} from 'react-native'
 import {AntDesign , FontAwesome5} from 'react-native-vector-icons'
@@ -15,10 +15,12 @@ import * as Amplitude from 'expo-analytics-amplitude';
 const AddProduct = () => {
 
     const [source,setSource] = React.useState(true)
-    const [buyURL, setBuyURL] = React.useState("")
+    const [buyURL, setBuyURL] = React.useState("www.amazon.in")
 
     const progress = React.useRef(new Animated.Value(0)).current
     const navigation = useNavigation()
+    const route = useRoute()
+    const {buy_url} = route?.params
     const [randomNo,userId] = React.useContext(RandomContext)
     const [myRewardsCoins,setMyRewardsCoins] = React.useState(7000)
 
@@ -51,6 +53,9 @@ const AddProduct = () => {
     })
 
     React.useEffect(()=>{
+        if (buy_url) {
+            setBody({...body, buy_url : buy_url})
+        }
         console.log("body in add product use effect", body)
         Amplitude.logEventAsync('ADD PRODUCT')
         Animated.timing(progress, {

@@ -33,6 +33,7 @@ import FeedAlt from './Home/FeedAlt';
 import CategoryAlt from './Page/CategoryAlt';
 import Product from './Page/Product';
 import Search from './Home/Search';
+import UserLink from './Page/UserLink';
 
 
 const Stack = createStackNavigator();
@@ -79,6 +80,7 @@ const HomeStack = () => {
       <Stack.Screen name="Post" component={Post} /> 
       <Stack.Screen name="CategoryAlt" component={CategoryAlt} /> 
       <Stack.Screen name="Search" component={Search} /> 
+      <Stack.Screen name="UserLink" component={UserLink} /> 
     </Stack.Navigator>
   );
 }
