@@ -79,7 +79,7 @@ const MyRedeems = ({user_id}) => {
     const emptyComponent = () => {
         return(
             <View style = {{padding : 20 }}>
-                <Text>You haven't redeemed yet your coins yet. Click on REDEEM NOW in the bottom for exciting gift vouchers</Text>
+                <Text>You haven't redeemed your coins yet. Click on REDEEM NOW in the bottom for exciting gift vouchers</Text>
             </View>
         )
     }

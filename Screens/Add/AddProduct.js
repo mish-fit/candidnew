@@ -20,7 +20,7 @@ const AddProduct = () => {
     const progress = React.useRef(new Animated.Value(0)).current
     const navigation = useNavigation()
     const route = useRoute()
-    const {buy_url} = route?.params
+    const [buy_url,set_buy_url] = React.useState(route?.params?.buy_url ? route?.params?.buy_url : "")
     const [randomNo,userId] = React.useContext(RandomContext)
     const [myRewardsCoins,setMyRewardsCoins] = React.useState(7000)
 
@@ -34,6 +34,7 @@ const AddProduct = () => {
     const [searchTextProduct,setSearchTextProduct] = React.useState("")
     const [searchArray,setSearchArray] = React.useState([])
     const [searchLoading,setSearchLoading] = React.useState(false)
+    const [plusDisable,setPlusDisable] = React.useState(true)
 
     const [body,setBody] = React.useState({
         "user_name": "",
@@ -97,7 +98,9 @@ const AddProduct = () => {
     }
 
     const searchProduct = (text) => {
-        
+        if(text.length > 0) {
+            setPlusDisable(false)
+        }
         setSearchTextProduct(text)
         setSearchLoading(true)
         
@@ -155,6 +158,7 @@ const AddProduct = () => {
                         />
                         <TouchableOpacity 
                             style = {{padding : 2 , paddingLeft : 10 , paddingRight : 10,}}
+                            disabled = {plusDisable}
                             onPress = {()=>onClickSearchItemChild(searchTextProduct,0)} >
                             <AntDesign name = "plus" size = {24} color = {theme} />
                         </TouchableOpacity>

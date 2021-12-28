@@ -534,8 +534,12 @@ const heroBannerClick = (link) => {
     if(link.slice(0,4) == "http") {
         WebBrowser.openBrowserAsync(link);
     } 
-    else if (link.slice(0,4) == "nav-") {
-        navigation.navigate(link,slice(4,).toString())
+    else if (link == "AddPost") {
+        navigation.navigate("AddPost" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})
+    } else if (link.slice(0,9) == "Category-") {
+        navigation.navigate("CategoryAlt", {categoryCarousel : categoryCarousel, master_category_name : link.slice(9,).toString() , userInfo : userInfo, userSummary : userSummary})
+    } else if (link == "HowToEarn") {
+        navigation.navigate("HowToEarn", {userInfo : userInfo, userSummary : userSummary})
     }
     
     };
@@ -568,11 +572,42 @@ ReceiveSharingIntent.getReceivedFiles(files => {
 (error) =>{
 //  console.log(error);
 });
+
+const onContextModalClose = () => {
+    setModalVisible(false)
+}
       
 
     return (
         !loading ? 
         <View style = {{flex : 1}}>
+        <Modal 
+                isVisible={modalVisible}
+                deviceWidth={Dimensions.get('screen').width}
+                deviceHeight={Dimensions.get('screen').height}
+                onBackdropPress={onContextModalClose}
+                onSwipeComplete={onContextModalClose}
+                swipeDirection="left"
+                style = {{marginHorizontal : 20 , marginVertical : 120 , borderRadius : 20}}
+                >
+                <ScrollView style = {{backgroundColor : 'white' , borderRadius : 30 , padding : 20}}>
+                    <Text style = {{fontWeight : 'bold', textAlign :'center', color : theme, fontSize : 30}}>Congratulations</Text>
+                    <Text style = {{textAlign : 'center' , fontSize : 20}}>You just earned 500 coins</Text>
+                    <View style = {{justifyContent :'center', alignItems : 'center'}}>
+                        <GiftComponent />
+                    </View>
+                    <Text style = {{fontWeight : 'bold', textAlign :'center' , fontSize : 20,marginTop : 40}}>Welcome to Candid Community</Text>
+                    <View style = {{justifyContent : 'center', alignItems : 'center'}}>
+                        <TouchableOpacity style = {home.modalButton} onPress = {()=>navigation.navigate("MyRewards")}>
+                            <Text style = {home.modalButtonText}>Go To Rewards Section</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style = {home.modalButton} onPress = {()=>navigation.navigate("HowToEarn")}>
+                            <Text style = {home.modalButtonText}>How to Earn ?</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
+                </ScrollView>
+        </Modal>
         <ScrollView style = {{flex : 1 , backgroundColor : 'white'}} contentContainerStyle = {{paddingBottom : 40}}>
             <Animated.View 
             style = {{ transform: [{translateY}],
@@ -625,7 +660,7 @@ ReceiveSharingIntent.getReceivedFiles(files => {
                 </TouchableOpacity>
               </TouchableOpacity>
             {heroBanner.length > 0 ?
-              <View style = {{width : Dimensions.get('screen').width-5, height : Dimensions.get('screen').height*0.25 ,justifyContent : 'center',  marginRight : 5, marginBottom : 5,}}>
+              <View style = {{width : Dimensions.get('screen').width-5, height : Dimensions.get('screen').width*0.55 ,justifyContent : 'center',  marginRight : 5, marginBottom : 5,}}>
                 
               <Swiper 
                   horizontal
@@ -649,7 +684,7 @@ ReceiveSharingIntent.getReceivedFiles(files => {
                       <Image 
                       key = {index}
                       source = {{uri:item.image}} 
-                      style = {{width : Dimensions.get('screen').width-10 , height : Dimensions.get('screen').height*0.25 }}/>
+                      style = {{width : Dimensions.get('screen').width-10 , height : Dimensions.get('screen').width*0.55 }}/>
                     </TouchableOpacity>  
                       )
                   })}  
