@@ -28,7 +28,7 @@ const Coupon = () => {
     const [coinsValue,setCoinsValue] = React.useState("")
 
     React.useEffect(()=>{
-
+     
     },[])
 
     const next = () => {
@@ -47,7 +47,7 @@ const Coupon = () => {
       
       try {
         Amplitude.logEventWithPropertiesAsync('COUPON SKIPPED')
-        navigation.navigate("ProfileInfo",{phoneNumber : phoneNumber , coupon : "" , refereeName : "" , refereeId : "" , coinsValue : ""  })
+        navigation.navigate("ProfileInfo",{phoneNumber : phoneNumber , coupon : "" , refereeName : "" , refereeId : "" , coinsValue : 500 })
       }
       catch(e) {
         console.log(e)

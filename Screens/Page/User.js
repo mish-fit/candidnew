@@ -148,7 +148,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <View style = {{flexDirection : 'row', marginLeft : 5}}>
                         <TouchableOpacity onPress = {()=> {
                          //   console.log(" user info ",userInfo, " item " , item)
-                            navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : item.user_name , userId : item.user_id , isFollowing : item.isFollowing}
+                            navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : item.user_name , userId : item.user_id , isFollowing : item.isFollowing ? item.isFollowing : false}
                         
                         )}}>
                             <Text style = {{fontSize : 15 , fontWeight : 'bold'}}>{item.user_name}</Text>
@@ -165,7 +165,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </View>
                
                     <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
+                        <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item && item.product_name && item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -268,7 +268,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
             </View>  
             <View style = {{ justifyContent : 'space-between', borderTopRightRadius : 20 , borderBottomRightRadius : 20 , flexShrink : 1, flex : 1}}>
                 <View style = {{paddingTop : 5 ,paddingLeft : 5 , flexDirection : 'row', flexWrap : 'wrap' , flexShrink : 1,}}>
-                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
+                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item && item.product_name && item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
                 </View>
                 <View style = {{paddingHorizontal: 5, paddingVertical : 2,  flexShrink : 1}}>
                     <View style = {{flexDirection : 'row', justifyContent : 'space-between', }}>
@@ -331,7 +331,7 @@ const User = () => {
     const navigation = useNavigation()
     const route = useRoute()
     const [userInfo,setUserInfo] = React.useState([])
-    const [isFollowing,setFollowing] = React.useState(route?.params?.isFollowing)
+    const [isFollowing,setFollowing] = React.useState(route?.params?.isFollowing ? route?.params?.isFollowing : false )
     const [userName,setUserName] = React.useState(route.params?.homeUserName)
     const [followingUserName,setFollowingUserName] = React.useState(route.params?.userName)
     const [followingUserId,setFollowingUserId] = React.useState(route.params?.userId)
@@ -404,7 +404,10 @@ const User = () => {
             .then(res => res.data).then(function(responseData) {
                 console.log(responseData)
                 setFeedSummary(responseData)
-                setFollowing(responseData[0].isFollowing)
+                if(responseData.length && responseData[0].isFollowing) {
+                    setFollowing(responseData[0].isFollowing)
+                }
+               
             })
             .catch(function(error) {
                 console.log(error)

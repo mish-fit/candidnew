@@ -162,7 +162,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                     disabled = {isFollowing[index]}
                     onPress = {itemFollow}
                     style = {{backgroundColor : isFollowing[index]? "#888" : themeLightest , borderRadius : 5, height : 20, justifyContent :'center', alignItems :'center' }}>
-                        <Text style={{fontSize : 10 , color : 'black', alignSelf : 'center'}}>{isFollowing[index]?  "Following" : "Follow"}</Text>
+                        <Text style={{fontSize : 10 , color : isFollowing[index]?  'white' : 'black', alignSelf : 'center'}}>{isFollowing[index]?  "Following" : "Follow"}</Text>
                     </TouchableOpacity>
                     <View style = {{position : 'absolute' , top : 0 , right : 0 , backgroundColor : alttheme ,  borderRadius : 20, width : 20 , height : 20 , justifyContent : 'center' , alignItems : 'center' }}>
                         <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 7 , color : 'white'}]}>{item.count_posts}</Text>
@@ -576,6 +576,49 @@ ReceiveSharingIntent.getReceivedFiles(files => {
 const onContextModalClose = () => {
     setModalVisible(false)
 }
+
+
+const followUser = (id,name, index) => {
+    Amplitude.logEventWithPropertiesAsync('FOLLOW USER IN ALT FEED',{"user_name": userInfo.user_name,"user_id": userInfo.user_id,"following_user_id": id,"following_user_name": name})
+    let newArr = [...isFollowing]; // copying the old datas array
+    newArr[index] = true // replace e.target.value with whatever you want to change it to
+    setFollowing(newArr)
+    const body = {
+        "user_name": userInfo.user_name,
+        "user_id": userInfo.user_id,
+        "following_user_id": id,
+        "following_user_name": name,
+        "isFollowing": true
+      }
+
+      axios({
+        method: 'post',
+        url: URL + '/engagement/followuser',
+        data: body
+      }, {timeout : 5000})
+    .then(res => {
+        console.log(res)
+    })
+    .catch((e) => console.log(e))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       
 
     return (
@@ -586,11 +629,10 @@ const onContextModalClose = () => {
                 deviceWidth={Dimensions.get('screen').width}
                 deviceHeight={Dimensions.get('screen').height}
                 onBackdropPress={onContextModalClose}
-                onSwipeComplete={onContextModalClose}
-                swipeDirection="left"
-                style = {{marginHorizontal : 20 , marginVertical : 120 , borderRadius : 20}}
+                style = {{marginHorizontal : 20 , marginVertical : 200 , borderRadius : 20, paddingVertical : 20}}
+                propagateSwipe={true}
                 >
-                <ScrollView style = {{backgroundColor : 'white' , borderRadius : 30 , padding : 20}}>
+                <ScrollView style = {{backgroundColor : 'white' , borderRadius : 30 , paddingBottom : 60 , }}>
                     <Text style = {{fontWeight : 'bold', textAlign :'center', color : theme, fontSize : 30}}>Congratulations</Text>
                     <Text style = {{textAlign : 'center' , fontSize : 20}}>You just earned 500 coins</Text>
                     <View style = {{justifyContent :'center', alignItems : 'center'}}>
@@ -598,10 +640,16 @@ const onContextModalClose = () => {
                     </View>
                     <Text style = {{fontWeight : 'bold', textAlign :'center' , fontSize : 20,marginTop : 40}}>Welcome to Candid Community</Text>
                     <View style = {{justifyContent : 'center', alignItems : 'center'}}>
-                        <TouchableOpacity style = {home.modalButton} onPress = {()=>navigation.navigate("MyRewards")}>
+                        <TouchableOpacity style = {home.modalButton} onPress = {()=>{
+                            setModalVisible(false)
+                            navigation.navigate("MyRewards")
+                        }}>
                             <Text style = {home.modalButtonText}>Go To Rewards Section</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style = {home.modalButton} onPress = {()=>navigation.navigate("HowToEarn")}>
+                        <TouchableOpacity style = {[home.modalButton,{marginBottom : 20}]} onPress = {()=>{
+                            setModalVisible(false)
+                            navigation.navigate("HowToEarn",{userInfo : userInfo})
+                        }}>
                             <Text style = {home.modalButtonText}>How to Earn ?</Text>
                         </TouchableOpacity>
                     </View>
@@ -699,7 +747,10 @@ const onContextModalClose = () => {
             {myFriends.length ? 
                 <View style = {{marginRight : 10 , backgroundColor : "#FFF", marginBottom :5 }}> 
                     <FriendsCarousel DATA = {myFriends} onClickItem = {(id, name , following)=>goToUser(id , name , following)} />
-                </View> : null
+                </View> :
+                <View style = {{marginVertical : 5,marginHorizontal : 10}}>
+                    <Text style = {{color : alttheme}}>Start following critics you like </Text>
+                </View>
             }
             <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>Top Critics</Text>
             {peopleYouCanFollow.length ? 

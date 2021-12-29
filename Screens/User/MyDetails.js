@@ -221,10 +221,11 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
 
     return(
         <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
-            <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'space-between'}}>
-                <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
+            <View style = {{marginTop : 5 ,marginLeft : 10 ,flexDirection : 'row', justifyContent : 'space-between'}}>
+                <View style = {{marginTop : 5 ,marginLeft : 5 , marginRight : 15,flexDirection : 'row', flexWrap : 'wrap'}}>
                     <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
                 </View>
+                <View style = {{padding : 15, marginRight : 20, }}>
                 <Menu style = {{}}>
                     <MenuTrigger>
                         <Entypo name = "dots-three-vertical" size = {15} color = '#AAA'/>
@@ -234,7 +235,8 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
                             <Text>Delete</Text>
                         </MenuOption>
                     </MenuOptions>
-                </Menu>   
+                </Menu> 
+                </View>  
             </View>
             <View style = {{marginHorizontal : 20 , marginVertical : 5,flexDirection : 'row' , justifyContent : 'space-between'}}>
                 <TouchableOpacity 

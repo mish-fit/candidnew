@@ -58,6 +58,19 @@ const EarnItemComponent = ({item , id}) => {
             </View>
         )
     }
+
+    const PostReview = ({reward_type , coins_value, engaged_user_name, engaged_product_name, created_at}) => {
+        return(
+            <View style = {mySummaryStyle.activityComponent}>
+                <View style = {mySummaryStyle.activity}>
+                    <Text style = {mySummaryStyle.activityText}><Text style = {mySummaryStyle.username}>{engaged_user_name}</Text> {reward_type} on {engaged_product_name}. You earned <Text style = {[mySummaryStyle.coinsValue,{color : colorsArray[(randomNo+id)%(colorsArray.length-1)]}]}>{coins_value}</Text> <FontAwesome5 name = "coins" color = "#D9A760"/> </Text>
+                </View>
+                <View style = {mySummaryStyle.date}>
+                    <Text style = {mySummaryStyle.dateText}>{moment(created_at,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>
+                </View>
+            </View>
+        )
+    }
         
     return(
         item.engaged_product_name ? 

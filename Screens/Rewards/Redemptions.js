@@ -41,7 +41,7 @@ const Redemptions = () => {
         // coins_value : 10000,cash_value : 1000}])
 
     React.useEffect(()=>{
-        setMyRewardsCoins(userSummary.coins_available)
+        setMyRewardsCoins(userSummary && userSummary.coins_available ? userSummary.coins_available : 0)
         Amplitude.logEventAsync('REDEMPTIONS')
         Animated.timing(progress, {
             toValue: 1,

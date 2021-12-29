@@ -25,7 +25,7 @@ const FeedItemComponent = ({item,id}) => {
         <View style = {{ borderRadius : 10, marginTop : 5 , marginBottom : 5, justifyContent : 'center' , alignItems : 'center' }}>
             <View style = {{}}>
             {item.reward_image && item.reward_image != "None" && item.reward_image != "" ?
-                <Image source = {{uri : item.reward_image}} style = {{width : Dimensions.get('screen').width*0.95, height : Dimensions.get('screen').width*0.5343 , borderRadius : 40  }}/> :
+                <Image source = {{uri : item.reward_image + "?" + new Date()}} style = {{width : Dimensions.get('screen').width*0.95, height : Dimensions.get('screen').width*0.5343 , borderRadius : 40  }}/> :
                 null}  
             </View>    
         </View>
@@ -39,9 +39,9 @@ const HowToEarn = () => {
     const progress = React.useRef(new Animated.Value(0)).current
     const navigation = useNavigation()
     const route = useRoute()
-    const [userInfo,setUserInfo] = React.useState(route?.params?.userInfo)
-    const [userSummary,setUserSummary] = React.useState(route?.params?.userSummary)
-    const [recentBurn,setRecentBurn] = React.useState(route?.params?.recentBurn)
+    const [userInfo,setUserInfo] = React.useState(route?.params?.userInfo ? route?.params?.userInfo : [] )
+    const [userSummary,setUserSummary] = React.useState(route?.params?.userSummary ? route?.params?.userSummary : [])
+    const [recentBurn,setRecentBurn] = React.useState(route?.params?.recentBurn ? route?.params?.recentBurn : 0)
     const [feedData,setFeedData] = React.useState([])
 
     React.useEffect(()=>{

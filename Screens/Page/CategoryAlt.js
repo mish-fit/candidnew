@@ -603,6 +603,7 @@ const CategoryAlt = () => {
                     return(
                     contextsChecked[index]  == true ?
                             <Pressable 
+                            key = {index.toString()}
                             android_ripple = {{color : themeLightest}}
                             onPress = {()=> contextCheckFunc(index, item.context_id ,false)}
                             style = {{backgroundColor : themeLightest ,flexDirection : 'row' , borderWidth : 1, borderColor : themeLightest, borderRadius : 10 , padding : 5 , alignItems : 'center', margin : 10 ,paddingHorizontal : 10, }}>
@@ -610,6 +611,7 @@ const CategoryAlt = () => {
                                
                             </Pressable>:
                             <Pressable 
+                            key = {index.toString()}
                             onPress = {()=> contextCheckFunc(index, item.context_id, true)}
                             android_ripple = {{color : themeLightest}}
                             style = {{backgroundColor : 'white', flexDirection : 'row' , borderRadius : 10 , borderWidth : 1, borderColor : '#EEE', padding : 5 , margin : 10,paddingHorizontal : 10, }}>

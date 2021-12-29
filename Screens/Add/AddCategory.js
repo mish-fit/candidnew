@@ -76,7 +76,7 @@ const AddCategory = () => {
     }
 
     const searchProduct = (text) => {
-        if(text.length) {
+        if(text.length > 1) {
             setPlusDisable(false)
         }
         setSearchTextProduct(text)

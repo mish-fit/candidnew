@@ -98,7 +98,7 @@ const AddProduct = () => {
     }
 
     const searchProduct = (text) => {
-        if(text.length > 0) {
+        if(text.length > 1) {
             setPlusDisable(false)
         }
         setSearchTextProduct(text)
