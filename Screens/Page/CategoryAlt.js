@@ -11,6 +11,7 @@ import { width } from '../Exports/Constants';
 import {Avatar} from 'react-native-paper'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 
 const FeedItemComponent = ({item,id, userInfo}) => {
@@ -228,9 +229,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     >
                         <AntDesign name = "dislike2" color = {dislike ? "red" : like ? "#EEE" :"#AAA"} size = {20} />
                     </TouchableOpacity>
-                </View >
+                </View>
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
-                    <Text>{item.comment}</Text>
+                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
+                        <Text>
+                            {item.title}
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read Detailed Review" : ""}</Text>
+                        </Text>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
         

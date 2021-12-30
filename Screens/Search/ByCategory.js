@@ -1,5 +1,5 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, FlatList,Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, ScrollView } from 'react-native'
+import { PermissionsAndroid,Animated, FlatList,Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, ScrollView, TouchableWithoutFeedback } from 'react-native'
 import { colorsArray, theme } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
@@ -132,9 +132,14 @@ const FeedItemComponent = ({item,id}) => {
                     >
                         <AntDesign name = "dislike2" color = {item.dislike ? "red" : "#888"} size = {20} />
                     </TouchableOpacity>
-                </View >
-                <View style = {{marginTop : 10 , paddingHorizontal : 10 , marginBottom : 10 }}>
-                    <Text>{item.comment}</Text>
+                </View>
+                <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
+                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
+                        <Text>
+                            {item.title}
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read Detailed Review" : ""}</Text>
+                        </Text>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
         

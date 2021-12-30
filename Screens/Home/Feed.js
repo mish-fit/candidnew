@@ -251,12 +251,12 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     >
                         <AntDesign name = "dislike2" color = {dislike ? "red" : like ? "#EEE" :"#AAA"} size = {20} />
                     </TouchableOpacity>
-                </View >
+                </View>
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
                     <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
                         <Text>
-                            {item.comment.length > 280 ? item.comment.substring(0,150) : item.comment}
-                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 280 ? " ... Read More" : ""}</Text>
+                            {item.title}
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read Detailed Review" : ""}</Text>
                         </Text>
                     </TouchableWithoutFeedback>
                 </View>

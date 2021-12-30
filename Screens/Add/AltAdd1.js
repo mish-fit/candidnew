@@ -18,10 +18,12 @@ const AltAdd1 = () => {
     const navigation = useNavigation()
     const route = useRoute()
     const [body, setBody] = React.useState(route?.params?.body ? route?.params?.body : {} )
+    const [productId, setProductId] = React.useState(route?.params?.product_id ? route?.params?.product_id : 0 )
     const [submitted,setSubmitted] = React.useState(false)
  
     React.useEffect(()=>{
         console.log("Body in add category use effect", body , " product id and product name", body.product_id, body.product_name)
+        setBody((body)=>({...body, product_id : productId}))
     },[])
 
     const submit = () => {

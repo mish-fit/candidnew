@@ -235,7 +235,10 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     >
                         <AntDesign name = "dislike2" color = {dislike ? "red" : like ? "#EEE" :"#AAA"} size = {20} />
                     </TouchableOpacity>
-                </View >
+                </View>
+                <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
+                    <Text style = {{fontWeight : 'bold'}}>{item.title}</Text>
+                </View>
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
                     <Text>{item.comment}</Text>
                 </View>

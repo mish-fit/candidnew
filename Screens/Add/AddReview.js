@@ -73,6 +73,7 @@ const AddReview = () => {
     const [plusContextDisable,setPlusContextDisable] = React.useState(true)
     const [titleInputFocus,setTitleInputFocus] = React.useState(false)
     const [ratingValue,setRatingValue] = React.useState(0)
+    const [newProduct,setNewProduct] = React.useState(false)
 
     const [body,setBody] = React.useState({
         "user_name": "",
@@ -119,35 +120,56 @@ const AddReview = () => {
     const onClickSearchItemChild = (name, id) => {
         console.log("body in add product select search", name , id)
         Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : name })
-        setBody((body) => ({...body, product_name : name, product_id : id}))
-        setSearchTextProduct(name)
         setProductSelected(true)
 
-        axios.get(URL + "/search/category/byproduct", {params:{product_id : id }} , {timeout : 3000})
-        .then(res => res.data).then(function(responseData) {
-           console.log("search category by product",responseData)
-            setSearchCategoryLoading(false)
-            if(responseData.length) {
-                setSearchTextCategory(responseData[0].category_name)
-                onClickSearchItemChildCategory(responseData[0].category_name,responseData[0].category_id)
-            } else {
+        if(id > 0) {
+            setBody((body) => ({...body, product_name : name, product_id : id}))
+            axios.get(URL + "/search/category/byproduct", {params:{product_id : id }} , {timeout : 3000})
+            .then(res => res.data).then(function(responseData) {
+               console.log("search category by product",responseData)
+               setSearchLoading(false)
+                if(responseData.length) { 
+                    setSearchTextProduct(responseData[0].product_name)
+                    onClickSearchItemChildCategory(responseData[0].category_name,responseData[0].category_id)
+                } else {
+                    setSearchTextProduct(name)
+                    setBody({...body, product_name : name, product_id : id})
+                }
+            })
+            .catch(function(error) {
                 setBody({...body, product_name : name, product_id : id})
-            }
-        })
-        .catch(function(error) {
-            setBody({...body, product_name : name, product_id : id})
-            setSearchCategoryLoading(false)
-        });
-
-        axios.get(URL + "/search/category", {params:{product_text : "" }} , {timeout : 3000})
-        .then(res => res.data).then(function(responseData) {
-            setSearchCategoryLoading(false)
-            setSearchCategoryArray(responseData)
-        })
-        .catch(function(error) {
-            setSearchCategoryLoading(false)
-        });
+                setSearchLoading(false)
+            });
+    
+            axios.get(URL + "/search/category", {params:{product_text : "" }} , {timeout : 3000})
+            .then(res => res.data).then(function(responseData) {
+                
+                setSearchLoading(false)
+                setSearchCategoryArray(responseData)
+            })
+            .catch(function(error) {
+                setSearchLoading(false)
+            });
+        } 
+        else {
+            axios.get(URL + "/isexists/product", {params:{product_name : body.product_name}} , {timeout : 3000})
+            .then(res => res.data).then(function(responseData) {
+                setSearchCategoryLoading(false)
+                if(responseData.length) {
+                    setBody((body) => ({...body, product_name : responseData[0].product_name, product_id : responseData[0].product_id}))
+                    setSearchTextCategory(responseData[0].category_name)
+                    onClickSearchItemChildCategory(responseData[0].category_name,responseData[0].category_id)
+                } else {
+                    setBody((body) => ({...body, product_name : name}))
+                    setNewProduct(true)
+                }
+            })
+            .catch(function(error) {
+               
+            });
+        }
     }
+
     const searchProduct = (text) => {
         console.log(productSelected)
         if(text.length > 1) {
@@ -157,7 +179,7 @@ const AddReview = () => {
         setSearchLoading(true)
         axios.get(URL + "/search/product", {params:{product_text : text }} , {timeout : 3000})
           .then(res => res.data).then(function(responseData) {
-              console.log(responseData)
+              
               setSearchLoading(false)
               setSearchArray(responseData)
         })
@@ -168,19 +190,26 @@ const AddReview = () => {
 
 
     const onClickSearchItemChildCategory = (category_name, category_id ) => {
-        console.log("Category BOdy", body)
-        Amplitude.logEventWithPropertiesAsync('ADDED NEW CATEGORY', {category_name : category_name })
-        setSearchTextCategory(category_name)
-        setCategorySelected(true)
-        setBody((body) => ({...body, category_name : category_name , category_id : category_id}))
-        axios.get(URL + "/search/context", {params:{context_text : "" , category_name : category_name }} , {timeout : 3000})
-        .then(res => res.data).then(function(responseData) {
-            console.log("SearchArray",responseData)
-            setContextArray(responseData)
-        })
-        .catch(function(error) {
-            console.log(error)
-        });
+        if(category_id > 0) {
+            console.log("Category BOdy", body)
+            Amplitude.logEventWithPropertiesAsync('ADDED NEW CATEGORY', {category_name : category_name })
+            setSearchTextCategory(category_name)
+            setCategorySelected(true)
+            setBody((body) => ({...body, category_name : category_name , category_id : category_id}))
+            axios.get(URL + "/search/context", {params:{context_text : "" , category_name : category_name }} , {timeout : 3000})
+            .then(res => res.data).then(function(responseData) {
+                console.log("SearchArray",responseData)
+                setContextArray(responseData)
+            })
+            .catch(function(error) {
+                console.log(error)
+            });
+        } else {
+            setSearchTextCategory(category_name)
+            setCategorySelected(true)
+            setBody((body) => ({...body, category_name : category_name }))
+        }
+       
     }
 
     const searchCategory = (text) => {
@@ -191,8 +220,8 @@ const AddReview = () => {
         setSearchCategoryLoading(true)
         axios.get(URL + "/search/category", {params:{category_text : text }} , {timeout : 3000})
           .then(res => res.data).then(function(responseData) {
-              setSearchCategoryLoading(false)
-              setSearchCategoryArray(responseData)
+                setSearchCategoryLoading(false)
+                setSearchCategoryArray(responseData)
         })
         .catch(function(error) {
               setSearchCategoryLoading(false)
@@ -242,7 +271,28 @@ const AddReview = () => {
 
     const next = () => {
         console.log("NEXT ", body)
-        navigation.navigate("AltAdd1", {body : body})
+        if(newProduct && body.category_id > 0 && body.category_name.length > 1 && body.product_name.length > 1) {
+            const addNewProductBody = {
+                "category_id": body.category_id,
+                "category_name": body.category_name,
+                "product_name": body.product_name
+            }
+            axios({
+                method: 'post',
+                url: URL + '/add/product',
+                data: addNewProductBody
+            }, {timeout : 5000})
+            .then(res => {
+                console.log("product id new created" , res.data )
+                navigation.navigate("AltAdd1", {body : body , product_id : res.data})
+            })
+            .catch((e) => console.log(e))
+        }
+        else {
+            navigation.navigate("AltAdd1", {body : body , product_id : body.product_id})
+        }
+
+        
     }
 
     const contextCheckFunc = (index, id,name, type ) => {
@@ -377,7 +427,7 @@ const AddReview = () => {
                 : null}
                
                 {productSelected && !categorySelected ? 
-                <View style = {{paddingVertical: 8,  flexDirection : 'row', justifyContent : 'space-between', borderRadius : 4, borderWidth : 1, borderColor : '#DDD', paddingHorizontal : 5}}>
+                <View style = {{paddingVertical: 10, marginHorizontal : 5, flexDirection : 'row', justifyContent : 'space-between', borderRadius : 10, borderWidth : 1, borderColor : '#888', paddingHorizontal : 5, marginTop : 5,}}>
                     <TextInput style = {{fontSize : 14,}}
                         placeholder = "Search / Add Category by clicking '+'"
                         onChangeText = {(text) => searchCategory(text)}
@@ -391,7 +441,7 @@ const AddReview = () => {
                         onPress = {()=>onClickSearchItemChildCategory(searchTextCategory,0)} >
                         <AntDesign name = "plus" size = {24} color = {theme} />
                     </TouchableOpacity>
-                </View> : productSelected ?
+                </View> : productSelected && categorySelected ?
                 <View style = {{marginHorizontal: 5, marginTop : 5,  paddingVertical: 5,  flexDirection : 'row', justifyContent : 'space-between',  paddingHorizontal : 5 , borderRadius : 5, borderWidth : 1, borderColor : "#EEE", backgroundColor : 'rgba(200,200,200,0.2)'}}>
                     <Text style = {{color : theme, fontSize : 16 , fontWeight : 'bold'}}>{searchTextCategory}</Text>
                     <TouchableOpacity 
@@ -401,16 +451,16 @@ const AddReview = () => {
                     </TouchableOpacity>
                 </View> : null
                 }
-                { searchArray.length && productSelected && !categorySelected ?
+                { searchCategoryArray.length && productSelected && !categorySelected ?
                 <ScrollView style = {add.dropDownList} contentContainerStyle = {{paddingBottom : 60}}>
-                <Text style = {{fontWeight : 'bold', marginTop : 5, }}>Top Categories</Text>
+                <Text style = {{fontWeight : 'bold', marginTop : 5, marginLeft : 5 }}>Top Categories</Text>
                 {
-                searchArray.map((item,index)=>{
+                searchCategoryArray.map((item,index)=>{
                     return(
                         <TouchableOpacity 
                                     key = {index.toString()}
                                     style = {add.dropDownItem}
-                                    onPress = {()=>onClickSearchItemChild(item.category_name,item.category_id)} >
+                                    onPress = {()=>onClickSearchItemChildCategory(item.category_name,item.category_id)} >
                             {item.category_image && item.category_image != "None" && item.category_image != "" ?
                             <Image source = {{uri : item.category_image}} style = {add.dropDownItemImage}/> :
                             <Avatar.Image style = {add.dropDownItemAvatar}

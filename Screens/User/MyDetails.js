@@ -276,6 +276,9 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
                 </View>
             </View>  
             <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
+                <Text style = {{fontWeight : 'bold'}}>{item.title}</Text>
+            </View>
+            <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
                 <Text>{item.comment}</Text>
             </View>
         </View>    
