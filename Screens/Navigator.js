@@ -34,6 +34,9 @@ import CategoryAlt from './Page/CategoryAlt';
 import Product from './Page/Product';
 import Search from './Home/Search';
 import UserLink from './Page/UserLink';
+import AltAdd from './Add/AltAdd';
+import AltAdd1 from './Add/AltAdd1';
+import AddReview from './Add/AddReview';
 
 
 const Stack = createStackNavigator();
@@ -81,6 +84,9 @@ const HomeStack = () => {
       <Stack.Screen name="CategoryAlt" component={CategoryAlt} /> 
       <Stack.Screen name="Search" component={Search} /> 
       <Stack.Screen name="UserLink" component={UserLink} /> 
+      <Stack.Screen name="AltAdd" component={AltAdd} /> 
+      <Stack.Screen name="AltAdd1" component={AltAdd1} /> 
+      <Stack.Screen name="AddReview" component={AddReview} /> 
     </Stack.Navigator>
   );
 }

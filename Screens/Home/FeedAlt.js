@@ -1,5 +1,5 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView, Pressable, ImageBackground, ToastAndroid } from 'react-native'
+import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView, Pressable, ImageBackground, ToastAndroid, Share } from 'react-native'
 import { alttheme, background, borderColor, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign, Fontisto} from 'react-native-vector-icons';
@@ -27,6 +27,7 @@ import  Modal  from 'react-native-modal'
 import Swiper from 'react-native-swiper'
 import { LoadingPage } from '../Exports/Pages';
 import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
+import { borderRadius } from 'styled-system';
 const urlRegex = require('url-regex');
 
 try {
@@ -338,7 +339,7 @@ const TrendingProducts = ({DATA , onClickItem }) => {
 const FeedAlt = () => {
 
     const [randomNo, userId] = React.useContext(RandomContext)
-    const [headerHeight,setHeaderHeight] = React.useState(70)
+    const [headerHeight,setHeaderHeight] = React.useState(50)
     const navigation = useNavigation()
     const route  = useRoute()
     const isFocused = useIsFocused()
@@ -604,6 +605,25 @@ const followUser = (id,name, index) => {
 
 
 
+const share = async () => {
+    console.log(userInfo)
+    Amplitude.logEventWithPropertiesAsync('SHARE PROFILE', {userName : userInfo.user_name })
+    try {
+        const result = await Share.share({
+          message: 'Shop from the amazing products I recommended on https://www.getcandid.app/user?user_name=' + userInfo.user_name + " . Use my coupon code : " + userInfo.coupon 
+        });
+        if (result.action === Share.sharedAction) {
+          if (result.activityType) {
+         //     console.log(result.activityType)
+            } 
+          else {
+        //  console.log(result)
+        }
+        } 
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
 
 
 
@@ -629,7 +649,7 @@ const followUser = (id,name, index) => {
                 deviceWidth={Dimensions.get('screen').width}
                 deviceHeight={Dimensions.get('screen').height}
                 onBackdropPress={onContextModalClose}
-                style = {{marginHorizontal : 20 , marginVertical : 200 , borderRadius : 20, paddingVertical : 20}}
+                style = {{marginHorizontal : 20 , marginVertical : 80 , borderRadius : 20, paddingVertical : 20}}
                 propagateSwipe={true}
                 >
                 <ScrollView style = {{backgroundColor : 'white' , borderRadius : 30 , paddingBottom : 60 , }}>
@@ -656,7 +676,7 @@ const followUser = (id,name, index) => {
                     
                 </ScrollView>
         </Modal>
-        <ScrollView style = {{flex : 1 , backgroundColor : 'white'}} contentContainerStyle = {{paddingBottom : 40}}>
+        <ScrollView style = {{flex : 1 , backgroundColor : 'white'}} contentContainerStyle = {{paddingBottom : 50}}>
             <Animated.View 
             style = {{ transform: [{translateY}],
                 backgroundColor : 'white', flex : 1 ,
@@ -673,22 +693,38 @@ const followUser = (id,name, index) => {
                         >
                         <Text style = {{fontWeight : 'bold', fontSize : 20, color : alttheme}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
                     </TouchableOpacity>
-                    <View style = {{alignItems : 'center', flexDirection : 'row-reverse' , marginRight : 20 }}>
-                        {/* <TouchableOpacity 
-                                style = {{padding : 2 , paddingLeft : 5 , paddingRight : 5, marginRight : 20}}
-                                onPress = {()=>{
-                                    Amplitude.logEventAsync("Clicked on Search on Home")
-                                    navigation.navigate("SearchByCategory")} 
-                                    }>
-                            <AntDesign name = "search1" size = {24} color = 'red' /> 
-                        </TouchableOpacity>  */}
+                    <View style = {{alignItems : 'center', justifyContent : 'flex-end',flexDirection : 'row-reverse' , marginRight : 10 }}>
                         <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
                     </View>
             </Animated.View>
-            <View style = {{marginTop : 50,}}>
+            <View style = {{marginTop : headerHeight,}}>
+            <View 
+            style = {{width: width-10, height : 40, borderRadius : 2,
+            backgroundColor : themeLightest, marginleft : 5, flex : 1, marginHorizontal : 5,
+            justifyContent : 'space-around', alignItems : 'center',  }}>
+                <View style = {{flexDirection : 'row'}}>
+                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
+                        <Text style = {{color : theme, fontSize : 15,marginRight : 5 , fontWeight : 'bold' }}>Home</Text>
+                    </View>
+                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
+                        <Switch
+                            trackColor={{ true: theme , false: "white" }}
+                            thumbColor={theme}
+                            onValueChange={()=>{
+                                Amplitude.logEventAsync("HOME FEED TOGGLE")
+                                navigation.navigate("Home1",{body : userInfo, userSummary : userSummary})
+                                }}
+                            value={false}
+                        />
+                    </View>
+                    <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
+                        <Text style = {{color : theme, fontSize : 15,marginLeft : 5}}>Feed</Text>
+                    </View>
+                </View>
+            </View>
             <TouchableOpacity onPress = {()=>navigation.navigate("Search",{userInfo : userInfo})}
                 style = {{flexDirection : 'row' , borderWidth : 1 , borderColor : '#bbb', backgroundColor : '#EEE' ,
-                borderRadius : 2, padding : 5, margin : 5 , marginTop : 20, height : 50, justifyContent: 'space-between', 
+                borderRadius : 2, padding : 5, margin : 5 , marginTop : 5, height : 50, justifyContent: 'space-between', 
                 alignItems:'center'}}>
                 {/* <TextInput 
                   style = {{flex : 1 , fontSize : 14}}
@@ -765,7 +801,15 @@ const followUser = (id,name, index) => {
                 </View>: null
             }
             </View>
-                
+            <TouchableOpacity 
+            onPress = {share}
+            style = {{width: width-10, height : 40, borderRadius : 2,
+            backgroundColor : themeLightest, marginleft : 5, flex : 1, marginHorizontal : 5,
+            justifyContent : 'space-around', alignItems : 'center',}}>
+                <Text style = {{color : alttheme, fontWeight :'bold', fontSize : 16}}>
+                    Invite your friends
+                </Text>
+            </TouchableOpacity>
             <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>Explore</Text>
             <View style = {{flexDirection : 'row', marginHorizontal : Dimensions.get('screen').width*0.01 , flexWrap : 'wrap' , }}>
                 
@@ -784,38 +828,15 @@ const followUser = (id,name, index) => {
             
         </ScrollView> 
         <TouchableOpacity 
-            onPress = {()=>navigation.navigate("AddPost" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
-            style = {{width: 50 , height : 50 , 
-            backgroundColor : colorsArray[randomNo+1], 
-            borderRadius : 60 , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , right : 20  }}>
+            onPress = {()=>navigation.navigate("AddReview" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
+            style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
+            backgroundColor : alttheme
+            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 10 , left : Dimensions.get('screen').width*.1  }}>
                 <View>
-                    <AntDesign name = "plus" size = {40} color = "white" />
+                    <Text style = {{color : 'white', fontWeight : 'bold'}}>POST REVIEW AND EARN COINS</Text>
                 </View>
         </TouchableOpacity>
-        <View 
-            style = {{width: width, height : 40,
-            backgroundColor : themeLightest, 
-            justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
-                <View style = {{flexDirection : 'row'}}>
-                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 15,marginRight : 5 , fontWeight : 'bold' }}>Home</Text>
-                    </View>
-                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Switch
-                            trackColor={{ true: theme , false: "white" }}
-                            thumbColor={theme}
-                            onValueChange={()=>{
-                                Amplitude.logEventAsync("HOME FEED TOGGLE")
-                                navigation.navigate("Home1",{body : userInfo, userSummary : userSummary})
-                                }}
-                            value={false}
-                        />
-                    </View>
-                    <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 15,marginLeft : 5}}>Feed</Text>
-                    </View>
-                </View>
-        </View>
+        
     </View>
         : <LoadingPage />
     )

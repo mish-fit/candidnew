@@ -324,7 +324,7 @@ const ByCategory = () => {
                 onScroll = {handleScroll}
                 showsVerticalScrollIndicator = {false}
             />
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
             style = {{width: 60 , height : 60 , 
             backgroundColor : colorsArray[randomNo+1], 
@@ -332,7 +332,7 @@ const ByCategory = () => {
                 <View>
                     <AntDesign name = "plus" size = {40} color = "white" />
                 </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }

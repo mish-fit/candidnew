@@ -46,7 +46,7 @@ const AddProduct = () => {
         "context_name": "",
         "product_id": 0,
         "product_name": "",
-        "access_control": "Public",
+        "title": "Public",
         "feed_image": "",
         "buy_url": "www.amazon.in",
         "comment": "",

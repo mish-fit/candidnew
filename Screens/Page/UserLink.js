@@ -180,19 +180,19 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         <Text style = {{fontSize : 12, fontStyle : 'italic'}}>{item.context_name}</Text>
                     </View>
                 </View>
-                <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
-                    <Image source = {{uri : item.feed_image}} 
+                { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
+                   <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
-                    {item.rating > 3 ? <TouchableOpacity 
+                   <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
                     style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> : null}
+                    </TouchableOpacity> 
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
@@ -203,7 +203,25 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         count = {5}
                         unSelectedColor = "transparent"
                         />
+                </View> :  
+                <View style = {{flexDirection : 'row' , }}>
+                    <AirbnbRating
+                        ratingContainerStyle = {{width : Dimensions.get('screen').width * 0.7, backgroundColor : 'transparent', flex : 1}}
+                        defaultRating = {item.rating}
+                        readOnly = {true}
+                        size={15}
+                        showRating = {false}
+                        isDisabled = {true}
+                        count = {5}
+                        unSelectedColor = "transparent"
+                        />
+                    <TouchableOpacity 
+                    onPress = {()=>buyItem(item.buy_url)}
+                    style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , borderRadius : 20}}>
+                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, flex : 1}}>BUY</Text>
+                    </TouchableOpacity> 
                 </View>
+                }
                 <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
                     <TouchableOpacity 
                     disabled={dislike}
@@ -688,7 +706,7 @@ const UserLink = () => {
                 showsVerticalScrollIndicator = {false}
                 ListHeaderComponent = {HeaderComponent}
             />
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
             style = {{width: 60 , height : 60 , 
             backgroundColor : colorsArray[randomNo+1], 
@@ -696,7 +714,7 @@ const UserLink = () => {
                 <View>
                     <AntDesign name = "plus" size = {40} color = "white" />
                 </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             {/* <View 
             style = {{width: width, height : 40,
             backgroundColor : themeLightest, 

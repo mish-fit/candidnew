@@ -605,7 +605,7 @@ const MyDetails = () => {
                     <AntDesign name = "home" size = {30} color = 'white' />
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
             style = {{width: 50 , height : 50 , 
             backgroundColor : colorsArray[randomNo+1], 
@@ -613,7 +613,7 @@ const MyDetails = () => {
                 <View>
                     <AntDesign name = "plus" size = {30} color = "white" />
                 </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }
