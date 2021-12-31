@@ -535,8 +535,8 @@ const heroBannerClick = (link) => {
     if(link.slice(0,4) == "http") {
         WebBrowser.openBrowserAsync(link);
     } 
-    else if (link == "AddPost") {
-        navigation.navigate("AddPost" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})
+    else if (link == "AddReview") {
+        navigation.navigate("AddReview" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})
     } else if (link.slice(0,9) == "Category-") {
         navigation.navigate("CategoryAlt", {categoryCarousel : categoryCarousel, master_category_name : link.slice(9,).toString() , userInfo : userInfo, userSummary : userSummary})
     } else if (link == "HowToEarn") {
