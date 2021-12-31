@@ -537,7 +537,7 @@ const MyDetails = () => {
                 </View>
                 <View style = {{justifyContent : 'center', alignItems :'center'}}>
                     <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No Posts yet</Text>
-                    <TouchableOpacity onPress = {()=>navigation.navigate("AddPost" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
+                    <TouchableOpacity onPress = {()=>navigation.navigate("AddReview" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
                         <Text style = {{marginTop : 10 , color : themeLight}}>Start Criticing</Text>
                     </TouchableOpacity>
                 </View>

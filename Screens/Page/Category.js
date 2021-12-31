@@ -587,6 +587,26 @@ const Category = () => {
         }
     };
 
+    const EmptyComponent = () => {
+        return(
+            <View style = {{marginTop : 10 }}>
+                <View style = {{justifyContent : 'center'}}>
+                    <LottieView
+                    progress = {progress}
+                    style={{width : Dimensions.get('screen').width*0.4 , height : Dimensions.get('screen').width*0.4}}
+                    source={require('../../assets/animation/astronaut.json')}
+                    autoPlay
+                    />
+                </View>
+                <View style = {{justifyContent : 'center', alignItems :'center'}}>
+                    <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No Posts on this category yet</Text>
+                    <TouchableOpacity onPress = {()=>navigation.navigate("AddReview" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
+                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Criticing</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
 
     return (
         <View style = {{ backgroundColor : 'white', flex : 1,}}>
@@ -707,6 +727,7 @@ const Category = () => {
                 onScroll = {handleScroll}
                 showsVerticalScrollIndicator = {false}
                 ListHeaderComponent = {HeaderComponent}
+                ListEmptyComponent={EmptyComponent}
             />
             {/* <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}

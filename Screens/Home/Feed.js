@@ -685,7 +685,7 @@ const Feed = () => {
             backgroundColor : alttheme
             , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 10 , left : Dimensions.get('screen').width*.1   }}>
                 <View>
-                    <Text style = {{color : 'white', fontWeight : 'bold'}}>ADD IMAGE REVIEW AND EARN COINS</Text>
+                    <Text style = {{color : 'white', fontWeight : 'bold'}}>POST REVIEW AND EARN COINS</Text>
                 </View>
         </TouchableOpacity>
             

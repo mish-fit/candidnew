@@ -508,6 +508,24 @@ const UserLink = () => {
         )
     }
 
+    const EmptyComponent = () => {
+        return(
+            <View style = {{marginTop : 10 }}>
+                <View style = {{justifyContent : 'center'}}>
+                    <LottieView
+                    progress = {progress}
+                    style={{width : Dimensions.get('screen').width*0.4 , height : Dimensions.get('screen').width*0.4}}
+                    source={require('../../assets/animation/astronaut.json')}
+                    autoPlay
+                    />
+                </View>
+                <View style = {{justifyContent : 'center', alignItems :'center'}}>
+                    <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No Posts yet</Text>
+                </View>
+            </View>
+        )
+    }
+
 
     
     const followUser = () => {
@@ -708,6 +726,7 @@ const UserLink = () => {
                 onScroll = {handleScroll}
                 showsVerticalScrollIndicator = {false}
                 ListHeaderComponent = {HeaderComponent}
+                ListEmptyComponent={EmptyComponent}
             />
             {/* <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
