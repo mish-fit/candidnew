@@ -2,7 +2,7 @@ import React from 'react'
 import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView, Pressable, ImageBackground, ToastAndroid, Share } from 'react-native'
 import { alttheme, background, borderColor, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
-import {AntDesign, Fontisto} from 'react-native-vector-icons';
+import {AntDesign, Fontisto, FontAwesome5} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation, useRoute , useIsFocused} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { GiftComponent, RewardsComponent } from '../Exports/Components';
@@ -27,7 +27,11 @@ import  Modal  from 'react-native-modal'
 import Swiper from 'react-native-swiper'
 import { LoadingPage } from '../Exports/Pages';
 import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
-import { borderRadius } from 'styled-system';
+import Clipboard from '@react-native-clipboard/clipboard';
+
+
+
+
 const urlRegex = require('url-regex');
 
 try {
@@ -687,6 +691,8 @@ const share = async () => {
                     <TouchableOpacity
                         style = {{marginLeft : 20, flex : 1 }}
                         onPress = {()=>{
+                            Clipboard.setString(userInfo.coupon)
+                            ToastAndroid.show("Your coupon code : " + userInfo.coupon + " is copied", ToastAndroid.SHORT)
                             Amplitude.logEventAsync("Clicked on My Details on Home")
                             navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
                             }
@@ -788,6 +794,16 @@ const share = async () => {
                     <Text style = {{color : alttheme}}>Start following critics you like </Text>
                 </View>
             }
+            <TouchableOpacity 
+            onPress = {share}
+            style = {{width: width-10, height : 40, borderRadius : 2,
+            backgroundColor : themeLightest, marginleft : 5, flex : 1, marginHorizontal : 5, justifyContent : 'center',
+            alignItems : 'center', flexDirection : 'row'}}>
+                <FontAwesome5 name = "user-friends" size = {15} color = {alttheme} />
+                <Text style = {{color : alttheme, fontWeight :'bold', fontSize : 16 , marginLeft : 10}}>
+                    Invite your friends
+                </Text>
+            </TouchableOpacity>
             <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>Top Critics</Text>
             {peopleYouCanFollow.length ? 
                 <View style = {{marginRight : 10 , backgroundColor : "#FFF", marginBottom :5 }}>
@@ -801,15 +817,7 @@ const share = async () => {
                 </View>: null
             }
             </View>
-            <TouchableOpacity 
-            onPress = {share}
-            style = {{width: width-10, height : 40, borderRadius : 2,
-            backgroundColor : themeLightest, marginleft : 5, flex : 1, marginHorizontal : 5,
-            justifyContent : 'space-around', alignItems : 'center',}}>
-                <Text style = {{color : alttheme, fontWeight :'bold', fontSize : 16}}>
-                    Invite your friends
-                </Text>
-            </TouchableOpacity>
+            
             <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>Explore</Text>
             <View style = {{flexDirection : 'row', marginHorizontal : Dimensions.get('screen').width*0.01 , flexWrap : 'wrap' , }}>
                 

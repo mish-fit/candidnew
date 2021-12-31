@@ -26,7 +26,7 @@ const AddReview = () => {
     const route = useRoute()
 
     const [source,setSource] = React.useState(true)
-    const [buyURL, setBuyURL] = React.useState("www.amazon.in")
+    const [buyURL, setBuyURL] = React.useState("https://www.amazon.in")
 
     const progress = React.useRef(new Animated.Value(0)).current
 
@@ -87,7 +87,7 @@ const AddReview = () => {
         "product_name": "",
         "title": "",
         "feed_image": "",
-        "buy_url": "www.amazon.in",
+        "buy_url": "https://https://www.amazon.in",
         "comment": "",
         "coupon" : ""
     })
@@ -121,18 +121,16 @@ const AddReview = () => {
         console.log("body in add product select search", name , id)
         Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : name })
         setProductSelected(true)
-
+        setSearchTextProduct(name)
         if(id > 0) {
             setBody((body) => ({...body, product_name : name, product_id : id}))
             axios.get(URL + "/search/category/byproduct", {params:{product_id : id }} , {timeout : 3000})
             .then(res => res.data).then(function(responseData) {
-               console.log("search category by product",responseData)
-               setSearchLoading(false)
+                console.log("search category by product",responseData)
+                setSearchLoading(false)
                 if(responseData.length) { 
-                    setSearchTextProduct(responseData[0].product_name)
                     onClickSearchItemChildCategory(responseData[0].category_name,responseData[0].category_id)
-                } else {
-                    setSearchTextProduct(name)
+                } else { 
                     setBody({...body, product_name : name, product_id : id})
                 }
             })

@@ -15,7 +15,7 @@ import * as Amplitude from 'expo-analytics-amplitude';
 const AddProduct = () => {
 
     const [source,setSource] = React.useState(true)
-    const [buyURL, setBuyURL] = React.useState("www.amazon.in")
+    const [buyURL, setBuyURL] = React.useState("https://www.amazon.in")
 
     const progress = React.useRef(new Animated.Value(0)).current
     const navigation = useNavigation()
@@ -48,7 +48,7 @@ const AddProduct = () => {
         "product_name": "",
         "title": "Public",
         "feed_image": "",
-        "buy_url": "www.amazon.in",
+        "buy_url": "https://www.amazon.in",
         "comment": "",
         "coupon" : ""
     })

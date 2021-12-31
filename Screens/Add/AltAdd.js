@@ -24,7 +24,7 @@ const AltAdd = () => {
     const route = useRoute()
 
     const [source,setSource] = React.useState(true)
-    const [buyURL, setBuyURL] = React.useState("www.amazon.in")
+    const [buyURL, setBuyURL] = React.useState("https://www.amazon.in")
 
     const progress = React.useRef(new Animated.Value(0)).current
 
@@ -68,7 +68,7 @@ const AltAdd = () => {
         "product_name": "",
         "title": "",
         "feed_image": "",
-        "buy_url": "www.amazon.in",
+        "buy_url": "https://www.amazon.in",
         "comment": "",
         "coupon" : ""
     })

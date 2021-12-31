@@ -131,7 +131,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             "user_name": userInfo.user_name,
             "activity_like": like,
             "activity_dislike": dislike,
-            "activity_buy": buys+1
+            "activity_buy": 1
         }
 
         axios({
@@ -140,7 +140,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             data: body
           }, {timeout : 5000})
         .then(res => {
-        //    console.log(res)
+           console.log(res)
         })
         .catch((e) => console.log(e))
 
