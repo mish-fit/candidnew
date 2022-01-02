@@ -19,6 +19,7 @@ import { width } from '../Exports/Constants';
 import {Avatar} from 'react-native-paper'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
+import * as firebase from "firebase";
 
 const FeedItemComponent = ({item,id, userInfo}) => {
     const [randomNo, userId] = React.useContext(RandomContext)
@@ -417,40 +418,46 @@ const UserLink = () => {
             useNativeDriver : true
               },).start()
 
-        
+            firebase.auth().onAuthStateChanged(user => {
+            if (user != null) {
+                axios.get(URL + "/user/info",{params:{user_id : user.phoneNumber.slice(1,13)}} , {timeout : 5000})
+                    .then(res => res.data).then(async function(responseData) {
+                        console.log("info ", responseData)
+                        if(responseData.length && responseData[0].user_name) {
+                            setUserInfo(responseData[0])
+                            setUserName(responseData[0].user_name)
+                            axios.get(URL + "/web/userlink",{params:{user_name : followingUserName}} , {timeout : 5000})
+                            .then(res => res.data).then(function(responseData) {
+                                console.log("user link ", responseData)
+                                setFollowingUserId(responseData[0].id)
+                            })
+                            .catch(function(error) {
+                                console.log(error)
+                            });
+                
+                            axios.get(URL + "/web/user",{params:{
+                                user_name : followingUserName}} , {timeout : 5000})
+                            .then(res => res.data).then(function(responseData) {
+                                console.log("Web ", responseData)
+                                    setFeedData(responseData)
+                                })
+                            .catch(function(error) {
+                                    console.log(error)
+                            });
+                        }
+                        else {
+                            navigation.navigate("Coupon",{phoneNumber : user.phoneNumber})
+                        }
+                    }).catch(function(error) {
+            
+                    });
+                } else {
+                    navigation.navigate("Auth")
+                }
+            })
        
 
-        if(dataRetrieve) {
-           
-            axios.get(URL + "/user/info",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
-                console.log(responseData)
-                setUserInfo(responseData[0])
-                setUserName(responseData[0].user_name)
-            })
-            .catch(function(error) {
-                console.log(error)
-            });
 
-            axios.get(URL + "/web/userlink",{params:{user_name : followingUserName}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
-                console.log(responseData)
-                setFollowingUserId(responseData[0].id)
-            })
-            .catch(function(error) {
-                console.log(error)
-            });
-
-            axios.get(URL + "/web/user",{params:{
-                user_name : followingUserName}} , {timeout : 5000})
-                .then(res => res.data).then(function(responseData) {
-                    console.log(responseData)
-                    setFeedData(responseData)
-                })
-                .catch(function(error) {
-                    console.log(error)
-                });
-        } 
 
        
 
@@ -475,7 +482,7 @@ const UserLink = () => {
     const filterCategoryFunc = () => {
         axios.get(URL + "/all/byuser/categories",{params:{user_id : followingUserId}} , {timeout : 5000})
         .then(res => res.data).then(function(responseData) {
-            console.log("FeedProduct",responseData)
+        //    console.log("FeedProduct",responseData)
             setContexts(responseData)
             setFilterContextModalVisible(!filterContextModalVisible)
         })
@@ -640,37 +647,7 @@ const UserLink = () => {
                             fontStyle : 'italic' }}>{isFollowing ? "Following" : "Follow"}</Text>
                     </Pressable>
             </Animated.View>
-            {/* <Modal 
-                isVisible={filterContextModalVisible}
-                deviceWidth={Dimensions.get('screen').width}
-                deviceHeight={Dimensions.get('screen').height}
-                onBackdropPress={onContextModalClose}
-                onSwipeComplete={onContextModalClose}
-                swipeDirection="left"
-                style = {{marginHorizontal : 20 , marginVertical : 40}}
-                >
-                <View style = {{flexDirection : 'row' , flexWrap : 'wrap' , }}>
-                {contexts.map((item,index)=>{
-                    return(
-                    contextsChecked[index]  == true ?
-                            <Pressable 
-                            android_ripple = {{color : 'black'}}
-                            onPress = {()=> contextCheckFunc(index, item.category_id ,false)}
-                            style = {{backgroundColor : 'red' , flexDirection : 'row' , borderRadius : 20 , padding : 10 , alignItems : 'center', margin : 10 }}>
-                                <Text style = {{color : 'white', marginRight : 10 }}>{item.category_name}</Text>
-                                <AntDesign name = "check" size = {15} color = 'white' />
-                            </Pressable>:
-                            <Pressable 
-                            onPress = {()=> contextCheckFunc(index, item.category_id, true)}
-                            android_ripple = {{color : 'red'}}
-                            style = {{backgroundColor : 'white', flexDirection : 'row' , borderRadius : 20 , borderWidth : 1, borderColor : 'green', padding : 10 , margin : 10 }}>
-                                <Text style = {{color : 'blue' , marginRight : 10}}>{item.category_name}</Text>
-                                <AntDesign name = "plus" size = {15} color = 'red' />
-                            </Pressable>
-                )                  
-                })}
-                </View>
-            </Modal> */}
+           
             
             <Modal 
                 isVisible={filterContextModalVisible}
@@ -728,36 +705,7 @@ const UserLink = () => {
                 ListHeaderComponent = {HeaderComponent}
                 ListEmptyComponent={EmptyComponent}
             />
-            {/* <TouchableOpacity 
-            onPress = {()=>navigation.navigate("AddPost")}
-            style = {{width: 60 , height : 60 , 
-            backgroundColor : colorsArray[randomNo+1], 
-            borderRadius : 60 , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , right : 20  }}>
-                <View>
-                    <AntDesign name = "plus" size = {40} color = "white" />
-                </View>
-            </TouchableOpacity> */}
-            {/* <View 
-            style = {{width: width, height : 40,
-            backgroundColor : themeLightest, 
-            justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
-                <View style = {{flexDirection : 'row'}}>
-                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 18,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>Summary</Text>
-                    </View>
-                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Switch
-                            trackColor={{ true: theme , false: "white" }}
-                            thumbColor={!toggled ? theme : 'white'}
-                            onValueChange={()=>setToggled(!toggled)}
-                            value={toggled}
-                        />
-                    </View>
-                    <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 18,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Feed</Text>
-                    </View>
-                </View>
-            </View> */}
+        
         </View>
     )
 }

@@ -15,16 +15,17 @@ import * as Linking from 'expo-linking';
 import { firebaseConfig, dataRetrieve, URL } from './Screens/Exports/Config';
 import { LoadingPage } from './Screens/Exports/Pages';
 import axios from 'axios'
+import PushController from './PushController'
 
 // import codePush from 'react-native-code-push';
 
-import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
+// import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import * as Amplitude from 'expo-analytics-amplitude';
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
 }
 catch {
-    console.log("No Amplitude Tracking")
+  //  console.log("No Amplitude Tracking")
 }
 
 try {
@@ -140,6 +141,7 @@ const App = () => {
         <LoadingPage />
       </View>
     )}
+      <PushController />
     </View>
   );
 }

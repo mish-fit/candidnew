@@ -46,13 +46,13 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
         return(
             <Animated.View style={{borderWidth : 0, flex : 1,  }  , {transform : [{scale}]}}>
                 <TouchableOpacity style = {{borderWidth : 0 , flex : 1, marginRight : 10,}} onPress = {() => {itemClick(item)}}>
-                    <View style = {{flex: 1  ,height : 60 , width : 60, }}>
+                    <View style = {{flex: 1  ,height : 60 , width : 60, justifyContent : 'center', alignItems : 'center'}}>
                         {item.user_profile_image && item.user_profile_image != "" ? 
                         <Image source = {{uri : item.user_profile_image}} 
-                            style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 60,}} />
+                            style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 20, height : 60 , width : 60}} />
                         : <Avatar.Image style = {{ }}
                         source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
-                        size={ITEM_SIZE-40}/> }
+                        size={ITEM_SIZE}/> }
                     </View>
                     <View style = {{backgroundColor : background , height : 30 ,width : ITEM_SIZE, }}>
                         <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.user_name.length > 20 ? item.user_name.substring(0,20) + "..." : item.user_name}</Text>
@@ -89,7 +89,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
     const scrollX = React.useRef(new Animated.Value(0)).current
    
     React.useEffect(() => {
-        console.log("Following",isFollowing)
+    //    console.log("Following",isFollowing)
     },[])
 
     const ITEM_SIZE = 100
@@ -222,10 +222,10 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
     return(
         <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
             <View style = {{marginTop : 5 ,marginLeft : 10 ,flexDirection : 'row', justifyContent : 'space-between'}}>
-                <View style = {{marginTop : 5 ,marginLeft : 5 , marginRight : 15,flexDirection : 'row', flexWrap : 'wrap'}}>
+                <View style = {{marginTop : 5 ,marginLeft : 5 , marginRight : 15,flexDirection : 'row', flexWrap : 'wrap', flex : 1}}>
                     <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
                 </View>
-                <View style = {{padding : 15, marginRight : 20, }}>
+                <View style = {{padding : 15, marginRight : 0}}>
                 <Menu style = {{}}>
                     <MenuTrigger>
                         <Entypo name = "dots-three-vertical" size = {15} color = '#AAA'/>
@@ -249,32 +249,49 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
                     <Text style = {{fontSize : 12, fontStyle : 'italic'}}>{item.context_name}</Text>
                 </View>
             </View>
-            <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
-                <Image source = {{uri : item.feed_image}} 
-                    style = {{
-                        width : Dimensions.get('screen').width * 0.92,
-                        height: Dimensions.get('screen').width * 0.92,
-                        borderRadius : 40, 
-                    }} 
-                />
-                <TouchableOpacity 
-                onPress = {()=>buyItem(item.buy_url)}
-                style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
-                    <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                </TouchableOpacity>
-                <View style = {{position : 'absolute', top : 10 , width : Dimensions.get('screen').width, backgroundColor : 'transparent',justifyContent : 'center', alignItems : 'center'}}>
+            { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? 
+                <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
+                   <Image source = {{uri : item.feed_image}} 
+                        style = {{
+                            width : Dimensions.get('screen').width * 0.92,
+                            height: Dimensions.get('screen').width * 0.92,
+                            borderRadius : 40, 
+                        }} 
+                    />
+                   <TouchableOpacity 
+                    onPress = {()=>buyItem(item.buy_url)}
+                    style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
+                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
+                    </TouchableOpacity> 
                     <AirbnbRating
-                            ratingContainerStyle = {{backgroundColor : 'transparent', flex : 1, marginHorizontal : 20}}
-                            defaultRating = {item.rating}
-                            readOnly = {true}
-                            size={30}
-                            showRating = {false}
-                            isDisabled = {true}
-                            count = {5}
-                            unSelectedColor = "transparent"
-                            />
+                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
+                        defaultRating = {item.rating}
+                        readOnly = {true}
+                        size={15}
+                        showRating = {false}
+                        isDisabled = {true}
+                        count = {5}
+                        unSelectedColor = "transparent"
+                        />
+                </View> :  
+                <View style = {{flexDirection : 'row' , }}>
+                    <AirbnbRating
+                        ratingContainerStyle = {{width : Dimensions.get('screen').width * 0.7, backgroundColor : 'transparent', flex : 1}}
+                        defaultRating = {item.rating}
+                        readOnly = {true}
+                        size={15}
+                        showRating = {false}
+                        isDisabled = {true}
+                        count = {5}
+                        unSelectedColor = "transparent"
+                        />
+                    <TouchableOpacity 
+                    onPress = {()=>buyItem(item.buy_url)}
+                    style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , borderRadius : 20}}>
+                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, flex : 1}}>BUY</Text>
+                    </TouchableOpacity> 
                 </View>
-            </View>  
+            }
             <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
                 <Text style = {{fontWeight : 'bold'}}>{item.title}</Text>
             </View>
@@ -351,7 +368,7 @@ const MyDetails = () => {
 
                axios.get(URL + "/user/myfollowers",{params:{user_id :userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log("MY FOLLOWERS",responseData)
+            //    console.log("MY FOLLOWERS",responseData)
                 setMyFollowers(responseData)
             })
             .catch(function(error) {
@@ -384,7 +401,7 @@ const MyDetails = () => {
     },[])
 
     const share = async () => {
-        console.log(userInfo)
+     //   console.log(userInfo)
         Amplitude.logEventWithPropertiesAsync('SHARE PROFILE', {userName : userInfo.user_name })
         try {
             const result = await Share.share({
@@ -581,7 +598,7 @@ const MyDetails = () => {
             data: body
           }, {timeout : 5000})
         .then(res => {
-            console.log(res)
+        //    console.log(res)
         })
         .catch((e) => console.log(e))
     }

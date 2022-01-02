@@ -195,7 +195,8 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         <Text style = {{fontSize : 12, fontStyle : 'italic'}}>{item.context_name}</Text>
                     </View>
                 </View>
-                { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
+                { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? 
+                <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
                    <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,

@@ -35,7 +35,7 @@ const AddCategory = () => {
     const [searchLoading,setSearchLoading] = React.useState(false)
 
     React.useEffect(()=>{
-        console.log("Body in add category use effect", body , " product id and product name", productId, productName)
+     //   console.log("Body in add category use effect", body , " product id and product name", productId, productName)
         Amplitude.logEventAsync('ADD CATEGORY')
    //     setBody({...body, product_id : productId, product_name : productName})
         Animated.timing(progress, {
@@ -47,7 +47,7 @@ const AddCategory = () => {
 
         axios.get(URL + "/search/category/byproduct", {params:{product_id : productId }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-           console.log("search category by product",responseData)
+      //     console.log("search category by product",responseData)
             setSearchLoading(false)
             if(responseData.length) {
                 setSearchTextProduct(responseData[0].category_name)

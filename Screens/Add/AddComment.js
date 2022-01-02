@@ -34,15 +34,15 @@ const AddComment = () => {
 
 
     React.useEffect(()=>{
-        console.log(route?.params)
+      //  console.log(route?.params)
         Amplitude.logEventAsync('ADD COMMENT')
-        console.log("body in add comment screen", body)
+     //   console.log("body in add comment screen", body)
         setFullBody({...body, context_id : contextId, product_id : productId, context_name : contextExists.context_name , product_name : productExists.product_name})
     },[])
 
     const submit = () => {
         setSubmitted(true)
-        console.log('submit full body', fullBody)
+    //    console.log('submit full body', fullBody)
         const addProductImageBody = {
             "product_id" : fullBody.product_id,
             "product_image" : fullBody.feed_image
@@ -85,7 +85,7 @@ const AddComment = () => {
             data: addPostBody
         }, {timeout : 5000})
         .then(res => {
-                console.log(res)
+             //   console.log(res)
                 ToastAndroid.show("Wohoo!! It's posted. Share it on your social pages and start earning coins.", ToastAndroid.SHORT)
                 navigation.navigate("PostShare", {body : addPostBody})
             })

@@ -6,8 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 
 import { authContext } from "../Exports/Context";
 
-import SMSUserConsent from 'react-native-sms-user-consent';
-import { useSmsUserConsent } from '@eabdullazyanov/react-native-sms-user-consent';
+// import SMSUserConsent from 'react-native-sms-user-consent';
+// import { useSmsUserConsent } from '@eabdullazyanov/react-native-sms-user-consent';
 
 import {width , height } from '../Exports/Constants'
 import { theme } from "../Exports/Colors";
@@ -55,19 +55,20 @@ export default function Login() {
   
   const [message,setMessage] = React.useState("")
 
-  const retrievedCode = useSmsUserConsent();
+  // const retrievedCode = useSmsUserConsent();
 
   React.useEffect(() => {
     Amplitude.logEventAsync('LOGIN SCREEN')
   //  console.log("Code",retrievedCode)
-    if (retrievedCode) {
-      setCode(retrievedCode);
-      setOTPNumber(retrievedCode)
-    }
-    if(code) {
-      onSubmit()
-    }    
-  }, [retrievedCode, code]);
+    // if (retrievedCode) {
+    //   setCode(retrievedCode);
+    //   setOTPNumber(retrievedCode)
+    // }
+    // if(code) {
+    //   onSubmit()
+    // }    
+  // }, [retrievedCode, code]);
+}, []);
   
   React.useEffect(()=>{
    
@@ -79,7 +80,7 @@ export default function Login() {
       else setSecs(s => s - 1)
     }, 1000)
     return () => {
-        SMSUserConsent.removeOTPListener()
+        // SMSUserConsent.removeOTPListener()
         clearInterval(timerId);}
   },[secs])
 
@@ -112,7 +113,7 @@ export default function Login() {
 
 
   const onPressLogin = async () => {
-    getSMSMessage()
+    // getSMSMessage()
     setLoginClick(true)
     try {
     const phoneProvider = new firebase.auth.PhoneAuthProvider();
@@ -147,15 +148,15 @@ const onSubmit = async () => {
     }
   }
 
-const getSMSMessage = async () => {
-    try {
+// const getSMSMessage = async () => {
+//     try {
    
-      const message = await SMSUserConsent.listenOTP()
-    //  console.log("message",message.receivedOtpMessage , retrievedCode)
-    } catch (e) {
-    //  console.log("message",e)
-    }
-}
+//       const message = await SMSUserConsent.listenOTP()
+//     //  console.log("message",message.receivedOtpMessage , retrievedCode)
+//     } catch (e) {
+//     //  console.log("message",e)
+//     }
+// }
 
 
   return (

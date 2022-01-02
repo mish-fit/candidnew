@@ -13,7 +13,7 @@ import {homeFeed} from "../FakeData/HomeFeed"
 import Contacts from 'react-native-contacts';
 import {Avatar} from 'react-native-paper'
 import * as firebase from "firebase";
-import * as Notifications from 'expo-notifications'
+
 import * as Permissions from 'expo-permissions'
 import { FlatList } from 'react-native-gesture-handler';
 import axios from 'axios';

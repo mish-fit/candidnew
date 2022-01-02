@@ -505,12 +505,12 @@ const CategoryAlt = () => {
 
     const categoryApply = () => {
         
-        console.log(categoriesRequest)
+    //    console.log(categoriesRequest)
         if(categoriesRequest.length) 
         {
             axios.get(URL + "/feedsummary/bycategory",{params:{category_id : JSON.stringify(categoriesRequest) , user_id : userId.slice(1,13) }} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-               console.log("feedsummary category",responseData[0])
+    //           console.log("feedsummary category",responseData[0])
                 setFeedSummary(responseData)
                 setFilterCategoryModalVisible(false)
             })
@@ -520,7 +520,7 @@ const CategoryAlt = () => {
 
             axios.get(URL + "/feed/category",{params:{category_id : JSON.stringify(categoriesRequest), page : 0 , user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-               console.log("feed category",responseData[0])
+    //           console.log("feed category",responseData[0])
                 setFeedData(responseData)
                 setFilterCategoryModalVisible(false)
             })

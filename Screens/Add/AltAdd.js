@@ -75,7 +75,7 @@ const AltAdd = () => {
 
     React.useEffect(()=>{
         
-        console.log("body in add product use effect", body)
+     //   console.log("body in add product use effect", body)
         Amplitude.logEventAsync('ADD PRODUCT')
         Animated.timing(progress, {
             toValue: 1,
@@ -86,7 +86,7 @@ const AltAdd = () => {
 
         axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-            console.log(responseData)
+      //      console.log(responseData)
             if (url && url != "") {
                 setBody({...body, user_name : responseData[0].user_name , coupon : responseData[0].coupon , user_image : responseData[0].user_profile_image, buy_url : url})
             } else {
@@ -99,14 +99,14 @@ const AltAdd = () => {
     },[])
 
     const onClickSearchItemChild = (product_name, product_id) => {
-        console.log("body in add product select search", body)
+   //     console.log("body in add product select search", body)
         Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : product_name })
         setBody({...body, product_name : product_name, product_id : product_id})
         setSearchTextProduct(product_name)
         setProductSelected(true)
     }
     const searchProduct = (text) => {
-        console.log(productSelected)
+    //    console.log(productSelected)
         if(text.length > 1) {
             setPlusDisable(false)
         }
@@ -114,7 +114,7 @@ const AltAdd = () => {
         setSearchLoading(true)
         axios.get(URL + "/search/product", {params:{product_text : text }} , {timeout : 3000})
           .then(res => res.data).then(function(responseData) {
-              console.log(responseData)
+     //         console.log(responseData)
               setSearchLoading(false)
               setSearchArray(responseData)
         })
@@ -140,7 +140,7 @@ const AltAdd = () => {
           quality: 1,
         });
 
-        console.log(result.uri)
+     //   console.log(result.uri)
     
         if (!result.cancelled) {
             setImageAdded(true)

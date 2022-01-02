@@ -57,7 +57,7 @@ const AddProduct = () => {
         if (buy_url) {
             setBody({...body, buy_url : buy_url})
         }
-        console.log("body in add product use effect", body)
+      //  console.log("body in add product use effect", body)
         Amplitude.logEventAsync('ADD PRODUCT')
         Animated.timing(progress, {
             toValue: 1,
@@ -90,7 +90,7 @@ const AddProduct = () => {
     },[])
 
     const onClickSearchItemChild = (product_name, product_id) => {
-        console.log("body in add product select search", body)
+    //    console.log("body in add product select search", body)
         Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : product_name })
         setSearchTextProduct(product_name)
     //    console.log(product_name)

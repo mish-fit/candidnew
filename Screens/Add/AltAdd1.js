@@ -22,13 +22,13 @@ const AltAdd1 = () => {
     const [submitted,setSubmitted] = React.useState(false)
  
     React.useEffect(()=>{
-        console.log("Body in add category use effect", body , " product id and product name", body.product_id, body.product_name)
+     //   console.log("Body in add category use effect", body , " product id and product name", body.product_id, body.product_name)
         setBody((body)=>({...body, product_id : productId}))
     },[])
 
     const submit = () => {
         setSubmitted(true)
-        console.log("Body",body)
+    //    console.log("Body",body)
 
         axios({
             method: 'post',
@@ -36,7 +36,7 @@ const AltAdd1 = () => {
             data: body
         }, {timeout : 5000})
         .then(res => {
-                console.log(res)
+         //       console.log(res)
                 ToastAndroid.show("Wohoo!! It's posted. Coins will be credited within 48 hours.", ToastAndroid.SHORT)
                 navigation.navigate("PostShare", {body : body})
             })
@@ -68,7 +68,7 @@ const AltAdd1 = () => {
                         <Text style = {{color : alttheme, fontSize : 15}}> ( You can earn coins when someone buy using this list from your post ) </Text>
                     </Text>
                     <TextInput 
-                    placeholder = "Share website link of the product starting with https://. For supporting websites, visit How To Earn section "
+                    placeholder = "Share products to whatsapp and copy and paste website links here starting with https://. For supporting websites, visit How To Earn section "
                     value = {body.buy_url}
                     onChangeText = {(text)=>setBody({...body, buy_url : text})}
                     multiline

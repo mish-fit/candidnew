@@ -423,7 +423,7 @@ const User = () => {
            
             axios.get(URL + "/feedsummary/byuser",{params:{following_user_id : followingUserId, user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log(responseData)
+           //     console.log(responseData)
                 setFeedSummary(responseData)
                 if(responseData.length && responseData[0].isFollowing) {
                     setFollowing(responseData[0].isFollowing)
@@ -440,7 +440,7 @@ const User = () => {
             page : pageNumber,
             user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log(responseData)
+            //    console.log(responseData)
                 setFeedData(responseData)
             })
             .catch(function(error) {
@@ -474,7 +474,7 @@ const User = () => {
     const filterCategoryFunc = () => {
         axios.get(URL + "/all/byuser/categories",{params:{user_id : followingUserId}} , {timeout : 5000})
         .then(res => res.data).then(function(responseData) {
-            console.log("FeedProduct",responseData)
+        //    console.log("FeedProduct",responseData)
             setContexts(responseData)
             setFilterContextModalVisible(!filterContextModalVisible)
         })

@@ -54,7 +54,7 @@ const HowToEarn = () => {
         Amplitude.logEventAsync('HOW TO EARN')     
         axios.get(URL + "/rewards/howtoearn", {timeout : 5000})
         .then(res => res.data).then(function(responseData) {
-            console.log(responseData)
+       //     console.log(responseData)
             setFeedData(responseData)
         })
         .catch(function(error) {

@@ -47,6 +47,8 @@ const AuthStack = ({navigation}) => {
       <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
         <Stack.Screen name="HomeTab" component={HomeStack}  /> 
         <Stack.Screen name="Login" component ={Login} />
+        <Stack.Screen name="Signout" component ={Signout} />
+        <Stack.Screen name="UserLink" component ={UserLink} />
       </Stack.Navigator>
   );
 }

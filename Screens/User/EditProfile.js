@@ -13,7 +13,7 @@ import { useNavigation , useRoute } from '@react-navigation/native';
 
 import { AntDesign, Entypo, EvilIcons, MaterialIcons } from 'react-native-vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import * as Notifications from 'expo-notifications'
+
 import Constants from 'expo-constants';
 import { style } from '../../Styles/ProfileInfo';
 import { URL } from '../Exports/Config';
@@ -72,11 +72,11 @@ const EditProfile = () => {
     useEffect(() => {
       Amplitude.logEventWithPropertiesAsync('EDIT PROFILE',{user_id : userId.slice(1,13) })
         
-        console.log(userId)
+    //    console.log(userId)
        const getUserInfo = () => {
         axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout:5000})
         .then(res => res.data).then(function(responseData) {
-            console.log("USER INFO",responseData)
+     //       console.log("USER INFO",responseData)
             setUserInfo(responseData)
             setUserName(responseData[0].user_name)
             setImage(responseData[0].user_profile_image)
@@ -134,7 +134,7 @@ const EditProfile = () => {
           "twitter_user_name" : twitter,
           "social_handles" : socialHandles
         }
-      console.log("USER BODY",userbody)
+  //    console.log("USER BODY",userbody)
  
       axios({
       method: 'post',
@@ -142,7 +142,7 @@ const EditProfile = () => {
       data: userbody
       })
       .then(res => {
-          console.log(res)
+   //       console.log(res)
        ToastAndroid.show("Your Details are updated", ToastAndroid.LONG)
                   setTimeout(function(){
                   navigation.navigate("Home", {source : "Edit", body : userbody})
@@ -184,7 +184,7 @@ const EditProfile = () => {
       setUserName(text)
       axios.get(URL + "/isexists/username", {params:{user_name : text}} , {timeout:5000})
       .then(res => res.data).then(function(responseData) {
-          console.log("username" , userName , "Check", responseData)
+    //      console.log("username" , userName , "Check", responseData)
           if(responseData.length == 0 && text.length > 4) {
             setUserNameAccepted(true)
           } else {

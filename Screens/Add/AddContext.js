@@ -36,7 +36,7 @@ const AddContext = () => {
     const [plusDisable,setPlusDisable] = React.useState(true)
 
     React.useEffect(()=>{
-        console.log("Body in add context use effect", body , " product id and product name and category id and category name", productId, productName , categoryId , categoryName)
+     //   console.log("Body in add context use effect", body , " product id and product name and category id and category name", productId, productName , categoryId , categoryName)
         Amplitude.logEventAsync('ADD CONTEXT')
         setBody({...body, category_name : categoryName , category_id : categoryId , product_name : productName, product_id : productId})
         Animated.timing(progress, {
@@ -48,7 +48,7 @@ const AddContext = () => {
 
         axios.get(URL + "/search/context", {params:{context_text : "" , category_name : categoryName }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-            console.log("SearchArray",responseData)
+      //      console.log("SearchArray",responseData)
             setSearchLoading(false)
             setSearchArray(responseData)
         })
@@ -62,7 +62,7 @@ const AddContext = () => {
     const onClickSearchItemChild = (name) => {
         Amplitude.logEventWithPropertiesAsync('ADDED NEW CONTEXT', {context_name : name })
         setSearchTextProduct(name)
-        console.log(name)
+      //  console.log(name)
         navigation.navigate("AddImage", {body : body , context_name : name })
     }
 

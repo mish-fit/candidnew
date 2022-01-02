@@ -8,7 +8,7 @@ import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import expo.modules.ReactActivityDelegateWrapper;
-import android.content.Intent;
+// import android.content.Intent;
 
 public class MainActivity extends ReactActivity {
   @Override
@@ -41,11 +41,11 @@ public class MainActivity extends ReactActivity {
     });
   }
 
-  @Override
-  public void onNewIntent(Intent intent) {
-    super.onNewIntent(intent);
-    setIntent(intent); 
-  }
+  // @Override
+  // public void onNewIntent(Intent intent) {
+  //   super.onNewIntent(intent);
+  //   setIntent(intent); 
+  // }
 
 
 

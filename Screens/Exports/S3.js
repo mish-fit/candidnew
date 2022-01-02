@@ -18,13 +18,13 @@ export const s3bucket = new S3({
 
 
 export const uploadImageOnS3 = async (name,uri) => {
-       console.log("Reached S3 function")
+    //   console.log("Reached S3 function")
        let contentType = 'image/jpeg';
        let contentDeposition = 'inline;filename="' + name + '"';
        const base641 = await fs.readAsStringAsync(uri, {encoding : fs.EncodingType.Base64});
        const arrayBuffer = decode(base641)
        s3bucket.createBucket(() => {
-           console.log("Reached create bucket S3 function")
+    //       console.log("Reached create bucket S3 function")
            const params = {
                Bucket: s3BucketName,
                Key: name,
@@ -34,7 +34,7 @@ export const uploadImageOnS3 = async (name,uri) => {
        };
        s3bucket.upload(params, (err, data) => {
            if (err) {
-               console.log(err);
+    //           console.log(err);
            }
            });
        });

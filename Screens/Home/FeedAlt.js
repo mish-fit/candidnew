@@ -26,7 +26,7 @@ import { home } from '../../Styles/Home';
 import  Modal  from 'react-native-modal'
 import Swiper from 'react-native-swiper'
 import { LoadingPage } from '../Exports/Pages';
-import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
+// import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 
@@ -515,7 +515,7 @@ React.useEffect(()=>{
       else setSecs(s => s - 1)
     }, 5000)
     return () => {
-        ReceiveSharingIntent.clearReceivedFiles()
+        // ReceiveSharingIntent.clearReceivedFiles()
         clearInterval(timerId);
         setSecs(5000)
     }
@@ -568,15 +568,15 @@ const onSearchHero = () => {
     });
     }
 
-ReceiveSharingIntent.getReceivedFiles(files => {
-    console.log("received intent", JSON.stringify(files))    
-    if(JSON.stringify(files).match(urlRegex())) {
-        navigation.navigate("AddPost", {buy_url : JSON.stringify(files).match(urlRegex())[0]})
-    }
-},
-(error) =>{
-//  console.log(error);
-});
+// ReceiveSharingIntent.getReceivedFiles(files => {
+//     console.log("received intent", JSON.stringify(files))    
+//     if(JSON.stringify(files).match(urlRegex())) {
+//         navigation.navigate("AddPost", {buy_url : JSON.stringify(files).match(urlRegex())[0]})
+//     }
+// },
+// (error) =>{
+// //  console.log(error);
+// });
 
 const onContextModalClose = () => {
     setModalVisible(false)
@@ -610,7 +610,7 @@ const followUser = (id,name, index) => {
 
 
 const share = async () => {
-    console.log(userInfo)
+  //  console.log(userInfo)
     Amplitude.logEventWithPropertiesAsync('SHARE PROFILE', {userName : userInfo.user_name })
     try {
         const result = await Share.share({

@@ -101,7 +101,7 @@ const ProfileInfo = () => {
         }
         try {
           token = await Notifications.getExpoPushTokenAsync({
-            experienceId : '@kandurisv/taiq'
+            experienceId : '@kandurisv/candidapp'
           })
         }
         catch(e) {
@@ -324,7 +324,7 @@ const ProfileInfo = () => {
           "social_handles" : socialHandles,
           "coupon" : nanoid()
         }
-      console.log("USER BODY",userbody)
+    //  console.log("USER BODY",userbody)
       
      const userPoints = {
       "user_id": phoneNumber.slice(1,13),
@@ -350,8 +350,8 @@ const ProfileInfo = () => {
       "engaged_user_name" : userName
     }
 
-      console.log("USER POINTS",userPoints)
-      console.log("REFEREE POINTS",refereePoints)
+   //   console.log("USER POINTS",userPoints)
+   //   console.log("REFEREE POINTS",refereePoints)
 
       axios({
       method: 'post',
@@ -364,7 +364,7 @@ const ProfileInfo = () => {
           url: URL + '/rewards/earn',
           data: userPoints
           }).then(res=>{
-            console.log(res)
+     //       console.log(res)
           }).catch((e)=>{
             console.log(e)
         })
@@ -375,7 +375,7 @@ const ProfileInfo = () => {
               url: URL + '/rewards/earn',
               data: refereePoints
               }).then(res=>{
-                console.log(res)
+      //          console.log(res)
               }).catch((e)=>{
                 console.log(e)
             })
@@ -424,7 +424,7 @@ const ProfileInfo = () => {
       setUserName(text)
       axios.get(URL + "/isexists/username", {params:{user_name : text}} , {timeout:5000})
       .then(res => res.data).then(function(responseData) {
-          console.log("username" , userName , "Check", responseData)
+    //      console.log("username" , userName , "Check", responseData)
           if(responseData.length == 0 && text.length > 4) {
             setUserNameAccepted(true)
           } else {

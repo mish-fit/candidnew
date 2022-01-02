@@ -80,13 +80,13 @@ const Coupon = () => {
     const couponCodeChange = (text) => {
       var couponValue = text
      // var couponValue = text.toLowerCase().replace(/[^a-zA-Z0-9]/g, "") 
-      console.log(" text ",text , " length " , text.length, " coupon " , coupon , "coupon Value ", couponValue)
+    //  console.log(" text ",text , " length " , text.length, " coupon " , coupon , "coupon Value ", couponValue)
       if(text.length == 6) {
-        console.log("text ",text , " length " , text.length, " coupon " , coupon)
+    //    console.log("text ",text , " length " , text.length, " coupon " , coupon)
         setCoupon(couponValue)
         axios.get(URL + "/isexists/coupon", {params:{coupon : couponValue}} , {timeout:5000})
         .then(res => res.data).then(function(responseData) {
-          console.log("coupon" , text , "Check", responseData)
+     //     console.log("coupon" , text , "Check", responseData)
           if(responseData.length) {
             setUsername(responseData[0].user_name)
             setRefereeId(responseData[0].user_id)

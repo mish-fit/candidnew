@@ -29,9 +29,9 @@ export default function DrawerContent(props) {
         const fetchUser = async () => {
             axios.get(URL + "/user/info" , {params : {user_id : userId.slice(1,13)}}, {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log("user id ", userId)
-                console.log("Name" , userName)
-                console.log("Response" , responseData)
+             //   console.log("user id ", userId)
+            //    console.log("Name" , userName)
+           //     console.log("Response" , responseData)
                 setUserName(responseData[0].user_name)
                 setUserImage(responseData[0].user_profile_image)
                 

@@ -87,14 +87,14 @@ const AddReview = () => {
         "product_name": "",
         "title": "",
         "feed_image": "",
-        "buy_url": "https://https://www.amazon.in",
+        "buy_url": "https://www.amazon.in",
         "comment": "",
         "coupon" : ""
     })
 
     React.useEffect(()=>{
         
-        console.log("body in add product use effect", body)
+      //  console.log("body in add product use effect", body)
         Amplitude.logEventAsync('ADD PRODUCT')
         Animated.timing(progress, {
             toValue: 1,
@@ -105,7 +105,7 @@ const AddReview = () => {
 
         axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-            console.log(responseData)
+        //    console.log(responseData)
             if (url && url != "") {
                 setBody({...body, user_name : responseData[0].user_name , coupon : responseData[0].coupon , user_image : responseData[0].user_profile_image, buy_url : url})
             } else {
@@ -118,7 +118,7 @@ const AddReview = () => {
     },[])
     
     const onClickSearchItemChild = (name, id) => {
-        console.log("body in add product select search", name , id)
+     //   console.log("body in add product select search", name , id)
         Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : name })
         setProductSelected(true)
         setSearchTextProduct(name)
@@ -126,7 +126,7 @@ const AddReview = () => {
             setBody((body) => ({...body, product_name : name, product_id : id}))
             axios.get(URL + "/search/category/byproduct", {params:{product_id : id }} , {timeout : 3000})
             .then(res => res.data).then(function(responseData) {
-                console.log("search category by product",responseData)
+         //       console.log("search category by product",responseData)
                 setSearchLoading(false)
                 if(responseData.length) { 
                     onClickSearchItemChildCategory(responseData[0].category_name,responseData[0].category_id)
@@ -169,7 +169,7 @@ const AddReview = () => {
     }
 
     const searchProduct = (text) => {
-        console.log(productSelected)
+     //   console.log(productSelected)
         if(text.length > 1) {
             setPlusDisable(false)
         }
@@ -189,14 +189,14 @@ const AddReview = () => {
 
     const onClickSearchItemChildCategory = (category_name, category_id ) => {
         if(category_id > 0) {
-            console.log("Category BOdy", body)
+        //    console.log("Category BOdy", body)
             Amplitude.logEventWithPropertiesAsync('ADDED NEW CATEGORY', {category_name : category_name })
             setSearchTextCategory(category_name)
             setCategorySelected(true)
             setBody((body) => ({...body, category_name : category_name , category_id : category_id}))
             axios.get(URL + "/search/context", {params:{context_text : "" , category_name : category_name }} , {timeout : 3000})
             .then(res => res.data).then(function(responseData) {
-                console.log("SearchArray",responseData)
+          //      console.log("SearchArray",responseData)
                 setContextArray(responseData)
             })
             .catch(function(error) {
@@ -230,7 +230,7 @@ const AddReview = () => {
 
     const rating = (rating) => {
             setRatingValue(rating)
-            console.log(body)
+         //   console.log(body)
             setBody({...body, rating : rating})
             setRatingSelected(true)
     }
@@ -247,7 +247,7 @@ const AddReview = () => {
           quality: 1,
         });
 
-        console.log(result.uri)
+     //   console.log(result.uri)
     
         if (!result.cancelled) {
             setImageAdded(true)
@@ -268,7 +268,7 @@ const AddReview = () => {
     }
 
     const next = () => {
-        console.log("NEXT ", body)
+     //   console.log("NEXT ", body)
         if(newProduct && body.category_id > 0 && body.category_name.length > 1 && body.product_name.length > 1) {
             const addNewProductBody = {
                 "category_id": body.category_id,
@@ -281,7 +281,7 @@ const AddReview = () => {
                 data: addNewProductBody
             }, {timeout : 5000})
             .then(res => {
-                console.log("product id new created" , res.data )
+         //       console.log("product id new created" , res.data )
                 navigation.navigate("AltAdd1", {body : body , product_id : res.data})
             })
             .catch((e) => console.log(e))
@@ -294,7 +294,7 @@ const AddReview = () => {
     }
 
     const contextCheckFunc = (index, id,name, type ) => {
-        console.log(body)
+     //   console.log(body)
         if(type) {
             let newArray = []
             newArray[index] = true
@@ -329,7 +329,7 @@ const AddReview = () => {
                     "category_name": body.category_name,
                     "context_name": newContext
                 }
-                console.log("context does not exists", addNewContextBody)
+        //        console.log("context does not exists", addNewContextBody)
                 axios({
                     method: 'post',
                     url: URL + '/add/context',
@@ -338,7 +338,7 @@ const AddReview = () => {
                 .then(res => {
                     let newArray = []
                     newArray[contextArray.length] = true
-                    console.log("context id new created" , res.data )
+         //           console.log("context id new created" , res.data )
                     setBody({...body, context_id : res.data, context_name : newContext})
                     setContextArray([...contextArray, {context_id : res.data, context_name : newContext}])
                     setContextsChecked([...newArray])
