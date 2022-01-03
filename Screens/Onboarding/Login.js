@@ -120,6 +120,7 @@ export default function Login() {
     const verificationId = await phoneProvider.verifyPhoneNumber(phoneNumber,recaptchaVerifier.current);
     setVerificationId(verificationId);
     ToastAndroid.show("Verification code has been sent to your phone",ToastAndroid.SHORT)
+    
     setScreen(true)
     } catch (err) {
        // console.log(err)
@@ -171,7 +172,7 @@ const onSubmit = async () => {
           firebaseConfig={firebaseConfig}
           attemptInvisibleVerification={true}
           title='Prove you are human!'
-          cancelLabel='Close'
+          cancelLabel='x'
         />
       
      
@@ -207,9 +208,9 @@ const onSubmit = async () => {
         </View>
       </View>
       <TouchableOpacity
-        style = {{ marginHorizontal : 20, marginTop : 20 ,  borderRadius : 10 ,  padding : 10, backgroundColor : loginClick ? "#888" : theme, justifyContent : 'center', alignItems : 'center'}}
+        style = {{ marginHorizontal : 20, marginTop : 20 ,  borderRadius : 10 ,  padding : 10, backgroundColor : loginClick || !valid ? "#888" : theme, justifyContent : 'center', alignItems : 'center'}}
         onPress={onPressLogin}
-        disabled={loginClick}
+        disabled={loginClick || !valid}
         >
           <Text style = {{color : 'white'}}>GET OTP</Text>
         </TouchableOpacity>
@@ -252,8 +253,8 @@ const onSubmit = async () => {
       
      
       </View>
-       <TouchableOpacity style = {{ marginHorizontal : 20, marginTop : 20 ,  borderRadius : 10 ,  padding : 10, backgroundColor : otpClick ?"#888" :  theme , justifyContent : 'center', alignItems : 'center'}}
-        disabled = {otpClick}
+       <TouchableOpacity style = {{ marginHorizontal : 20, marginTop : 20 ,  borderRadius : 10 ,  padding : 10, backgroundColor : otpClick || !otpvalid ?"#888" :  theme , justifyContent : 'center', alignItems : 'center'}}
+        disabled = {otpClick || !otpvalid}
         onPress = {onSubmit} 
         >
         <Text style = {{color : 'white'}}>
