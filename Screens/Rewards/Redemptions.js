@@ -130,7 +130,7 @@ const Redemptions = () => {
                         flexDirection : 'row' , margin : 10 , padding : 10 , borderRadius : 20 , borderWidth : 1 , borderColor : "#EEE" }}>
                         <View style = {{ justifyContent : 'center', alignItems : 'center', flex : 1 , }}>
                             <View>
-                                <Image source = {{uri : item.company_logo}} 
+                                <Image source = {{uri : item.company_logo + "?" + new Date()}} 
                                 style = {{width : 100, height : 100 }} />
                             </View>  
                             <View style = {{height : 50 ,  width : '100%', justifyContent : 'center', alignItems : 'center', borderWidth : 1 , padding : 5, borderColor : "#AAA", justifyContent : 'center' }}>

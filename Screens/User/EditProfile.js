@@ -127,7 +127,7 @@ const EditProfile = () => {
         const userbody = {
           "user_id": userId.slice(1,13),
           "user_name": userName,
-          "user_profile_image": profileImageChange || userImage != "" ? s3URL + userId.slice(1,13) + "/profile" : "",
+          "user_profile_image": profileImageChange ? s3URL + userId.slice(1,13) + "/profile" : userImage != "" ? s3URL + userId.slice(1,13) + "/profile" : "",
           "user_gender": gender,
           "user_dob": userDob,
           "instagram_user_name": instagram,
@@ -207,7 +207,7 @@ const EditProfile = () => {
           <View style = {{}}>
             <View style = {style.editUserDetailsDisplayContainer}>
               <TouchableOpacity style = {style.editUserDetailsDisplayImageButton} onPress = {pickProfilePhoto}>
-                <ImageBackground source = {image && image != "None"? {uri : image } : {uri : 'https://ui-avatars.com/api/?rounded=true&name&size=512'}} 
+                <ImageBackground source = {image && image != "None"? {uri : image + "?" + new Date() } : {uri : 'https://ui-avatars.com/api/?rounded=true&name&size=512'}} 
                         style = {style.editUserDetailsDisplayImage} >
                 </ImageBackground>
                 <View style = {{position: 'absolute' , backgroundColor : 'white' , padding : 3, borderRadius : 20 , bottom : 0 , right : 0 , margin : 15 , zIndex : 150}}>

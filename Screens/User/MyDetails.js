@@ -48,7 +48,7 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
                 <TouchableOpacity style = {{borderWidth : 0 , flex : 1, marginRight : 10,}} onPress = {() => {itemClick(item)}}>
                     <View style = {{flex: 1  ,height : 60 , width : 60, justifyContent : 'center', alignItems : 'center'}}>
                         {item.user_profile_image && item.user_profile_image != "" ? 
-                        <Image source = {{uri : item.user_profile_image}} 
+                        <Image source = {{uri : item.user_profile_image + "?" + new Date()}} 
                             style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 20, height : 60 , width : 60}} />
                         : <Avatar.Image style = {{ }}
                         source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
@@ -130,7 +130,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
                     <View style = {{flex: 1  , width : ITEM_SIZE, backgroundColor : background }}>
                     {item.user_profile_image ? 
-                     <Image source = {{uri : item.user_profile_image}} 
+                     <Image source = {{uri : item.user_profile_image + "?" + new Date()}} 
                           style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : ITEM_SIZE-20 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
                    : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
@@ -490,7 +490,6 @@ const MyDetails = () => {
                             <View style = {{flexDirection : 'row', justifyContent : 'space-between', marginTop : 10, marginBottom : 10}}>
                                 <TouchableOpacity
                                     style = {{}}
-                                    onPress = {()=>ToastAndroid.show("This is your trust score. More Authentic Content, More the trust score and more rewards",ToastAndroid.LONG)}
                                     >
                                     <View style = {home.headingTitleView}>
                                         <Text style = {home.headingTitle}>{userEngagement && userEngagement.followers? userEngagement.followers : "0"}</Text>
@@ -501,7 +500,6 @@ const MyDetails = () => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style = {{}}
-                                    onPress = {()=>ToastAndroid.show("This is your trust score. More Authentic Content, More the trust score and more rewards",ToastAndroid.LONG)}
                                     >
                                     <View style = {home.headingTitleView}>
                                         <Text style = {home.headingTitle}>{userEngagement && userEngagement.count_feed? userEngagement.count_feed : "0"}</Text>
@@ -512,7 +510,6 @@ const MyDetails = () => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style = {{}}
-                                    onPress = {()=>ToastAndroid.show("This is your trust score. More Authentic Content, More the trust score and more rewards",ToastAndroid.LONG)}
                                     >
                                     <View style = {home.headingTitleView}>
                                         <Text style = {home.headingTitle}>{userEngagement && userEngagement.sales? userEngagement.sales : "0"}</Text>

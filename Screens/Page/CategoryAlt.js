@@ -134,7 +134,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{marginRight : 10}}>
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                    <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
@@ -176,7 +176,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </View>
                 </View>
                 { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
-                   <Image source = {{uri : item.feed_image}} 
+                   <Image source = {{uri : item.feed_image + "?" + new Date()}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
@@ -273,7 +273,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
     return(
         <View style = {{marginLeft : 10 ,  flexDirection : 'row', marginRight : 10 ,  marginTop : 10 , marginBottom : 5, borderRadius : 20 , borderWidth : 1, borderColor: "#EEE" }}>
             <View style = {{ justifyContent : 'center', alignItems : 'center' , }}>
-                <Image source = {{uri : item.feed_summary_image}} 
+                <Image source = {{uri : item.feed_summary_image + "?" + new Date()}} 
                     style = {{
                         width : Dimensions.get('screen').width * 0.46,
                         height: Dimensions.get('screen').width * 0.46,
@@ -333,6 +333,8 @@ const CategoryAlt = () => {
     const [contexts,setContexts] = React.useState([])
     const [categories,setCategories] = React.useState([])
 
+    const [loading,setLoading] = React.useState(true)
+
     const scrollY = React.useRef(new Animated.Value(0));
     const handleScroll = Animated.event(
         [{nativeEvent: {contentOffset: {y: scrollY.current}}}],
@@ -351,7 +353,7 @@ const CategoryAlt = () => {
 
     React.useEffect(()=>{
     //    console.log("category carousel",categoryCarousel.filter(item => item.master_category_name == master_category_name ).map(i => i.category_id))
-
+        setLoading(true)
 
         setUserName(userInfo.user_name)
       //  console.log(categoryCarousel.filter(item => item.master_category_name == master_category_name ).map(i => i.category_id))
@@ -373,10 +375,10 @@ const CategoryAlt = () => {
             .then(res => res.data).then(function(responseData) {
                // console.log(responseData)
                 setFeedSummary(responseData)
-                
+                setLoading(false)
             })
             .catch(function(error) {
-             //   console.log(error)
+                setLoading(false)
             });
 
             axios.get(URL + "/feed/category",{params:{
@@ -386,9 +388,10 @@ const CategoryAlt = () => {
                 .then(res => res.data).then(function(responseData) {
                   //  console.log(responseData)
                     setFeedData(responseData)
+                    setLoading(false)
                 })
                 .catch(function(error) {
-                //    console.log(error)
+                    setLoading(false)
                 });
         } 
 

@@ -22,7 +22,7 @@ const BurnItemComponent = ({item , id}) => {
             <View style = {[mySummaryStyle.activityComponent,{flexDirection : 'row' ,}]}>
                 <View style = {{height : 50 , width : 50 , }}>
                     <Image 
-                        source = {{uri : company_logo}}
+                        source = {{uri : company_logo + "?" + new Date()}}
                         style = {{height : 50 , width : 50 , }}
                     />
                 </View>

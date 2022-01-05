@@ -130,9 +130,6 @@ export default function Login() {
   }
 
 
-
-
-
 const onSubmit = async () => {
     
     setOtpClick(true)

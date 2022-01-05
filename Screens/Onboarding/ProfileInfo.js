@@ -299,6 +299,9 @@ const ProfileInfo = () => {
     }
 
     const onSubmitOnboarding = () =>{
+
+
+
         Amplitude.logEventAsync("NEW USER PROFILE SUBMITTED")
         setSubmitted(true)
         if(profileImageChange) {
@@ -353,44 +356,74 @@ const ProfileInfo = () => {
    //   console.log("USER POINTS",userPoints)
    //   console.log("REFEREE POINTS",refereePoints)
 
+   axios.get(URL + "/user/info", {params:{user_id : phoneNumber.slice(1,13) }} , {timeout:5000})
+   .then(res => res.data).then(function(responseData) {
+     if(responseData.length>0) {
       axios({
-      method: 'post',
-      url: URL + '/user/new',
-      data: userbody
-      })
-      .then(res => {
-        axios({
-          method: 'post',
-          url: URL + '/rewards/earn',
-          data: userPoints
-          }).then(res=>{
-     //       console.log(res)
-          }).catch((e)=>{
-            console.log(e)
+        method: 'post',
+        url: URL + '/user/new',
+        data: userbody
         })
-        if(refereeId && refereeId != "" ) 
-        {
-            axios({
-              method: 'post',
-              url: URL + '/rewards/earn',
-              data: refereePoints
-              }).then(res=>{
-      //          console.log(res)
-              }).catch((e)=>{
-                console.log(e)
-            })
-        }
-          
-
-
-          ToastAndroid.show("Hi " + userbody.user_name, ToastAndroid.LONG)
-                  setTimeout(function(){
-                  navigation.navigate("Home", {source : "Onboarding", body : userbody})
-                  }, 300);        
-          }).catch((e) => {
-              ToastAndroid.show("Error updating details. Please try later", ToastAndroid.SHORT)
-              setSubmitted(false)
+        .then(res => {            
+            ToastAndroid.show("Details updated", ToastAndroid.LONG)
+                    setTimeout(function(){
+                    navigation.navigate("Home", {source : "Onboarding", body : userbody})
+              }, 300);        
+        })
+        .catch((e) => {
+            ToastAndroid.show("Error updating details. Please try later", ToastAndroid.SHORT)
+            setSubmitted(false)
+        })
+     }
+     else {
+      axios({
+        method: 'post',
+        url: URL + '/user/new',
+        data: userbody
+        })
+        .then(res => {
+          axios({
+            method: 'post',
+            url: URL + '/rewards/earn',
+            data: userPoints
+            }).then(res=>{
+       //       console.log(res)
+            }).catch((e)=>{
+              console.log(e)
           })
+          if(refereeId && refereeId != "" ) 
+            {
+              axios({
+                  method: 'post',
+                  url: URL + '/rewards/earn',
+                  data: refereePoints
+                  }).then(res=>{
+          //          console.log(res)
+                  }).catch((e)=>{
+                    console.log(e)
+                })
+            }
+            
+            ToastAndroid.show("Hi " + userbody.user_name, ToastAndroid.LONG)
+                    setTimeout(function(){
+                    navigation.navigate("Home", {source : "Onboarding", body : userbody})
+                    }, 300);        
+            })
+        .catch((e) => {
+            ToastAndroid.show("Error updating details. Please try later", ToastAndroid.SHORT)
+            setSubmitted(false)
+        })
+     }
+      
+   })
+   .catch(function(error) {
+       //
+   });
+
+
+
+
+
 
     }
 
@@ -455,7 +488,7 @@ const ProfileInfo = () => {
           <View style = {{}}>
             <View style = {style.editUserDetailsDisplayContainer}>
               <TouchableOpacity style = {style.editUserDetailsDisplayImageButton} onPress = {pickProfilePhoto}>
-                <ImageBackground source = {image && image != "None"? {uri : image } : {uri : 'https://ui-avatars.com/api/?rounded=true&name&size=512'}} 
+                <ImageBackground source = {image && image != "None"? {uri : image + "?" + new Date() } : {uri : 'https://ui-avatars.com/api/?rounded=true&name&size=512'}} 
                         style = {style.editUserDetailsDisplayImage} >
                 </ImageBackground>
                 <View style = {{position: 'absolute' , backgroundColor : 'white' , padding : 3, borderRadius : 20 , bottom : 0 , right : 0 , margin : 15 , zIndex : 150}}>

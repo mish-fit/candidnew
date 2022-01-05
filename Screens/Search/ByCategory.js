@@ -60,7 +60,7 @@ const FeedItemComponent = ({item,id}) => {
                 <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                     <View style = {{marginRight : 10}}>
                     {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                        <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                        <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                         <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                         source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                         size={40}/> }  
@@ -103,7 +103,7 @@ const FeedItemComponent = ({item,id}) => {
                     </View>
                 </View>
                 <View style = {{marginTop : 10, justifyContent : 'center', alignItems : 'center' }}>
-                    <Image source = {{uri : item.feed_summary_image}} 
+                    <Image source = {{uri : item.feed_summary_image + "?" + new Date()}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,

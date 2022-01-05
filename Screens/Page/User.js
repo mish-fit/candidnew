@@ -6,6 +6,7 @@ import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation , useRoute} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { RewardsComponent } from '../Exports/Components';
+
 import Constants from 'expo-constants'
 import {dataRetrieve, URL} from '../Exports/Config'
 import {homeFeed} from "../FakeData/HomeFeed"
@@ -19,6 +20,7 @@ import { width } from '../Exports/Constants';
 import {Avatar} from 'react-native-paper'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
+import { LoadingPage } from '../Exports/Pages';
 
 const FeedItemComponent = ({item,id, userInfo}) => {
     const [randomNo, userId] = React.useContext(RandomContext)
@@ -139,7 +141,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{marginRight : 10}}>
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                    <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
@@ -279,7 +281,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
     return(
         <View style = {{marginLeft : 10 ,  flexDirection : 'row', marginRight : 10 ,  marginTop : 10 , marginBottom : 5, borderRadius : 20 , borderWidth : 1, borderColor: "#EEE" }}>
             <View style = {{ justifyContent : 'center', alignItems : 'center' , }}>
-                <Image source = {{uri : item.feed_image}} 
+                <Image source = {{uri : item.feed_image }} 
                     style = {{
                         width : Dimensions.get('screen').width * 0.46,
                         height: Dimensions.get('screen').width * 0.46,
@@ -360,6 +362,8 @@ const User = () => {
     const [feedData,setFeedData] = React.useState([])
     const [feedSummary,setFeedSummary] = React.useState([])
 
+    const [loading,setLoading] = React.useState(true)
+
     const scrollY = React.useRef(new Animated.Value(0));
     const handleScroll = Animated.event(
         [{nativeEvent: {contentOffset: {y: scrollY.current}}}],
@@ -408,6 +412,7 @@ const User = () => {
     }
 
     React.useEffect(()=>{
+        setLoading(true)
         Amplitude.logEventAsync('USER PAGE')     
         Animated.timing(progress, {
             toValue: 1,
@@ -424,6 +429,7 @@ const User = () => {
             axios.get(URL + "/feedsummary/byuser",{params:{following_user_id : followingUserId, user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
            //     console.log(responseData)
+                setLoading(false)
                 setFeedSummary(responseData)
                 if(responseData.length && responseData[0].isFollowing) {
                     setFollowing(responseData[0].isFollowing)
@@ -431,6 +437,7 @@ const User = () => {
                
             })
             .catch(function(error) {
+                setLoading(false)
                 console.log(error)
             });
         } 
@@ -441,9 +448,11 @@ const User = () => {
             user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
             //    console.log(responseData)
+                setLoading(false)
                 setFeedData(responseData)
             })
             .catch(function(error) {
+                setLoading(false)
                 console.log(error)
             });
 
@@ -714,7 +723,7 @@ const User = () => {
                 
             </Modal>
 
-
+            {loading ? <LoadingPage /> :
             <Animated.FlatList
                 keyExtractor = {(item,index)=>index.toString()}
                 ref = {ref}
@@ -727,6 +736,7 @@ const User = () => {
                 ListHeaderComponent = {HeaderComponent}
                 ListEmptyComponent={EmptyComponent}
             />
+            }
             {/* <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
             style = {{width: 60 , height : 60 , 

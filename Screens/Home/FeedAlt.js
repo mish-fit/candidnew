@@ -1,5 +1,5 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView, Pressable, ImageBackground, ToastAndroid, Share } from 'react-native'
+import { PermissionsAndroid,Animated, Dimensions,BackHandler, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView, Pressable, ImageBackground, ToastAndroid, Share, Alert } from 'react-native'
 import { alttheme, background, borderColor, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign, Fontisto, FontAwesome5} from 'react-native-vector-icons';
@@ -73,7 +73,7 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
                     <View style = {{flex: 1  , width : ITEM_SIZE, height : ITEM_SIZE-20, backgroundColor : background}}>
                      {item.user_profile_image ? 
-                     <Image source = {{uri : item.user_profile_image}} 
+                     <Image source = {{uri : item.user_profile_image + "?" + new Date()}} 
                           style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 10 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
                    : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.following_user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
@@ -154,7 +154,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0, marginRight : 10 , }]} onPress = {() => {itemClick(item)}}>
                     <View style = {{flex: 1  , width : ITEM_SIZE, height : ITEM_SIZE-20, backgroundColor : background }}>
                     {item.user_profile_image ? 
-                     <Image source = {{uri : item.user_profile_image}} 
+                     <Image source = {{uri : item.user_profile_image + "?" + new Date()}} 
                           style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 10 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
                    : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
@@ -238,7 +238,7 @@ const TrendingProducts = ({DATA , onClickItem }) => {
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0, marginRight : 10 , }]} onPress = {() => {itemClick(item)}}>
                     <View style = {{flex: 1  , width : ITEM_SIZE, height : ITEM_SIZE-20, backgroundColor : background }}>
                     {item.product_image ? 
-                        <Image source = {{uri : item.product_image}} 
+                        <Image source = {{uri : item.product_image + "?" + new Date()}} 
                             style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 10 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
                     : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.product_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
@@ -384,6 +384,26 @@ const FeedAlt = () => {
     const [heroBanner,setHeroBanner] = React.useState([])
     const [heroSearchText,setHeroSearchText] = React.useState("")
 React.useEffect(()=>{
+
+    const backAction = () => {
+        Alert.alert("Wait!!","Do you want to exit the app ?", [
+          {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel"
+          },
+          { text: "YES", onPress: () => BackHandler.exitApp() }
+        ]);
+        return true;
+      };
+  
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+  
+  
+
     setLoading(true)
     console.log("source" , source)
     if(source == "Onboarding") {
@@ -442,7 +462,7 @@ React.useEffect(()=>{
                 axios.get(URL + "/user/followingusers",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
                     setLoading(false)
-                //    console.log("MY FRIENDS",responseData)
+                    console.log("MY FRIENDS",responseData)
                     setMyFriends(responseData)
                 })
                 .catch(function(error) {
@@ -501,25 +521,12 @@ React.useEffect(()=>{
             setFeedData(homeFeed)
         }
 
-        
+    return () => backHandler.remove();  
             
   
 },[isFocused])
 
-const [secs,setSecs] = React.useState(5000)
-React.useEffect(()=>{
-    const timerId = setInterval(() => {
-      if (secs <= 0) {
-        setSecs(-1)
-      }
-      else setSecs(s => s - 1)
-    }, 5000)
-    return () => {
-        // ReceiveSharingIntent.clearReceivedFiles()
-        clearInterval(timerId);
-        setSecs(5000)
-    }
-  },[secs])
+
 
 
 const goToUser = (id, name , following) => {
@@ -827,7 +834,7 @@ const share = async () => {
                     style = {{ backgroundColor :'white', borderRadius : 10,
                         width : Dimensions.get('screen').width*0.225 , height : Dimensions.get('screen').width*0.225, marginHorizontal : Dimensions.get('screen').width*0.01 , marginVertical : Dimensions.get('screen').width*0.02
                         }}>
-                        <ImageBackground source={{uri : item.master_category_image}} resizeMode="cover" style={{flex : 1, padding : 5, justifyContent : 'flex-end'}} imageStyle={{ borderRadius: 10,  opacity:0.2}}> 
+                        <ImageBackground source={{uri : item.master_category_image + "?" + new Date()}} resizeMode="cover" style={{flex : 1, padding : 5, justifyContent : 'flex-end'}} imageStyle={{ borderRadius: 10,  opacity:0.2}}> 
                             <Text style = {{fontSize : 13, fontWeight : 'bold'}} >{item.master_category_name}</Text>
                         </ImageBackground>
                     </Pressable>)
@@ -836,7 +843,7 @@ const share = async () => {
             
         </ScrollView> 
         <TouchableOpacity 
-            onPress = {()=>navigation.navigate("AddReview" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
+            onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
             style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
             backgroundColor : alttheme
             , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 10 , left : Dimensions.get('screen').width*.1  }}>

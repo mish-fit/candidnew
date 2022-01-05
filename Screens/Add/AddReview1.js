@@ -1,6 +1,6 @@
 import { NavigationContainer , useNavigation , useRoute } from '@react-navigation/native'
 import React from 'react'
-import { PermissionsAndroid, StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, Dimensions} from 'react-native'
+import { PermissionsAndroid, StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, Dimensions, ToastAndroid} from 'react-native'
 import {AntDesign , FontAwesome5, Entypo,MaterialCommunityIcons} from 'react-native-vector-icons'
 import { RandomContext } from '../Exports/Context'
 import { alttheme, backArrow, background, colorsArray, themeLightest } from '../Exports/Colors'
@@ -19,20 +19,23 @@ import * as ImagePicker from 'expo-image-picker';
 import { s3URL, uploadImageOnS3 } from '../Exports/S3'
 
 
-const AddReview = () => {
+const AddReview1 = () => {
 
 
     const navigation = useNavigation()
     const route = useRoute()
 
     const [source,setSource] = React.useState(true)
-    const [buyURL, setBuyURL] = React.useState("https://www.amazon.in")
+    const [buyURL, setBuyURL] = React.useState("")
 
     const progress = React.useRef(new Animated.Value(0)).current
 
     const [url,setURL] = React.useState(route?.params?.buy_url ? route?.params?.buy_url : "")
     const [randomNo,userId] = React.useContext(RandomContext)
     const [myRewardsCoins,setMyRewardsCoins] = React.useState(0)
+
+    const [categoryId,setCategoryId]= React.useState(route?.params?.category_id ? route?.params?.category_id : 0 )
+    const [categoryName,setCategoryName]= React.useState(route?.params?.category_name ? route?.params?.category_name : "" )
 
     const [comment,setComment] = React.useState("")
 
@@ -67,7 +70,7 @@ const AddReview = () => {
     const [contextArray,setContextArray] = React.useState([])
     const [contextsChecked,setContextsChecked] = React.useState([])
 
-    const [categorySelected,setCategorySelected] = React.useState(false)
+    const [categorySelected,setCategorySelected] = React.useState(true)
     const [addContextFlag,setAddContextFlag] = React.useState(false)
     const [newContext,setNewContext] = React.useState("")
     const [plusContextDisable,setPlusContextDisable] = React.useState(true)
@@ -79,15 +82,15 @@ const AddReview = () => {
         "user_name": "",
         "user_id": userId.slice(1,13),
         "user_image": "",
-        "category_id": 0,
-        "category_name": "",
+        "category_id": route?.params?.category_id ? route?.params?.category_id : 0 ,
+        "category_name": route?.params?.category_name ? route?.params?.category_name : ""  ,
         "context_id": 0,
         "context_name": "",
         "product_id": 0,
         "product_name": "",
         "title": "",
         "feed_image": "",
-        "buy_url": "https://www.amazon.in",
+        "buy_url": "",
         "comment": "",
         "coupon" : ""
     })
@@ -115,6 +118,26 @@ const AddReview = () => {
             setSearchLoading(false)
             console.log(error)
         });  
+
+        axios.get(URL + "/search/context", {params:{context_text : "" , category_name : categoryName }} , {timeout : 3000})
+            .then(res => res.data).then(function(responseData) {
+          //      console.log("SearchArray",responseData)
+                setContextArray(responseData)
+            })
+            .catch(function(error) {
+                console.log(error)
+            });
+
+        axios.get(URL + "/search/product", {params:{product_text : "" , category_id : categoryId.toString()}} , {timeout : 3000})
+        .then(res => res.data).then(function(responseData) {
+            console.log("product data", responseData)
+            setSearchLoading(false)
+            setSearchArray(responseData)
+        })
+        .catch(function(error) {
+            console.log(error)
+            setSearchLoading(false)
+        });
     },[])
     
     const onClickSearchItemChild = (name, id) => {
@@ -175,7 +198,7 @@ const AddReview = () => {
         }
         setSearchTextProduct(text)
         setSearchLoading(true)
-        axios.get(URL + "/search/product", {params:{product_text : text }} , {timeout : 3000})
+        axios.get(URL + "/search/product", {params:{product_text : text , category_id : categoryId}} , {timeout : 3000})
           .then(res => res.data).then(function(responseData) {
               
               setSearchLoading(false)
@@ -185,48 +208,6 @@ const AddReview = () => {
               setSearchLoading(false)
         });
     }
-
-
-    const onClickSearchItemChildCategory = (category_name, category_id ) => {
-        if(category_id > 0) {
-        //    console.log("Category BOdy", body)
-            Amplitude.logEventWithPropertiesAsync('ADDED NEW CATEGORY', {category_name : category_name })
-            setSearchTextCategory(category_name)
-            setCategorySelected(true)
-            setBody((body) => ({...body, category_name : category_name , category_id : category_id}))
-            axios.get(URL + "/search/context", {params:{context_text : "" , category_name : category_name }} , {timeout : 3000})
-            .then(res => res.data).then(function(responseData) {
-          //      console.log("SearchArray",responseData)
-                setContextArray(responseData)
-            })
-            .catch(function(error) {
-                console.log(error)
-            });
-        } else {
-            setSearchTextCategory(category_name)
-            setCategorySelected(true)
-            setBody((body) => ({...body, category_name : category_name }))
-        }
-       
-    }
-
-    const searchCategory = (text) => {
-        if(text.length > 1) {
-            setPlusCategoryDisable(false)
-        }
-        setSearchTextCategory(text)
-        setSearchCategoryLoading(true)
-        axios.get(URL + "/search/category", {params:{category_text : text }} , {timeout : 3000})
-          .then(res => res.data).then(function(responseData) {
-                setSearchCategoryLoading(false)
-                setSearchCategoryArray(responseData)
-        })
-        .catch(function(error) {
-              setSearchCategoryLoading(false)
-        });
-    }
-
-
 
     const rating = (rating) => {
             setRatingValue(rating)
@@ -309,13 +290,38 @@ const AddReview = () => {
                 data: addNewProductBody
             }, {timeout : 5000})
             .then(res => {
-         //       console.log("product id new created" , res.data )
-                navigation.navigate("AltAdd1", {body : body , product_id : res.data})
+                    console.log({...body, product_id : res.data})
+                    setBody({...body, product_id : res.data})
+                    axios({
+                        method: 'post',
+                        url: URL + '/add/post',
+                        data: {...body, product_id : res.data}
+                    }, {timeout : 5000})
+                    .then(res => {
+                    //       console.log(res)
+                            ToastAndroid.show("Wohoo!! It's posted. Coins will be credited within 48 hours.", ToastAndroid.SHORT)
+                            navigation.navigate("PostShare", {body : body})
+                        })
+                    .catch((e) => {
+                        ToastAndroid.show("Error posting your critic. Please try again later!!", ToastAndroid.SHORT)
+                    })
             })
             .catch((e) => console.log(e))
         }
         else {
-            navigation.navigate("AltAdd1", {body : body , product_id : body.product_id})
+            axios({
+                method: 'post',
+                url: URL + '/add/post',
+                data: body
+            }, {timeout : 5000})
+            .then(res => {
+             //       console.log(res)
+                    ToastAndroid.show("Wohoo!! It's posted. Coins will be credited within 48 hours.", ToastAndroid.SHORT)
+                    navigation.navigate("PostShare", {body : body})
+                })
+            .catch((e) => {
+                ToastAndroid.show("Error posting your critic. Please try again later!!", ToastAndroid.SHORT)
+            })
         }
 
         
@@ -401,7 +407,7 @@ const AddReview = () => {
                     style = {add.headerTitle}
                     disabled
                     >
-                    <Text style = {add.headerTitleText}>Post Review</Text>
+                    <Text style = {add.headerTitleText}>Recommend / Review</Text>
                 </TouchableOpacity>
             </Animated.View>
             <View style = {{marginTop : 50 , borderTopColor : "#EEE" , borderTopWidth : 2, flex : 1}}>
@@ -452,58 +458,12 @@ const AddReview = () => {
                     </TouchableOpacity>
                        )})
                 }
+                <View style = {{margin : 5 , padding : 5 , marginTop : 20 , borderRadius : 10 , borderWidth : 1 , borderColor : "#EEE", justifyContent : 'center', alignItems : 'center'}}>
+                    <Text style = {{color : "#AAA"}}>Product not found ? Don't worry. Type complete product name and press (+) button</Text>
+                </View>
                 </ScrollView> 
                 : null}
                
-                {productSelected && !categorySelected ? 
-                <View style = {{paddingVertical: 10, marginHorizontal : 5, flexDirection : 'row', justifyContent : 'space-between', borderRadius : 10, borderWidth : 1, borderColor : '#888', paddingHorizontal : 5, marginTop : 5,}}>
-                    <TextInput style = {{fontSize : 14,}}
-                        placeholder = "Search / Add Category by clicking '+'"
-                        onChangeText = {(text) => searchCategory(text)}
-                        value = {searchTextCategory}
-                        onFocus = {()=>setInputFocus(true)}
-                        onBlur = {()=>setInputFocus(false)}
-                    />
-                    <TouchableOpacity 
-                        style = {{padding : 2 ,  marginRight : 10, justifyContent :'center', alignItems:'center',}}
-                        disabled = {plusDisable}
-                        onPress = {()=>onClickSearchItemChildCategory(searchTextCategory,0)} >
-                        <AntDesign name = "plus" size = {24} color = {theme} />
-                    </TouchableOpacity>
-                </View> : productSelected && categorySelected ?
-                <View style = {{marginHorizontal: 5, marginTop : 5,  paddingVertical: 5,  flexDirection : 'row', justifyContent : 'space-between',  paddingHorizontal : 5 , borderRadius : 5, borderWidth : 1, borderColor : "#EEE", backgroundColor : 'rgba(200,200,200,0.2)'}}>
-                    <Text style = {{color : theme, fontSize : 16 , fontWeight : 'bold'}}>{searchTextCategory}</Text>
-                    <TouchableOpacity 
-                        style = {{padding : 2 ,  marginRight : 10, justifyContent :'center', alignItems:'center',}}
-                        onPress = {()=>setCategorySelected(false)} >
-                        <AntDesign name = "edit" size = {15} color = {theme} />
-                    </TouchableOpacity>
-                </View> : null
-                }
-                { searchCategoryArray.length && productSelected && !categorySelected ?
-                <ScrollView style = {add.dropDownList} contentContainerStyle = {{paddingBottom : 60}}>
-                <Text style = {{fontWeight : 'bold', marginTop : 5, marginLeft : 5 }}>Top Categories</Text>
-                {
-                searchCategoryArray.map((item,index)=>{
-                    return(
-                        <TouchableOpacity 
-                                    key = {index.toString()}
-                                    style = {add.dropDownItem}
-                                    onPress = {()=>onClickSearchItemChildCategory(item.category_name,item.category_id)} >
-                            {item.category_image && item.category_image != "None" && item.category_image != "" ?
-                            <Image source = {{uri : item.category_image}} style = {add.dropDownItemImage}/> :
-                            <Avatar.Image style = {add.dropDownItemAvatar}
-                            source={{uri: 'https://ui-avatars.com/api/?rounded=false&name='+ item.category_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
-                            size={30}/> }  
-                            <View style = {add.dropDownView}>
-                                <Text style = {add.dropDownText}>{item.category_name}</Text>
-                            </View>
-                            
-                        </TouchableOpacity>
-                       )})
-                }
-                </ScrollView> : null}
-
 
                 {productSelected && categorySelected? 
                 <View style = {{marginHorizontal : 5, marginVertical : 5, }}>
@@ -708,7 +668,7 @@ const AddReview = () => {
     )
 }
 
-export default AddReview
+export default AddReview1
 
 const styles = StyleSheet.create({
    

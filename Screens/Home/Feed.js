@@ -152,7 +152,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{marginRight : 10}}>
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                    <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
@@ -197,7 +197,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                 </View>
                 { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? 
                 <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
-                   <Image source = {{uri : item.feed_image}} 
+                   <Image source = {{uri : item.feed_image + "?" + new Date()}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
@@ -576,7 +576,7 @@ const Feed = () => {
 
     const HeaderComponent = () => {
         return (<View 
-            style = {{width: width-20, height : 40, borderRadius : 10,
+            style = {{width: width-20, height : 40, borderRadius : 2,
             backgroundColor : themeLightest, marginleft : 5, flex : 1, marginHorizontal : 10,
             justifyContent : 'space-around', alignItems : 'center', }}>
                 <View style = {{flexDirection : 'row'}}>
@@ -681,7 +681,7 @@ const Feed = () => {
             />
             }
             <TouchableOpacity 
-            onPress = {()=>navigation.navigate("AddReview" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
+            onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
             style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
             backgroundColor : alttheme
             , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 10 , left : Dimensions.get('screen').width*.1   }}>

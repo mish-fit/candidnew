@@ -37,6 +37,7 @@ import UserLink from './Page/UserLink';
 import AltAdd from './Add/AltAdd';
 import AltAdd1 from './Add/AltAdd1';
 import AddReview from './Add/AddReview';
+import AddReview1 from './Add/AddReview1';
 
 
 const Stack = createStackNavigator();
@@ -89,6 +90,7 @@ const HomeStack = () => {
       <Stack.Screen name="AltAdd" component={AltAdd} /> 
       <Stack.Screen name="AltAdd1" component={AltAdd1} /> 
       <Stack.Screen name="AddReview" component={AddReview} /> 
+      <Stack.Screen name="AddReview1" component={AddReview1} /> 
     </Stack.Navigator>
   );
 }
