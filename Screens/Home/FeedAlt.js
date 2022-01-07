@@ -3,7 +3,7 @@ import { PermissionsAndroid,Animated, Dimensions,BackHandler, Linking, Image, St
 import { alttheme, background, borderColor, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign, Fontisto, FontAwesome5} from 'react-native-vector-icons';
-import { NavigationContainer, useNavigation, useRoute , useIsFocused} from '@react-navigation/native';
+import { NavigationContainer, useNavigation, useRoute , useIsFocused, useFocusEffect} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { GiftComponent, RewardsComponent } from '../Exports/Components';
 import Constants from 'expo-constants'
@@ -28,7 +28,7 @@ import Swiper from 'react-native-swiper'
 import { LoadingPage } from '../Exports/Pages';
 // import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import Clipboard from '@react-native-clipboard/clipboard';
-
+import { useBackHandler } from '@react-native-community/hooks'
 
 
 
@@ -82,9 +82,10 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
                     <View style = {{backgroundColor : background , width : ITEM_SIZE,height : 30 , borderRadius : 5, justifyContent :'flex-end', alignItems : 'center' }}>
                         <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.following_user_name.length > 30 ? item.following_user_name.substring(0,20) + "..." : item.following_user_name}</Text>
                     </View>
-                    <View style = {{position : 'absolute' , top : 0 , right : 0 , backgroundColor : alttheme , borderRadius : 20, width : 20 , height : 20 , justifyContent : 'center' , alignItems : 'center' }}>
+                    {item.count_posts>0 ?
+                    <View style = {{position : 'absolute' , top : 0 , right : 0 , backgroundColor : alttheme  , borderRadius : 20, width : 20 , height : 20 , justifyContent : 'center' , alignItems : 'center' }}>
                         <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : 'white'}]}>{item.count_posts}</Text>
-                    </View>
+                    </View> : null }
                 </TouchableOpacity>
             </Animated.View>
         )
@@ -169,9 +170,9 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                     style = {{backgroundColor : isFollowing[index]? "#888" : themeLightest , borderRadius : 5, height : 20, justifyContent :'center', alignItems :'center' }}>
                         <Text style={{fontSize : 10 , color : isFollowing[index]?  'white' : 'black', alignSelf : 'center'}}>{isFollowing[index]?  "Following" : "Follow"}</Text>
                     </TouchableOpacity>
-                    <View style = {{position : 'absolute' , top : 0 , right : 0 , backgroundColor : alttheme ,  borderRadius : 20, width : 20 , height : 20 , justifyContent : 'center' , alignItems : 'center' }}>
-                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 7 , color : 'white'}]}>{item.count_posts}</Text>
-                    </View>
+                    {item.count_posts>0 ? <View style = {{position : 'absolute' , top : 0 , right : 0 , backgroundColor : alttheme ,  borderRadius : 20, width : 20 , height : 20 , justifyContent : 'center' , alignItems : 'center' }}>
+                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : 'white'}]}>{item.count_posts}</Text>
+                    </View> : null }
                 </TouchableOpacity>
             </Animated.View>
         )
@@ -383,27 +384,38 @@ const FeedAlt = () => {
     const [heroLinkExists,setHeroLinkExists] = React.useState([])
     const [heroBanner,setHeroBanner] = React.useState([])
     const [heroSearchText,setHeroSearchText] = React.useState("")
-React.useEffect(()=>{
 
-    const backAction = () => {
-        Alert.alert("Wait!!","Do you want to exit the app ?", [
-          {
-            text: "Cancel",
-            onPress: () => null,
-            style: "cancel"
-          },
-          { text: "YES", onPress: () => BackHandler.exitApp() }
-        ]);
-        return true;
-      };
-  
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-      );
-  
-  
 
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                if (route.name == "Home") {
+                    Alert.alert("Wait!!","Do you want to exit the app ?", [
+                        {
+                            text: "Cancel",
+                            onPress: () => null,
+                            style: "cancel"
+                        },
+                        { text: "YES", onPress: () => BackHandler.exitApp() }
+                    ]);
+                return true
+                }
+                else {
+                    return false
+                }
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () =>
+            BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [route.name])
+    );
+
+
+    React.useEffect(()=>{
+        console.log(route.name)
     setLoading(true)
     console.log("source" , source)
     if(source == "Onboarding") {
@@ -462,7 +474,7 @@ React.useEffect(()=>{
                 axios.get(URL + "/user/followingusers",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
                     setLoading(false)
-                    console.log("MY FRIENDS",responseData)
+                //    console.log("MY FRIENDS",responseData)
                     setMyFriends(responseData)
                 })
                 .catch(function(error) {
@@ -521,10 +533,10 @@ React.useEffect(()=>{
             setFeedData(homeFeed)
         }
 
-    return () => backHandler.remove();  
+       
             
   
-},[isFocused])
+},[])
 
 
 
@@ -687,16 +699,23 @@ const share = async () => {
                     
                 </ScrollView>
         </Modal>
-        <ScrollView style = {{flex : 1 , backgroundColor : 'white'}} contentContainerStyle = {{paddingBottom : 50}}>
+        <ScrollView style = {{flex : 1 , backgroundColor : 'white'}} contentContainerStyle = {{paddingBottom : 110}}>
             <Animated.View 
             style = {{ transform: [{translateY}],
                 backgroundColor : 'white', flex : 1 ,
                 height : headerHeight , 
                 position: 'absolute',  zIndex: 100, width: '100%',  left: 0,right: 0,
                 flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
-              
+                    <TouchableOpacity style = {{marginLeft : 10, height : 30}} onPress={()=>navigation.openDrawer()}>
+                        {userInfo.user_profile_image && userInfo.user_profile_image != "" ? 
+                        <Image source = {{uri : userInfo.user_profile_image + "?" + new Date()}} 
+                            style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 30, height : 30 , width : 30}} />
+                        : <Avatar.Image style = {{ }}
+                        source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userInfo.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                        size={30}/> }
+                    </TouchableOpacity>
                     <TouchableOpacity
-                        style = {{marginLeft : 20, flex : 1 }}
+                        style = {{marginLeft : 10, flex : 1 }}
                         onPress = {()=>{
                             Clipboard.setString(userInfo.coupon)
                             ToastAndroid.show("Your coupon code : " + userInfo.coupon + " is copied", ToastAndroid.SHORT)
@@ -711,7 +730,7 @@ const share = async () => {
                     </View>
             </Animated.View>
             <View style = {{marginTop : headerHeight,}}>
-            <View 
+            {/* <View 
             style = {{width: width-10, height : 40, borderRadius : 2,
             backgroundColor : themeLightest, marginleft : 5, flex : 1, marginHorizontal : 5,
             justifyContent : 'space-around', alignItems : 'center',  }}>
@@ -734,7 +753,7 @@ const share = async () => {
                         <Text style = {{color : theme, fontSize : 15,marginLeft : 5}}>Feed</Text>
                     </View>
                 </View>
-            </View>
+            </View> */}
             <TouchableOpacity onPress = {()=>navigation.navigate("Search",{userInfo : userInfo})}
                 style = {{flexDirection : 'row' , borderWidth : 1 , borderColor : '#bbb', backgroundColor : '#EEE' ,
                 borderRadius : 2, padding : 5, margin : 5 , marginTop : 5, height : 50, justifyContent: 'space-between', 
@@ -845,8 +864,8 @@ const share = async () => {
         <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
             style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
-            backgroundColor : alttheme
-            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 10 , left : Dimensions.get('screen').width*.1  }}>
+            backgroundColor : theme
+            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , left : Dimensions.get('screen').width*.1  }}>
                 <View>
                     <Text style = {{color : 'white', fontWeight : 'bold'}}>POST REVIEW AND EARN COINS</Text>
                 </View>

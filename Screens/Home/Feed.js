@@ -25,6 +25,7 @@ import * as Amplitude from 'expo-analytics-amplitude';
 import { home } from '../../Styles/Home';
 import  Modal  from 'react-native-modal'
 import { LoadingPage } from '../Exports/Pages';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
@@ -152,7 +153,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{marginRight : 10}}>
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                    <Image source = {{uri : item.user_image }} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
@@ -197,7 +198,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                 </View>
                 { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? 
                 <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
-                   <Image source = {{uri : item.feed_image + "?" + new Date()}} 
+                   <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
@@ -210,14 +211,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
                     </TouchableOpacity> 
                     <AirbnbRating
-                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
+                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
                         readOnly = {true}
-                        size={15}
+                        size={30}
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
                 </View> :  
                 <View style = {{flexDirection : 'row' , }}>
@@ -229,7 +230,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
                     <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
@@ -257,7 +258,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
                         <Text>
                             {item.title}
-                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read Detailed Review" : ""}</Text>
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
                         </Text>
                     </TouchableWithoutFeedback>
                 </View>
@@ -415,7 +416,7 @@ const Feed = () => {
     const [searchText,setSearchText] = React.useState("")
 
     const [feedData,setFeedData] = React.useState([])
-    const [userInfo,setUserInfo] = React.useState(route?.params?.body ? route?.params?.body : {})
+    const [userInfo,setUserInfo] = React.useState([])
     const [source,setSource] = React.useState(route?.params?.source ? route?.params?.source : "")
     const [userSummary,setUserSummary] = React.useState(route?.params?.userSummary ? route?.params?.userSummary : {})
     const [refresh,setRefresh] = React.useState(false)
@@ -484,6 +485,15 @@ const Feed = () => {
         //  console.log(URL)
             firebase.auth().onAuthStateChanged(user => {
                 if (user != null) {
+
+                    axios.get(URL + "/user/info",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
+                        .then(res => res.data).then(function(responseData) {
+                        //  console.log("OUTPUT", responseData)
+                            setUserInfo(responseData[0])
+                        })
+                        .catch(function(error) {
+                        //  console.log(error)
+                        });   
             
                     axios.get(URL + "/feed/home",{params:{user_id : user.phoneNumber.slice(1,13), page : pageNumber}} , {timeout : 5000})
                     .then(res => res.data).then(function(responseData) {
@@ -637,25 +647,26 @@ const Feed = () => {
                 height : headerHeight , 
                 position: 'absolute',  zIndex: 100, width: '100%',  left: 0,right: 0,
                 flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
-              
+                    <TouchableOpacity style = {{marginLeft : 10, height : 30}} onPress={()=>navigation.openDrawer()}>
+                        {userInfo.user_profile_image && userInfo.user_profile_image != "" ? 
+                        <Image source = {{uri : userInfo.user_profile_image }} 
+                            style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 30, height : 30 , width : 30}} />
+                        : <Avatar.Image style = {{ }}
+                        source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userInfo.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                        size={30}/> }
+                    </TouchableOpacity>
                     <TouchableOpacity
-                        style = {{marginLeft : 20, flex : 1 }}
+                        style = {{marginLeft : 10, flex : 1 }}
                         onPress = {()=>{
+                            Clipboard.setString(userInfo.coupon)
+                            ToastAndroid.show("Your coupon code : " + userInfo.coupon + " is copied", ToastAndroid.SHORT)
                             Amplitude.logEventAsync("Clicked on My Details on Home")
                             navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
                             }
                         >
                         <Text style = {{fontWeight : 'bold', fontSize : 20, color : alttheme}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
                     </TouchableOpacity>
-                    <View style = {{alignItems : 'center', flexDirection : 'row-reverse' , marginRight : 20 }}>
-                        {/* <TouchableOpacity 
-                                style = {{padding : 2 , paddingLeft : 5 , paddingRight : 5, marginRight : 20}}
-                                onPress = {()=>{
-                                    Amplitude.logEventAsync("Clicked on Search on Home")
-                                    navigation.navigate("SearchByCategory")} 
-                                    }>
-                            <AntDesign name = "search1" size = {24} color = 'red' /> 
-                        </TouchableOpacity>  */}
+                    <View style = {{alignItems : 'center', justifyContent : 'flex-end',flexDirection : 'row-reverse' , marginRight : 10 }}>
                         <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
                     </View>
             </Animated.View>
@@ -671,20 +682,20 @@ const Feed = () => {
             keyExtractor = {(item,index)=>index.toString()}
             ref = {ref}
             style = {{marginBottom : 0 , }}
-            contentContainerStyle = {{paddingTop : 50,}}
+            contentContainerStyle = {{paddingTop : 50, paddingBottom : 110}}
             data = {toggled ? feedData.filter((item,index)=>item.rating >3) : feedData}
             renderItem = {FeedItem}
             onScroll = {handleScroll}
             showsVerticalScrollIndicator = {false}
-            ListHeaderComponent={HeaderComponent}
+           // ListHeaderComponent={HeaderComponent}
             
             />
             }
             <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
             style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
-            backgroundColor : alttheme
-            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 10 , left : Dimensions.get('screen').width*.1   }}>
+            backgroundColor : theme
+            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , left : Dimensions.get('screen').width*.1   }}>
                 <View>
                     <Text style = {{color : 'white', fontWeight : 'bold'}}>POST REVIEW AND EARN COINS</Text>
                 </View>

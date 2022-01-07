@@ -54,7 +54,7 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
                         source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                         size={ITEM_SIZE}/> }
                     </View>
-                    <View style = {{backgroundColor : background , height : 30 ,width : ITEM_SIZE, }}>
+                    <View style = {{backgroundColor : background , height : 40 ,width : ITEM_SIZE, }}>
                         <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.user_name.length > 20 ? item.user_name.substring(0,20) + "..." : item.user_name}</Text>
                     </View>
                     {item && item.count_posts && item.count_posts > 0 ?
@@ -70,7 +70,7 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
             <Animated.FlatList
             data={data}
             renderItem={renderItem}
-            keyExtractor={item => item.following_user_id.toString()}
+            keyExtractor={(item,index) => index.toString()}
             horizontal = {true}
             style = {{marginLeft : Dimensions.get('screen').width*0.03,width : Dimensions.get('screen').width*0.94 , paddingTop : 10 , marginRight : Dimensions.get('screen').width*0.03, }}
             contentContainerStyle = {{justifyContent : 'center', alignItems : 'center'}}
@@ -136,7 +136,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={ITEM_SIZE-40}/> }
                     </View>
-                    <View style = {{backgroundColor : background , borderRadius : 5,alignItems : 'center', justifyContent : 'center' }}>
+                    <View style = {{backgroundColor : background , borderRadius : 5,alignItems : 'center', justifyContent : 'center', height : 30 }}>
                         <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : borderColor}]}>{item.user_name.length > 20 ? item.user_name.substring(0,20) + "..." : item.user_name}</Text>
                     </View>
                     <TouchableOpacity 
@@ -154,7 +154,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
             <Animated.FlatList
             data={data}
             renderItem={renderItem}
-            keyExtractor={item => item.user_id.toString()}
+            keyExtractor={item => item.following_user_id.toString()}
             horizontal = {true}
             style = {{width : Dimensions.get('screen').width*0.94}}
             contentContainerStyle = {home.mainViewCarouselScrollableItem}
@@ -174,8 +174,8 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
     const [colorNo,setColorNo] = React.useState(0) 
     const navigation = useNavigation()
     React.useEffect(() => {
-        console.log("item",item)
-        setColorNo((randomNo+id)%(colorsArray.length-1))
+       
+      
     },[])
 
     const editPost = () => {
@@ -183,7 +183,8 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
     }
 
     const deletePost = () => {
-
+        console.log(item)
+        
         Alert.alert("Delete Post",
             "Are you sure you want to delete this post?",
             [
@@ -192,30 +193,35 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
                 onPress: () => console.log("Cancel Pressed"),
                 style: "cancel"
               },
-              { text: "OK", onPress: () => {
-                
-                const body = {
-                    "feed_id": item.feed_id
-                }
-        
-                axios({
-                    method: 'post',
-                    url: URL + '/delete',
-                    data: body
-                  }, {timeout : 5000})
-                .then(res => {
-                    ToastAndroid.show("Post is deleted", ToastAndroid.SHORT)
-                    deleteItem(item.feed_id)
-                })
-                .catch((e) => {
-                    console.log(e)
-                    ToastAndroid.show("Error deleting the post ", ToastAndroid.SHORT)
-                })
-                } }
+              { text: "OK", onPress: () => deleteAction()
+            }
             ]
           );
 
         
+    }
+
+    const deleteAction = () => {
+        {
+            console.log(item) 
+            const body = {
+                "feed_id": item.feed_id
+            }
+            axios({
+                method: 'post',
+                url: URL + '/delete',
+                data: body
+              }, {timeout : 5000})
+            .then(res => {
+                console.log(res.data)
+                ToastAndroid.show("Post is deleted", ToastAndroid.SHORT)
+                deleteItem(item.feed_id)
+            })
+            .catch((e) => {
+                console.log(e)
+                ToastAndroid.show("Error deleting the post ", ToastAndroid.SHORT)
+            })
+            } 
     }
 
 
@@ -264,14 +270,14 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
                     </TouchableOpacity> 
                     <AirbnbRating
-                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
+                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
                         readOnly = {true}
-                        size={15}
+                        size={30}
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
                 </View> :  
                 <View style = {{flexDirection : 'row' , }}>
@@ -283,7 +289,7 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
                     <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
@@ -560,7 +566,7 @@ const MyDetails = () => {
     }
     
     const deletePostItem = (id) => {
-        Amplitude.logEventWithPropertiesAsync('DELETE POST',{"feed_id" : item.feed_id})
+        Amplitude.logEventWithPropertiesAsync('DELETE POST',{"feed_id" : id})
         setFeedData(feedData.filter((item, index)=> item.feed_id != id))
     }
 
@@ -616,12 +622,12 @@ const MyDetails = () => {
             ListEmptyComponent = {EmptyComponent}
             />
 
-            <View style = {{position : 'absolute', left : 20 , bottom : 20 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            {/* <View style = {{position : 'absolute', left : 20 , bottom : 20 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />
                 </TouchableOpacity>
-            </View>
+            </View> */}
             {/* <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
             style = {{width: 50 , height : 50 , 

@@ -55,7 +55,7 @@ const PostShare = () => {
           } catch (error) {
             console.log(error.message);
           }
-        }
+    }
 
 
 

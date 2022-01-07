@@ -1,6 +1,6 @@
 import React from 'react'
 import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking } from 'react-native'
-import { colorsArray, theme, themeLightest } from '../Exports/Colors'
+import { colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation , useRoute} from '@react-navigation/native';
@@ -199,14 +199,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
                     </TouchableOpacity> 
                     <AirbnbRating
-                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
+                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
                         readOnly = {true}
-                        size={15}
+                        size={30}
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
                 </View> :  
                 <View style = {{flexDirection : 'row' , }}>
@@ -218,7 +218,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
                     <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
@@ -245,7 +245,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
                         <Text>
                             {item.title}
-                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read Detailed Review" : ""}</Text>
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
                         </Text>
                     </TouchableWithoutFeedback>
                 </View>
@@ -345,7 +345,7 @@ const Category = () => {
     const progress = React.useRef(new Animated.Value(0)).current
     const ref = React.useRef(null)
   
-    const [headerHeight,setHeaderHeight] = React.useState(70)
+    const [headerHeight,setHeaderHeight] = React.useState(50)
     const [randomNo, userId] = React.useContext(RandomContext)
 
     const navigation = useNavigation()
@@ -400,7 +400,7 @@ const Category = () => {
             let newarray1 = [...categoriesRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setCategoriesRequest(newarray1)
             }
         }
@@ -408,6 +408,7 @@ const Category = () => {
     }
 
     React.useEffect(()=>{
+        console.log(categoryArray)
         Amplitude.logEventWithPropertiesAsync('CATEGORY PAGE',{category_id : JSON.stringify(categoryArray), user_id : userId.slice(1,13)})  
         Animated.timing(progress, {
             toValue: 1,
@@ -423,9 +424,9 @@ const Category = () => {
             console.log(categoryArray, userId)
             axios.get(URL + "/feedsummary/bycategory",{params:{category_id : JSON.stringify(categoryArray), user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-               // console.log(responseData)
+                console.log(responseData)
                 setFeedSummary(responseData)
-                setFollowing(responseData[0].isFollowing)
+               
             })
             .catch(function(error) {
                 console.log(error)
@@ -433,11 +434,11 @@ const Category = () => {
         } 
 
         axios.get(URL + "/feed/category",{params:{
-            category_id : categoryId, 
+            category_id : JSON.stringify(categoryArray), 
             page : pageNumber,
             user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-              //  console.log(responseData)
+                console.log(responseData)
                 setFeedData(responseData)
             })
             .catch(function(error) {
@@ -495,41 +496,41 @@ const Category = () => {
         
     }
 
-    const HeaderComponent = () => {
-        return(<View style = {{flex : 1 }}>
-                <Pressable 
-                        onPress = {filterContextFunc}
-                        style = {{alignItems : 'flex-start', paddingLeft : 10, justifyContent :'center', borderWidth : 1, borderColor : "#EEE" , flex : 1 , borderRadius : 10 , marginLeft : 10 , marginRight : 10 , height  : 40  }}>
-                            <Text style = {{color : "#888", fontSize : 16, fontStyle : 'italic'}}>Filter by Context</Text>
-                </Pressable>
-        </View>)
-    }
+    // const HeaderComponent = () => {
+    //     return(<View style = {{flex : 1 }}>
+    //             <Pressable 
+    //                     onPress = {filterContextFunc}
+    //                     style = {{alignItems : 'flex-start', paddingLeft : 10, justifyContent :'center', borderWidth : 1, borderColor : "#EEE" , flex : 1 , borderRadius : 10 , marginLeft : 10 , marginRight : 10 , height  : 40  }}>
+    //                         <Text style = {{color : "#888", fontSize : 16, fontStyle : 'italic'}}>Filter by Context</Text>
+    //             </Pressable>
+    //     </View>)
+    // }
 
 
-    const [isFollowing,setFollowing] = React.useState(true)
-    const followCategory = () => {
-        setFollowing(!isFollowing)
-        const body = {
-            "user_name": userName,
-            "user_id": userId,
-            "category_id": categoryId,
-            "category_name": categoryName,
-            "isFollowing": !isFollowing
-        }
+    // const [isFollowing,setFollowing] = React.useState(true)
+    // const followCategory = () => {
+    //     setFollowing(!isFollowing)
+    //     const body = {
+    //         "user_name": userName,
+    //         "user_id": userId,
+    //         "category_id": categoryId,
+    //         "category_name": categoryName,
+    //         "isFollowing": !isFollowing
+    //     }
      //   console.log("POST BODY", body)
 
-        axios({
-            method: 'post',
-            url: URL + '/engagement/followcategory',
-            data: body
-          }, {timeout : 5000})
-        .then(res => {
+    //     axios({
+    //         method: 'post',
+    //         url: URL + '/engagement/followcategory',
+    //         data: body
+    //       }, {timeout : 5000})
+    //     .then(res => {
             
-        })
-        .catch((e) => console.log(e))
+    //     })
+    //     .catch((e) => console.log(e))
 
 
-    }
+    // }
 
     const [contexts,setContexts] = React.useState([])
     const [contextsChecked,setContextsChecked] = React.useState([])
@@ -552,7 +553,7 @@ const Category = () => {
             let newarray1 = [...contextsRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setContextsRequest(newarray1)
             }
         }
@@ -624,22 +625,12 @@ const Category = () => {
                             <AntDesign name = "home" size = {30} color = {colorsArray[randomNo]}/>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style = {{marginLeft : 20, flex : 1 , justifyContent :'center', alignItems :'center' }}
+                        style = {{marginRight : 40, flex : 1 , justifyContent :'center', alignItems :'center' }}
                         disabled
                         >
                         <Text style = {add.headerTitleText}>{categoryName}</Text>
                     </TouchableOpacity>
-                    <Pressable 
-                    onPress = {followCategory}
-                    style = {{alignItems : 'flex-start', paddingHorizontal : 10, justifyContent :'center', borderWidth : 1, 
-                    borderColor : isFollowing ? "red" : "#EEE" , 
-                    borderRadius : 10 , marginLeft : 10 , marginRight : 10 , height  : 30 , 
-                    backgroundColor : isFollowing ? "white" : 'red' }}>
-                        <Text style = {{
-                            color : isFollowing ? "#888" : 'white', 
-                            fontSize : isFollowing ? 12 : 16, 
-                            fontStyle : 'italic' }}>{isFollowing ? "Following" : "Follow"}</Text>
-                    </Pressable>
+                    
             </Animated.View>
             <Modal 
                 isVisible={filterContextModalVisible}
@@ -723,11 +714,11 @@ const Category = () => {
                 ref = {ref}
                 style = {{}}
                 contentContainerStyle = {{paddingTop : headerHeight}}
-                data = {!toggled ? feedSummary : feedData}
-                renderItem = {!toggled ? FeedItemSummary : FeedItem}
+                data = {feedData}
+                renderItem = {FeedItem}
                 onScroll = {handleScroll}
                 showsVerticalScrollIndicator = {false}
-                ListHeaderComponent = {HeaderComponent}
+               
                 ListEmptyComponent={EmptyComponent}
             />
             {/* <TouchableOpacity 
@@ -739,7 +730,7 @@ const Category = () => {
                     <AntDesign name = "plus" size = {40} color = "white" />
                 </View>
             </TouchableOpacity> */}
-            <View 
+            {/* <View 
             style = {{width: width, height : 40,
             backgroundColor : themeLightest, 
             justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
@@ -759,7 +750,7 @@ const Category = () => {
                         <Text style = {{color : theme, fontSize : 18,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>All Reviews</Text>
                     </View>
                 </View>
-            </View>
+            </View> */}
         </View>
     )
 }

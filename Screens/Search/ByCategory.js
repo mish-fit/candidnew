@@ -137,7 +137,7 @@ const FeedItemComponent = ({item,id}) => {
                     <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
                         <Text>
                             {item.title}
-                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read Detailed Review" : ""}</Text>
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
                         </Text>
                     </TouchableWithoutFeedback>
                 </View>
@@ -204,7 +204,7 @@ const ByCategory = () => {
             let newarray1 = [...categoriesRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setCategoriesRequest(newarray1)
             }
         }

@@ -186,12 +186,12 @@ const AddProduct = () => {
                 : null}
                 </ScrollView>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            {/* <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />
                 </TouchableOpacity>
-            </View>
+            </View> */}
         </View>
     )
 }

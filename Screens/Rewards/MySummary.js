@@ -144,14 +144,14 @@ const MySummary = () => {
             <NavigationContainer independent = {true}>
                 <Tabs user_id = {userId.slice(1,13)}/>
             </NavigationContainer>  
-            <View style = {{height: 40, backgroundColor : theme}}>
+            <View style = {{height: 40, backgroundColor : alttheme}}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Redeem",{userSummary: userSummary, userInfo : userInfo, recentBurn : recentBurn})}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1 , borderBottomColor : '#888', borderBottomWidth : 1, borderStyle:'dashed'}}>
                     <Text style = {{color : "#EEE"}}>REDEEM NOW</Text>
                 </TouchableOpacity>
             </View>
             
-            <View style = {{position : 'absolute', left : 30 , bottom : 50 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            <View style = {{position : 'absolute', left : 20 , bottom : 60 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />

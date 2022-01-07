@@ -134,7 +134,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{marginRight : 10}}>
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                    <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
@@ -146,7 +146,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                             navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : item.user_name , userId : item.user_id , isFollowing : item.isFollowing}
                         
                         )}}>
-                            <Text style = {{fontSize : 15 , fontWeight : 'bold'}}>{item.user_name}</Text>
+                            <Text style = {{fontSize : 12, fontWeight : 'bold' }}>{item.user_name}</Text>
                         </TouchableOpacity> 
                         { item.isFollowing ? null :
                         tempFollow ?
@@ -160,7 +160,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </View>
                
                     <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{fontSize : 12 , color : "#555" }}>{item.product_name}</Text>
+                        <Text style = {{fontSize : 18 ,color : "#555" }}>{item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -176,7 +176,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </View>
                 </View>
                 { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
-                   <Image source = {{uri : item.feed_image + "?" + new Date()}} 
+                   <Image source = {{uri : item.feed_image }} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
@@ -189,14 +189,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
                     </TouchableOpacity> 
                     <AirbnbRating
-                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
+                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
                         readOnly = {true}
-                        size={15}
+                        size={30}
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
                 </View> :  
                 <View style = {{flexDirection : 'row' , }}>
@@ -208,7 +208,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
                     <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
@@ -235,7 +235,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
                         <Text>
                             {item.title}
-                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read Detailed Review" : ""}</Text>
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
                         </Text>
                     </TouchableWithoutFeedback>
                 </View>
@@ -273,7 +273,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
     return(
         <View style = {{marginLeft : 10 ,  flexDirection : 'row', marginRight : 10 ,  marginTop : 10 , marginBottom : 5, borderRadius : 20 , borderWidth : 1, borderColor: "#EEE" }}>
             <View style = {{ justifyContent : 'center', alignItems : 'center' , }}>
-                <Image source = {{uri : item.feed_summary_image + "?" + new Date()}} 
+                <Image source = {{uri : item.feed_summary_image}} 
                     style = {{
                         width : Dimensions.get('screen').width * 0.46,
                         height: Dimensions.get('screen').width * 0.46,
@@ -508,7 +508,7 @@ const CategoryAlt = () => {
 
     const categoryApply = () => {
         
-    //    console.log(categoriesRequest)
+        console.log(categoriesRequest)
         if(categoriesRequest.length) 
         {
             axios.get(URL + "/feedsummary/bycategory",{params:{category_id : JSON.stringify(categoriesRequest) , user_id : userId.slice(1,13) }} , {timeout : 5000})
@@ -523,7 +523,7 @@ const CategoryAlt = () => {
 
             axios.get(URL + "/feed/category",{params:{category_id : JSON.stringify(categoriesRequest), page : 0 , user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-    //           console.log("feed category",responseData[0])
+                //console.log("feed category",responseData)
                 setFeedData(responseData)
                 setFilterCategoryModalVisible(false)
             })
@@ -543,15 +543,20 @@ const CategoryAlt = () => {
     
 
     const categoryCheckFunc = (index, name , type) => {
-    //  console.log(index , name , type)
-        if(type) {
+        console.log(index , name , type)
+       
+        if(type == true) {
+            console.log("categoriesRequest", categoriesRequest)
+            console.log("categoriesChecked", categoriesChecked)
             let newArray = [...categoriesChecked]
             newArray[index] = true
             setCategoriesChecked([...newArray])
             let newArray1 = [...categoriesRequest]
             newArray1.push(name)
             setCategoriesRequest([...newArray1])
-        } else {
+        } else if (type == false) {
+            console.log("categoriesRequest", categoriesRequest)
+            console.log("categoriesChecked", categoriesChecked)
             let newArray = [...categoriesChecked]
             newArray[index] = false
             setCategoriesChecked([...newArray])
@@ -559,7 +564,7 @@ const CategoryAlt = () => {
             let newarray1 = [...categoriesRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setCategoriesRequest(newarray1)
             }
         }
@@ -567,7 +572,7 @@ const CategoryAlt = () => {
     }
 
     const contextCheckFunc = (index, name , type) => {
-        //  console.log(index , name , type)
+          console.log(index , name , type)
           if(type) {
               let newArray = [...contextsChecked]
               newArray[index] = true
@@ -583,7 +588,7 @@ const CategoryAlt = () => {
               let newarray1 = [...contextsRequest]
               let index1 = newarray1.indexOf(name)
               if (index1 !== -1) {
-                  newarray1.splice(index, 1);
+                  newarray1.splice(index1, 1);
                   setContextsRequest(newarray1)
               }
           }
@@ -697,6 +702,7 @@ const CategoryAlt = () => {
                     return(
                     categoriesChecked[index]  == true ?
                             <Pressable 
+                            key = {index.toString()}
                             android_ripple = {{color : themeLightest}}
                             onPress = {()=> categoryCheckFunc(index, item.category_id ,false)}
                             style = {{backgroundColor : themeLightest ,flexDirection : 'row' , borderWidth : 1, borderColor : themeLightest, borderRadius : 10 , padding : 5 , alignItems : 'center', margin : 10 ,paddingHorizontal : 10, }}>
@@ -704,6 +710,7 @@ const CategoryAlt = () => {
                                 {/* <AntDesign name = "check" size = {15} color = 'white' /> */}
                             </Pressable>:
                             <Pressable 
+                            key = {index.toString()}
                             onPress = {()=> categoryCheckFunc(index, item.category_id, true)}
                             android_ripple = {{color : themeLightest}}
                             style = {{backgroundColor : 'white', flexDirection : 'row' , borderRadius : 10 , borderWidth : 1, borderColor : '#EEE', padding : 5 , margin : 10,paddingHorizontal : 10, }}>
@@ -773,8 +780,8 @@ const CategoryAlt = () => {
                 ref = {ref}
                 style = {{}}
                 contentContainerStyle = {{paddingTop : headerHeight}}
-                data = {!toggled ? feedSummary : feedData}
-                renderItem = {!toggled ? FeedItemSummary : FeedItem}
+                data = {toggled ? feedSummary : feedData}
+                renderItem = {toggled ? FeedItemSummary : FeedItem}
                 onScroll = {handleScroll}
                 showsVerticalScrollIndicator = {false}
                 ListHeaderComponent = {HeaderComponent}
@@ -795,18 +802,18 @@ const CategoryAlt = () => {
             justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
                 <View style = {{flexDirection : 'row'}}>
                     <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 18,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>Summary</Text>
+                        <Text style = {{color : theme, fontSize : 18,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>Feed</Text>
                     </View>
                     <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
                         <Switch
-                            trackColor={{ true: theme , false: "white" }}
-                            thumbColor={!toggled ? theme : 'white'}
+                            trackColor={{ true: 'white' , false: theme }}
+                            thumbColor={toggled ? theme : 'white'}
                             onValueChange={()=>setToggled(!toggled)}
                             value={toggled}
                         />
                     </View>
                     <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 18,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>All Reviews</Text>
+                        <Text style = {{color : theme, fontSize : 18,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Summary</Text>
                     </View>
                 </View>
             </View>

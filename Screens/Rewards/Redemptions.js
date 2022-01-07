@@ -1,5 +1,5 @@
 import React from 'react'
-import {Animated, Easing,  StyleSheet, Text, View , TouchableOpacity, Dimensions, Image, ToastAndroid, Alert} from 'react-native'
+import {Animated, Easing,  StyleSheet, Text, View , TouchableOpacity, Dimensions, Image, ToastAndroid, Alert, ScrollView} from 'react-native'
 import { alttheme, colorsArray, theme } from '../Exports/Colors'
 import { RewardsComponent } from '../Exports/Components'
 import { RandomContext } from '../Exports/Context'
@@ -99,7 +99,7 @@ const Redemptions = () => {
 
     return (
         pageLoading ? <LoadingPage /> :
-        <View style = {{flex :1 , backgroundColor : 'white'  }}>
+        <ScrollView style = {{flex :1 , backgroundColor : 'white'  }} contentContainerStyle = {{paddingBottom : 60}}>
             <View style = {{height : 70 , flexDirection : 'row-reverse', alignItems : 'center', justifyContent : 'space-between'}}>
                 <TouchableOpacity
                     style = {{marginRight : 30}}
@@ -187,13 +187,13 @@ const Redemptions = () => {
                 }
                 </View>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            {/* <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />
                 </TouchableOpacity>
-            </View>
-        </View>
+            </View> */}
+        </ScrollView>
     
     )
 }

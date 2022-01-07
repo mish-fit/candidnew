@@ -1,5 +1,5 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking } from 'react-native'
+import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking, BackHandler } from 'react-native'
 import { colorsArray, theme, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
@@ -36,9 +36,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
     React.useEffect(() => {
         setColorNo((randomNo+id)%(colorsArray.length-1))
-
-     //   console.log(userInfo)
-
+    //     const backHandler = BackHandler.addEventListener(
+    //         "hardwareBackPress",
+    //         ()=>navigation.goBack() 
+    //       );
+    //  //   console.log(userInfo)
+    //  return () => {
+    //     BackHandler.removeEventListener("hardwareBackPress", backHandler);
+    // };
 
     },[])
 
@@ -196,14 +201,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
                     </TouchableOpacity> 
                     <AirbnbRating
-                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
+                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
                         readOnly = {true}
-                        size={15}
+                        size={30}
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
                 </View> :  
                 <View style = {{flexDirection : 'row' , }}>
@@ -215,7 +220,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
                     <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
@@ -404,7 +409,7 @@ const User = () => {
             let newarray1 = [...categoriesRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setCategoriesRequest(newarray1)
             }
         }
@@ -563,7 +568,7 @@ const User = () => {
             let newarray1 = [...contextsRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setContextsRequest(newarray1)
             }
         }
@@ -733,7 +738,7 @@ const User = () => {
                 renderItem = {FeedItem}
                 onScroll = {handleScroll}
                 showsVerticalScrollIndicator = {false}
-                ListHeaderComponent = {HeaderComponent}
+                // ListHeaderComponent = {HeaderComponent}
                 ListEmptyComponent={EmptyComponent}
             />
             }

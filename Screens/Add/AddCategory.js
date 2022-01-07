@@ -41,7 +41,7 @@ const AddCategory = () => {
         .then(res => res.data).then(function(responseData) {
             setLoading(false)
             setCategoryArray(responseData)
-            console.log([...new Map(responseData.map(item => [item['master_category_name'], item])).values()])
+        //    console.log([...new Map(responseData.map(item => [item['master_category_name'], item])).values()])
             setMasterCategoryArray([...new Map(responseData.map(item => [item['master_category_name'], item])).values()])
         })
         .catch(function(error) {
@@ -80,7 +80,7 @@ const AddCategory = () => {
                 return(
                     <Pressable key = {index.toString()} 
                     onPress = {()=>{
-                        console.log(categoryArray.filter((item1)=>item1.master_category_name==item.master_category_name))
+                 //       console.log(categoryArray.filter((item1)=>item1.master_category_name==item.master_category_name))
                         setCategoryFilteredArray(categoryArray.filter((item1)=>item1.master_category_name==item.master_category_name))
                         setMasterCategorySelected(true)
                     }}

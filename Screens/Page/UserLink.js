@@ -402,7 +402,7 @@ const UserLink = () => {
             let newarray1 = [...categoriesRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setCategoriesRequest(newarray1)
             }
         }
@@ -580,7 +580,7 @@ const UserLink = () => {
             let newarray1 = [...contextsRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setContextsRequest(newarray1)
             }
         }

@@ -1,11 +1,11 @@
 import { NavigationContainer , useNavigation , useRoute } from '@react-navigation/native'
 import React from 'react'
-import { PermissionsAndroid, StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, Dimensions, ToastAndroid} from 'react-native'
+import { PermissionsAndroid, StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, Dimensions, ToastAndroid, Share} from 'react-native'
 import {AntDesign , FontAwesome5, Entypo,MaterialCommunityIcons} from 'react-native-vector-icons'
 import { RandomContext } from '../Exports/Context'
 import { alttheme, backArrow, background, colorsArray, themeLightest } from '../Exports/Colors'
 import LottieView from 'lottie-react-native';
-import {theme} from '../Exports/Colors'
+import {theme, themeLight} from '../Exports/Colors'
 import axios from 'axios'
 import {URL} from '../Exports/Config'
 import { add } from '../../Styles/Add'
@@ -17,14 +17,14 @@ import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
 import * as ImagePicker from 'expo-image-picker';
 import { s3URL, uploadImageOnS3 } from '../Exports/S3'
-
+import  Modal  from 'react-native-modal'
 
 const AddReview1 = () => {
 
 
     const navigation = useNavigation()
     const route = useRoute()
-
+    const [postCompletedModalVisible,setPostCompletedModalVisible] = React.useState(false)
     const [source,setSource] = React.useState(true)
     const [buyURL, setBuyURL] = React.useState("")
 
@@ -130,7 +130,7 @@ const AddReview1 = () => {
 
         axios.get(URL + "/search/product", {params:{product_text : "" , category_id : categoryId.toString()}} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-            console.log("product data", responseData)
+          //  console.log("product data", responseData)
             setSearchLoading(false)
             setSearchArray(responseData)
         })
@@ -145,6 +145,21 @@ const AddReview1 = () => {
         Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : name })
         setProductSelected(true)
         setSearchTextProduct(name)
+
+        axios.get(URL + "/isexists/post", {params:{product_id : id , user_id : userId.slice(1,13)  }} , {timeout : 3000})
+            .then(res => res.data).then(function(responseData) {
+        
+                if(responseData.length > 0) { 
+                    alert("You already added review for this product. Please delete the review in your profile to add it again")
+                    navigation.navigate("MyDetails")
+                }
+            })
+            .catch(function(error) {
+               
+            });
+
+
+
         if(id > 0) {
             setBody((body) => ({...body, product_name : name, product_id : id}))
             axios.get(URL + "/search/category/byproduct", {params:{product_id : id }} , {timeout : 3000})
@@ -209,10 +224,10 @@ const AddReview1 = () => {
         });
     }
 
-    const rating = (rating) => {
-            setRatingValue(rating)
+    const rating = (rating1) => {
+            setRatingValue(rating1)
          //   console.log(body)
-            setBody({...body, rating : rating})
+            setBody({...body, rating : rating1})
             setRatingSelected(true)
     }
 
@@ -277,7 +292,7 @@ const AddReview1 = () => {
     }
 
     const next = () => {
-     //   console.log("NEXT ", body)
+        console.log("NEXT ", body)
         if(newProduct && body.category_id > 0 && body.category_name.length > 1 && body.product_name.length > 1) {
             const addNewProductBody = {
                 "category_id": body.category_id,
@@ -300,7 +315,7 @@ const AddReview1 = () => {
                     .then(res => {
                     //       console.log(res)
                             ToastAndroid.show("Wohoo!! It's posted. Coins will be credited within 48 hours.", ToastAndroid.SHORT)
-                            navigation.navigate("PostShare", {body : body})
+                            setPostCompletedModalVisible(true)
                         })
                     .catch((e) => {
                         ToastAndroid.show("Error posting your critic. Please try again later!!", ToastAndroid.SHORT)
@@ -317,7 +332,7 @@ const AddReview1 = () => {
             .then(res => {
              //       console.log(res)
                     ToastAndroid.show("Wohoo!! It's posted. Coins will be credited within 48 hours.", ToastAndroid.SHORT)
-                    navigation.navigate("PostShare", {body : body})
+                    setPostCompletedModalVisible(true)
                 })
             .catch((e) => {
                 ToastAndroid.show("Error posting your critic. Please try again later!!", ToastAndroid.SHORT)
@@ -389,6 +404,32 @@ const AddReview1 = () => {
 
     }
 
+    const onModalClose = () => {
+        navigation.navigate("Home")
+    }
+
+    const share = async () => {
+        console.log(body)
+        Amplitude.logEventWithPropertiesAsync('REFERRAL', {userId : body.user_name })
+        try {
+            const result = await Share.share({
+              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/user?user_name=' + body.user_name + " . Use my coupon code : " + body.coupon 
+            });
+            if (result.action === Share.sharedAction) {
+              if (result.activityType) {
+             //     console.log(result.activityType)
+                } 
+              else {
+            //  console.log(result)
+            }
+            } 
+            else if (result.action === Share.dismissedAction) {
+                onModalClose()
+            }
+          } catch (error) {
+            console.log(error.message);
+          }
+    }
     
 
     return (
@@ -396,6 +437,27 @@ const AddReview1 = () => {
         <ScrollView 
         contentContainerStyle = {{paddingBottom : 60}}
         style = {{flex : 1 ,backgroundColor : 'white'}}>
+            <Modal 
+                isVisible={postCompletedModalVisible}
+                deviceWidth={Dimensions.get('screen').width}
+                deviceHeight={Dimensions.get('screen').height}
+                onBackdropPress={onModalClose}
+                onSwipeComplete={onModalClose}
+                swipeDirection="left"
+                style = {{marginHorizontal : 20 , marginVertical : Dimensions.get('screen').height*0.2}}
+                >
+                <View style = {{borderRadius : 20, backgroundColor :'white' }}>
+                    <View style = {{padding : 10, height : 80 }}>
+                        <Text style = {{color : themeLight}}>Share this post on your social handles and earn exciting rewards !</Text>
+                    </View>
+                    <Pressable 
+                    android_ripple = {{color : 'black'}}
+                    onPress = {share}
+                    style = {{backgroundColor : theme , borderRadius : 20 , padding : 10 , alignItems : 'center', margin : 10 }}>
+                        <Text style = {{color : 'white', marginRight : 10 }}>Share</Text>
+                    </Pressable>
+                </View>
+            </Modal>
             <Animated.View 
             style = {add.headerView}>
                 <TouchableOpacity 
@@ -606,7 +668,7 @@ const AddReview1 = () => {
                             borderRadius : 2, padding : 5, marginTop : 10, height : 50, justifyContent: 'space-between', 
                             alignItems:'center'}}>
                             <Text style = {{color : "#999"}}>
-                                Add a detailed review (More than 500 characters)
+                                Blog about this product (More than 500 characters)
                             </Text>
 
                             <TouchableOpacity 
@@ -624,7 +686,7 @@ const AddReview1 = () => {
                 disabled = {!productSelected || !categorySelected || !ratingSelected}
                 onPress = {next}
                 style = {{backgroundColor : productSelected && categorySelected && ratingSelected ? theme : "#888", borderRadius : 5 , width : Dimensions.get('screen').width * 0.3, padding : 10, justifyContent :'center', alignItems : 'center'}}>
-                    <Text style = {{color : 'white', fontWeight : 'bold' }}>Next</Text>
+                    <Text style = {{color : 'white', fontWeight : 'bold' }}>Post</Text>
                 </TouchableOpacity>
                 </View>
                  : null }
