@@ -90,7 +90,7 @@ const AddComment = () => {
                 navigation.navigate("PostShare", {body : addPostBody})
             })
         .catch((e) => {
-            ToastAndroid.show("Error posting your critic. Please try again later!!", ToastAndroid.SHORT)
+            ToastAndroid.show("Error posting your review. Please try again later!!", ToastAndroid.SHORT)
         })
 
     

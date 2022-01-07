@@ -144,10 +144,10 @@ const MySummary = () => {
             <NavigationContainer independent = {true}>
                 <Tabs user_id = {userId.slice(1,13)}/>
             </NavigationContainer>  
-            <View style = {{height: 40, backgroundColor : alttheme}}>
+            <View style = {{height: 40, backgroundColor : 'white'}}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Redeem",{userSummary: userSummary, userInfo : userInfo, recentBurn : recentBurn})}
-                style = {{justifyContent : 'center', alignItems : 'center', flex : 1 , borderBottomColor : '#888', borderBottomWidth : 1, borderStyle:'dashed'}}>
-                    <Text style = {{color : "#EEE"}}>REDEEM NOW</Text>
+                style = {{justifyContent : 'center', alignItems : 'center', flex : 1 , borderColor : '#EEE', borderWidth : 1, borderStyle:'dashed'}}>
+                    <Text style = {{color : theme, fontWeight : 'bold', fontSize : 18}}>REDEEM NOW</Text>
                 </TouchableOpacity>
             </View>
             

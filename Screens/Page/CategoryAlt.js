@@ -1,6 +1,6 @@
 import React from 'react'
 import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking } from 'react-native'
-import { alttheme, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
+import { alttheme, backArrow, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation , useRoute} from '@react-navigation/native';
@@ -13,6 +13,7 @@ import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import LottieView from 'lottie-react-native';
+import { LoadingPage } from '../Exports/Pages';
 
 
 const FeedItemComponent = ({item,id, userInfo}) => {
@@ -608,8 +609,8 @@ const CategoryAlt = () => {
                 </View>
                 <View style = {{justifyContent : 'center', alignItems :'center'}}>
                     <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No Posts on this category yet</Text>
-                    <TouchableOpacity onPress = {()=>navigation.navigate("AddReview" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
-                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Criticing</Text>
+                    <TouchableOpacity onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
+                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Reviewing</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -628,9 +629,9 @@ const CategoryAlt = () => {
                 flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
                     <TouchableOpacity 
                     onPress = {()=>navigation.navigate("Home")}
-                    style = {{width: 40 , height : 40 , marginLeft : 20,
-                    borderRadius : 60 , justifyContent : 'center', alignItems : 'center'  }}>
-                            <AntDesign name = "home" size = {30} color = {colorsArray[randomNo]}/>
+                    style = {{width: 20 , height : 40 , marginLeft : 20,
+                    borderRadius : 20 , justifyContent : 'center', alignItems : 'center'  }}>
+                            <AntDesign name = "arrowleft" size = {20} color = {backArrow}/>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style = {{marginLeft : 20, marginRight:60, flex : 1 , justifyContent :'center', alignItems :'center' }}
@@ -774,7 +775,7 @@ const CategoryAlt = () => {
                 </ScrollView>
                 </View>
             </Modal>
-            
+            {loading ? <LoadingPage /> :
             <Animated.FlatList
                 keyExtractor = {(item,index)=>index.toString()}
                 ref = {ref}
@@ -786,7 +787,7 @@ const CategoryAlt = () => {
                 showsVerticalScrollIndicator = {false}
                 ListHeaderComponent = {HeaderComponent}
                 ListEmptyComponent={EmptyComponent}
-            />
+            /> }
             {/* <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
             style = {{width: 50 , height : 50 , 

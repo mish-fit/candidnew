@@ -18,7 +18,7 @@ import Constants from 'expo-constants';
 import { style } from '../../Styles/ProfileInfo';
 import { URL } from '../Exports/Config';
 import { RandomContext } from '../Exports/Context';
-import { theme } from '../Exports/Colors';
+import { backArrow, theme } from '../Exports/Colors';
 import { s3URL, uploadImageOnS3 } from '../Exports/S3';
 import LottieView from 'lottie-react-native';
 import 'react-native-get-random-values'
@@ -59,6 +59,8 @@ const EditProfile = () => {
   const [instagram, setInstagram] = useState("")
   const [twitter, setTwitter] = useState("")
   const [socialHandles,setSocialHandles] = React.useState({})
+  const [aboutMe,setAboutMe] = React.useState("")
+  const [aboutMeFocus,setAboutMeFocus] = React.useState(false)
   
   const showDatePicker = () => {setDatePickerVisibility(true);};
   
@@ -86,6 +88,10 @@ const EditProfile = () => {
             setInstagram(responseData[0].instagram_user_name)
             setTwitter(responseData[0].twitter_user_name)
             setSocialHandles(responseData[0].social_handles)
+            if(responseData[0].social_handles && JSON.parse(responseData[0].socialHandles) && JSON.parse(responseData[0].socialHandles).aboutme && JSON.parse(responseData[0].socialHandles).aboutme != "" ) {
+              setAboutMe(JSON.parse(responseData[0].socialHandles).aboutme)
+            }
+            
         })
         .catch(function(error) {
             //
@@ -202,9 +208,27 @@ const EditProfile = () => {
         <ScrollView 
           contentContainerStyle = {style.mainViewContentContainer}
           style = {style.mainViewContainer} >
+            <Animated.View 
+            style = {{ 
+                backgroundColor : 'white', flex : 1 ,
+                height : 50 , 
+                position: 'absolute',  zIndex: 100, width: '100%',  left: 0,right: 0,
+                flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
+                    <TouchableOpacity 
+                    onPress = {()=>navigation.navigate("Home")}
+                    style = {{width: 20 , height : 40 , marginLeft : 20,
+                    borderRadius : 20 , justifyContent : 'center', alignItems : 'center'  }}>
+                            <AntDesign name = "arrowleft" size = {20} color = {backArrow}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style = {{marginLeft : 20, marginRight:60, flex : 1 , justifyContent :'center', alignItems :'center' }}
+                        disabled
+                        >
+                        <Text style = {{fontSize : 20, fontWeight : 'bold'}}>Edit Profile</Text>
+                    </TouchableOpacity>
+            </Animated.View>
 
-
-          <View style = {{}}>
+          <View style = {{paddingTop : 30}}>
             <View style = {style.editUserDetailsDisplayContainer}>
               <TouchableOpacity style = {style.editUserDetailsDisplayImageButton} onPress = {pickProfilePhoto}>
                 <ImageBackground source = {image && image != "None"? {uri : image + "?" + new Date() } : {uri : 'https://ui-avatars.com/api/?rounded=true&name&size=512'}} 
@@ -253,6 +277,24 @@ const EditProfile = () => {
                       source={require('../../assets/animation/refresh.json')}
                       />
                   </TouchableOpacity>
+                </View>
+              </View>
+              <View style = {style.editUserDetailsElementContainer}>
+                <Text style = {style.editUserDetailsElementText}>About Me</Text>
+                <View style = {{marginTop : 5, borderColor : "#AAA", borderWidth : 1, padding : 10 , borderRadius : 3}}>
+                  
+                  <TextInput style = {{fontSize : 14, flexWrap : 'wrap', textAlignVertical: 'top',  color : "#555"}}
+                      placeholder = "Tell us more about you.  "
+                      onChangeText = {(text) => {
+                        setAboutMe(text)
+                        setSocialHandles({...socialHandles, aboutme : text})
+                      }}
+                      value = {aboutMe}
+                      numberOfLines={4}
+                      multiline={true}
+                      onFocus={()=>setAboutMeFocus(true)}
+                      onBlur={()=>setAboutMeFocus(false)}
+                  />
                 </View>
               </View>
               <View style = {style.editUserDetailsElementContainer}>

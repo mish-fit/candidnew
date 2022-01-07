@@ -52,7 +52,7 @@ const Redemptions = () => {
 
         axios.get(URL + "/all/rewards", {timeout : 5000})
         .then(res => res.data).then(function(responseData) {
-        //    console.log(responseData)
+            console.log(responseData)
             setRedeemMapping(responseData)
         })
         .catch(function(error) {
@@ -73,19 +73,50 @@ const Redemptions = () => {
             "cash_value": cash_value
           }
 
+        const updatebody = {
+            "user_id" : userInfo.user_id,
+            "coins_available" : userSummary.coins_available - coins_value
+        }
     //    console.log(body)
-        axios({
-            method: 'post',
-            url: URL + '/rewards/redeem',
-            data: body
-          }, {timeout : 5000})
-        .then(res => {
-        //    console.log(res)
-            setPageLoading(false)
-            ToastAndroid.show("Your "+ company_name + " voucher code will be sent to your mobile.", ToastAndroid.SHORT)
-        })
-        .catch((e) => console.log(e))
+        Alert.alert("Redeem ?", "Do you want to redeem " + company_name + " voucher? You can redeem only one voucher per day", [
+        {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel"
+        },
+        { text: "YES", onPress: () => {
 
+            axios({
+                method: 'post',
+                url: URL + '/rewards/redeem',
+                data: body
+              }, {timeout : 5000})
+            .then(res => {
+            //    console.log(res)
+                setPageLoading(false)
+                ToastAndroid.show("Your voucher code will be sent to your mobile.", ToastAndroid.LONG)
+                axios({
+                    method: 'post',
+                    url: URL + '/rewards/updatecoin',
+                    data: updatebody
+                  }, {timeout : 5000})
+                .then(res => {
+                //    console.log(res)
+                    navigation.navigate("Home")
+                })
+                .catch((e) => {
+                    console.log(e)
+                })
+    
+            })
+            .catch((e) => {
+                setPageLoading(false)
+                console.log(e)
+            })
+
+        } }
+    ]);
+          
     }
 
     const importantInstructions = () => {
@@ -125,7 +156,9 @@ const Redemptions = () => {
                 <View style = {{ margin : 10 , }}>    
                 { redeemMapping.map((item,index)=>{ 
                     return(
-                    <View style = {{
+                    <View 
+                    key = {index.toString()}
+                    style = {{
                         backgroundColor : myRewardsCoins < item.coins_value ? 'rgba(0,0,0,0.2)' : 'white',
                         flexDirection : 'row' , margin : 10 , padding : 10 , borderRadius : 20 , borderWidth : 1 , borderColor : "#EEE" }}>
                         <View style = {{ justifyContent : 'center', alignItems : 'center', flex : 1 , }}>

@@ -346,7 +346,8 @@ const MyDetails = () => {
             
             axios.get(URL + "/user/info",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-              //  console.log("OUTPUT", responseData)
+                
+                
                 setUserInfo(responseData[0])
                 setUserImage(responseData[0].user_profile_image)
             })
@@ -483,7 +484,7 @@ const MyDetails = () => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style = {{}}
-                                    onPress = {()=>ToastAndroid.show("Post Authentic critics to get higher trust score and rewards",ToastAndroid.LONG)}
+                                    onPress = {()=>ToastAndroid.show("Post Authentic reviews to get higher trust score and rewards",ToastAndroid.LONG)}
                                     >
                                     <View style = {home.headingHeaderView}>
                                         <Text style = {[home.headingHeader,{color : theme}]}>Trust Score</Text>
@@ -528,6 +529,15 @@ const MyDetails = () => {
                             </View>
                         </View> 
                     </View>
+                    {userInfo && userInfo.social_handles && JSON.parse(userInfo.social_handles) && JSON.parse(userInfo.social_handles).aboutme && JSON.parse(userInfo.social_handles).aboutme != "" ? 
+                    <View style = {{flex : 1, paddingTop : 10, paddingHorizontal : 10 , paddingBottom : 10}}>
+                        <View style = {{marginBottom : 5, }}>
+                            <Text style = {{fontWeight : 'bold' , color : "#555"}}>About</Text>
+                        </View>
+                        <View> 
+                            <Text style = {{}}>{userInfo && userInfo.social_handles && JSON.parse(userInfo.social_handles) && JSON.parse(userInfo.social_handles).aboutme && JSON.parse(userInfo.social_handles).aboutme != "" ? JSON.parse(userInfo.social_handles).aboutme : ""}</Text>
+                        </View>
+                    </View> : null }
                     {myFollowers.length ? 
                     <View>
                     <Text style = {{fontSize : 18, borderTopWidth : 3, borderTopColor : "#EEE" , fontWeight : 'bold' , fontSize : 18, paddingLeft : 10 ,paddingTop : 10}}>My Followers</Text>
@@ -557,8 +567,8 @@ const MyDetails = () => {
                 </View>
                 <View style = {{justifyContent : 'center', alignItems :'center'}}>
                     <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No Posts yet</Text>
-                    <TouchableOpacity onPress = {()=>navigation.navigate("AddReview" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
-                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Criticing</Text>
+                    <TouchableOpacity onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
+                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Reviewing</Text>
                     </TouchableOpacity>
                 </View>
             </View>

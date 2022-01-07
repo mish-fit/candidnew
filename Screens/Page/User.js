@@ -1,6 +1,6 @@
 import React from 'react'
 import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking, BackHandler } from 'react-native'
-import { colorsArray, theme, themeLightest } from '../Exports/Colors'
+import { backArrow, colorsArray, theme, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation , useRoute} from '@react-navigation/native';
@@ -359,6 +359,7 @@ const User = () => {
     const navigation = useNavigation()
     const route = useRoute()
     const [userInfo,setUserInfo] = React.useState([])
+    const [followingUserInfo,setFollowingUserInfo] = React.useState([])
     const [isFollowing,setFollowing] = React.useState(route?.params?.isFollowing ? route?.params?.isFollowing : false )
     const [userName,setUserName] = React.useState(route.params?.homeUserName)
     const [followingUserName,setFollowingUserName] = React.useState(route.params?.userName)
@@ -446,6 +447,16 @@ const User = () => {
                 console.log(error)
             });
         } 
+
+        axios.get(URL + "/user/info",{params:{user_id : followingUserId}} , {timeout : 5000})
+            .then(res => res.data).then(function(responseData) {
+                console.log("OUTPUT", responseData[0].social_handles)
+                setFollowingUserInfo(responseData[0])
+                setUserImage(responseData[0].user_profile_image)
+            })
+            .catch(function(error) {
+            //  console.log(error)
+            });   
 
         axios.get(URL + "/feed/user",{params:{
             following_user_id : followingUserId, 
@@ -631,12 +642,20 @@ const User = () => {
                 flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
                     <TouchableOpacity 
                     onPress = {()=>navigation.navigate("Home")}
-                    style = {{width: 40 , height : 40 , marginLeft : 20,
-                    borderRadius : 60 , justifyContent : 'center', alignItems : 'center'  }}>
-                            <AntDesign name = "home" size = {30} color = {colorsArray[randomNo]}/>
+                    style = {{width: 20 , height : 20 , marginLeft : 10,
+                    borderRadius : 20 , justifyContent : 'center', alignItems : 'center'  }}>
+                            <AntDesign name = "arrowleft" size = {20} color = {backArrow}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style = {{marginLeft : 10, height : 30}} disabled>
+                        {followingUserInfo && followingUserInfo.user_profile_image && followingUserInfo.user_profile_image != "" ? 
+                        <Image source = {{uri : followingUserInfo.user_profile_image + "?" + new Date()}} 
+                            style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 30, height : 30 , width : 30}} />
+                        : <Avatar.Image style = {{ }}
+                        source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ followingUserName + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                        size={30}/> }
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style = {{marginLeft : 20, flex : 1 , justifyContent :'center', alignItems :'center' }}
+                        style = {{marginLeft : 10, flex : 1  }}
                         disabled
                         >
                         <Text style = {{fontWeight : 'bold', fontSize : 20, color : "#555"}}>{followingUserName}</Text>
@@ -649,10 +668,19 @@ const User = () => {
                     backgroundColor : isFollowing ? "white" : 'red' }}>
                         <Text style = {{
                             color : isFollowing ? "#888" : 'white', 
-                            fontSize : isFollowing ? 12 : 16, 
-                            fontStyle : 'italic' }}>{isFollowing ? "Following" : "Follow"}</Text>
+                            fontSize : isFollowing ? 10 : 14, 
+                             }}>{isFollowing ? "Following" : "Follow"}</Text>
                     </Pressable>
             </Animated.View>
+            {followingUserInfo && followingUserInfo.social_handles && followingUserInfo.social_handles != "" && JSON.parse(followingUserInfo.social_handles) && JSON.parse(followingUserInfo.social_handles).aboutme && JSON.parse(followingUserInfo.social_handles).aboutme != "" ? 
+                    <View style = {{marginTop : 50 , paddingTop : 10, paddingHorizontal : 10 , paddingBottom : 10 , borderBottomColor : '#EEE' , borderBottomWidth : 2,}}>
+                        <View style = {{marginBottom : 5, }}>
+                            <Text style = {{fontWeight : 'bold' , color : "#555"}}>About</Text>
+                        </View>
+                        <View> 
+                            <Text style = {{}}>{followingUserInfo && followingUserInfo.social_handles && followingUserInfo.social_handles != "" && JSON.parse(followingUserInfo.social_handles) && JSON.parse(followingUserInfo.social_handles).aboutme && JSON.parse(followingUserInfo.social_handles).aboutme != "" ? JSON.parse(followingUserInfo.social_handles).aboutme : ""}</Text>
+                        </View>
+                    </View> : null }
             {/* <Modal 
                 isVisible={filterContextModalVisible}
                 deviceWidth={Dimensions.get('screen').width}

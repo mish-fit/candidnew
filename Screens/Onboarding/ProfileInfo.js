@@ -68,6 +68,8 @@ const ProfileInfo = () => {
   const [userNameAccepted,setUserNameAccepted] = React.useState(false)
   const [userNameRefreshBoolean,setUserNameRefreshBoolean] = React.useState(false)
 
+  const [aboutMe,setAboutMe] = React.useState("")
+  const [aboutMeFocus,setAboutMeFocus] = React.useState(false)
  
 
   
@@ -488,7 +490,7 @@ const ProfileInfo = () => {
           <View style = {{}}>
             <View style = {style.editUserDetailsDisplayContainer}>
               <TouchableOpacity style = {style.editUserDetailsDisplayImageButton} onPress = {pickProfilePhoto}>
-                <ImageBackground source = {image && image != "None"? {uri : image + "?" + new Date() } : {uri : 'https://ui-avatars.com/api/?rounded=true&name&size=512'}} 
+                <ImageBackground source = {image && image != "None"? {uri : image  } : {uri : 'https://ui-avatars.com/api/?rounded=true&name&size=512'}} 
                         style = {style.editUserDetailsDisplayImage} >
                 </ImageBackground>
                 <View style = {{position: 'absolute' , backgroundColor : 'white' , padding : 3, borderRadius : 20 , bottom : 0 , right : 0 , margin : 15 , zIndex : 150}}>
@@ -534,6 +536,24 @@ const ProfileInfo = () => {
                       source={require('../../assets/animation/refresh.json')}
                       />
                   </TouchableOpacity>
+                </View>
+              </View>
+              <View style = {style.editUserDetailsElementContainer}>
+                <Text style = {style.editUserDetailsElementText}>About Me</Text>
+                <View style = {{marginTop : 5, borderColor : "#AAA", borderWidth : 1, padding : 10 , borderRadius : 3}}>
+                  
+                  <TextInput style = {{fontSize : 14, flexWrap : 'wrap', textAlignVertical: 'top',  color : "#555"}}
+                      placeholder = "Tell us more about you.  "
+                      onChangeText = {(text) => {
+                        setAboutMe(text)
+                        setSocialHandles({...socialHandles, aboutme : text})
+                      }}
+                      value = {aboutMe}
+                      numberOfLines={4}
+                      multiline={true}
+                      onFocus={()=>setAboutMeFocus(true)}
+                      onBlur={()=>setAboutMeFocus(false)}
+                  />
                 </View>
               </View>
               <View style = {style.editUserDetailsElementContainer}>

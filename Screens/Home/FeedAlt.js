@@ -245,11 +245,11 @@ const TrendingProducts = ({DATA , onClickItem }) => {
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.product_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={ITEM_SIZE-40}/> }
                     </View>
-                    <View style = {{backgroundColor : background , borderRadius : 5,alignItems : 'center', justifyContent : 'center', width : ITEM_SIZE-20 }}>
-                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 12 , color : borderColor}]}>{item.product_name.length > 30 ? item.product_name.substring(0,30) + "..." : item.product_name}</Text>
+                    <View style = {{backgroundColor : background , borderRadius : 5,alignItems : 'center', justifyContent : 'center', width : ITEM_SIZE }}>
+                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 14 , color : borderColor}]}>{item.product_name.length > 30 ? item.product_name.substring(0,30) + "..." : item.product_name}</Text>
                     </View>
                     <View style = {{position : 'absolute' , top : 0 , right : 0 , backgroundColor : alttheme ,  borderRadius : 20, width : 20 , height : 20 , justifyContent : 'center' , alignItems : 'center' }}>
-                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 7 , color : 'white'}]}>{item.trending}</Text>
+                        <Text style={[home.mainViewCarouselScrollableItemText,{margin:1 ,fontSize : 10 , color : 'white'}]}>{item.trending}</Text>
                     </View>
                 </TouchableOpacity>
             </Animated.View>
@@ -390,7 +390,7 @@ const FeedAlt = () => {
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                if (route.name == "Home") {
+                if (route.name == "TabHome") {
                     Alert.alert("Wait!!","Do you want to exit the app ?", [
                         {
                             text: "Cancel",
@@ -558,8 +558,8 @@ const heroBannerClick = (link) => {
     if(link.slice(0,4) == "http") {
         WebBrowser.openBrowserAsync(link);
     } 
-    else if (link == "AddReview") {
-        navigation.navigate("AddReview" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})
+    else if (link == "AddCategory") {
+        navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})
     } else if (link.slice(0,9) == "Category-") {
         navigation.navigate("CategoryAlt", {categoryCarousel : categoryCarousel, master_category_name : link.slice(9,).toString() , userInfo : userInfo, userSummary : userSummary})
     } else if (link == "HowToEarn") {
@@ -851,10 +851,10 @@ const share = async () => {
                     return(<Pressable key = {index.toString()} 
                     onPress = {()=>navigation.navigate("CategoryAlt", {categoryCarousel : categoryCarousel, master_category_name : item.master_category_name , userInfo : userInfo, userSummary : userSummary})}
                     style = {{ backgroundColor :'white', borderRadius : 10,
-                        width : Dimensions.get('screen').width*0.225 , height : Dimensions.get('screen').width*0.225, marginHorizontal : Dimensions.get('screen').width*0.01 , marginVertical : Dimensions.get('screen').width*0.02
+                        width : Dimensions.get('screen').width*0.305 , height : Dimensions.get('screen').width*0.305, marginHorizontal : Dimensions.get('screen').width*0.01 , marginVertical : Dimensions.get('screen').width*0.02
                         }}>
-                        <ImageBackground source={{uri : item.master_category_image + "?" + new Date()}} resizeMode="cover" style={{flex : 1, padding : 5, justifyContent : 'flex-end'}} imageStyle={{ borderRadius: 10,  opacity:0.2}}> 
-                            <Text style = {{fontSize : 13, fontWeight : 'bold'}} >{item.master_category_name}</Text>
+                        <ImageBackground source={{uri : item.master_category_image + "?" + new Date()}} resizeMode="cover" style={{flex : 1, padding : 5, justifyContent : 'center', alignItems : 'center'}} imageStyle={{ borderRadius: 10,  opacity:0.2}}> 
+                            <Text style = {{fontSize : 16, fontWeight : 'bold'}} >{item.master_category_name}</Text>
                         </ImageBackground>
                     </Pressable>)
                 })}

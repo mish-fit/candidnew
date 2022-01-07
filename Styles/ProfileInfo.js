@@ -263,7 +263,7 @@ export const style = StyleSheet.create({
        fontSize : 16,
     },
     editUserDetailsElementContainer : {
-        marginTop : 20,
+        marginTop : 10,
 
     },
     editUserDetailsElementText : {

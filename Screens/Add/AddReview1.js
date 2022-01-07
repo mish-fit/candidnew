@@ -318,7 +318,7 @@ const AddReview1 = () => {
                             setPostCompletedModalVisible(true)
                         })
                     .catch((e) => {
-                        ToastAndroid.show("Error posting your critic. Please try again later!!", ToastAndroid.SHORT)
+                        ToastAndroid.show("Error posting your review. Please try again later!!", ToastAndroid.SHORT)
                     })
             })
             .catch((e) => console.log(e))
@@ -335,7 +335,7 @@ const AddReview1 = () => {
                     setPostCompletedModalVisible(true)
                 })
             .catch((e) => {
-                ToastAndroid.show("Error posting your critic. Please try again later!!", ToastAndroid.SHORT)
+                ToastAndroid.show("Error posting your review. Please try again later!!", ToastAndroid.SHORT)
             })
         }
 

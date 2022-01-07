@@ -1,6 +1,6 @@
 import React from 'react'
 import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking } from 'react-native'
-import { colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
+import { backArrow, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation , useRoute} from '@react-navigation/native';
@@ -602,8 +602,8 @@ const Category = () => {
                 </View>
                 <View style = {{justifyContent : 'center', alignItems :'center'}}>
                     <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No Posts on this category yet</Text>
-                    <TouchableOpacity onPress = {()=>navigation.navigate("AddReview" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
-                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Criticing</Text>
+                    <TouchableOpacity onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
+                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Reviewing</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -620,9 +620,9 @@ const Category = () => {
                 flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
                     <TouchableOpacity 
                     onPress = {()=>navigation.navigate("Home")}
-                    style = {{width: 40 , height : 40 , marginLeft : 20,
-                    borderRadius : 60 , justifyContent : 'center', alignItems : 'center'  }}>
-                            <AntDesign name = "home" size = {30} color = {colorsArray[randomNo]}/>
+                    style = {{width: 20 , height : 40 , marginLeft : 20,
+                    borderRadius : 20 , justifyContent : 'center', alignItems : 'center'  }}>
+                            <AntDesign name = "arrowleft" size = {20} color = {backArrow}/>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style = {{marginRight : 40, flex : 1 , justifyContent :'center', alignItems :'center' }}

@@ -54,7 +54,7 @@ const TAB_ICON_SIZE = 20
 const TAB_SLIDER_HEIGHT = 2
 // const TAB_SLIDER_COLOR = "#C51E3A"
 const TAB_SLIDER_COLOR = themeLightest
-const TAB_ACTIVE_COLOR = 'white'
+const TAB_ACTIVE_COLOR = theme
 const TAB_INACTIVE_COLOR = altthemeLightest
 
 
@@ -65,7 +65,7 @@ const BottomMenu = ({iconName,isCurrent,label,value,index}) => {
         height: "100%",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor :  alttheme,
+        backgroundColor :  'white',
         margin : 0,
         padding : 0,
       }}
