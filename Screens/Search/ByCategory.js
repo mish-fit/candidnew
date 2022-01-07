@@ -17,6 +17,7 @@ import {Avatar} from 'react-native-paper'
 import * as Permissions from 'expo-permissions'
 import axios from 'axios';
 import * as Amplitude from 'expo-analytics-amplitude';
+import moment from 'moment';
 
 // import { FlatList } from 'react-native-gesture-handler';
 // import { categories } from '../FakeData/SearchByCategory';
@@ -60,7 +61,7 @@ const FeedItemComponent = ({item,id}) => {
                 <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                     <View style = {{marginRight : 10}}>
                     {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                        <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                        <Image source = {{uri : item.user_image + "?" + moment().format('YYYY-MM-DD')}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                         <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                         source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                         size={40}/> }  
@@ -103,21 +104,21 @@ const FeedItemComponent = ({item,id}) => {
                     </View>
                 </View>
                 <View style = {{marginTop : 10, justifyContent : 'center', alignItems : 'center' }}>
-                    <Image source = {{uri : item.feed_summary_image + "?" + new Date()}} 
+                    <Image source = {{uri : item.feed_summary_image + "?" + moment().format('YYYY-MM-DD')}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
-                    <TouchableOpacity 
+                    {item.buy_url != "" ? <TouchableOpacity 
                     onPress = {()=>{
                         Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , category_name : item.category_name , product_name : item.product_name})
                         redirect(item.buy_url)
                     }}
                     style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> : null }
                 </View>
                 <View style = {{marginTop : 10, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
                     <TouchableOpacity 

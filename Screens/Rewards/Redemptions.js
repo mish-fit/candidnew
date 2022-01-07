@@ -12,6 +12,7 @@ import axios from 'axios'
 import { URL } from '../Exports/Config'
 import { LoadingPage } from '../Exports/Pages'
 import * as Amplitude from 'expo-analytics-amplitude';
+import moment from 'moment'
 
 
 const Redemptions = () => {
@@ -163,7 +164,7 @@ const Redemptions = () => {
                         flexDirection : 'row' , margin : 10 , padding : 10 , borderRadius : 20 , borderWidth : 1 , borderColor : "#EEE" }}>
                         <View style = {{ justifyContent : 'center', alignItems : 'center', flex : 1 , }}>
                             <View>
-                                <Image source = {{uri : item.company_logo + "?" + new Date()}} 
+                                <Image source = {{uri : item.company_logo + "?" + moment().format('YYYY-MM-DD')}} 
                                 style = {{width : 100, height : 100 }} />
                             </View>  
                             <View style = {{height : 50 ,  width : '100%', justifyContent : 'center', alignItems : 'center', borderWidth : 1 , padding : 5, borderColor : "#AAA", justifyContent : 'center' }}>

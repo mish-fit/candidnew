@@ -475,16 +475,19 @@ const AddReview1 = () => {
             <View style = {{marginTop : 50 , borderTopColor : "#EEE" , borderTopWidth : 2, flex : 1}}>
                 <View style={add.element}>
                     {!productSelected ? 
-                    <View style = {{paddingVertical: 10, marginHorizontal : 5, flexDirection : 'row', justifyContent : 'space-between', borderRadius : 10, borderWidth : 1, borderColor : '#888', paddingHorizontal : 5}}>
-                        <TextInput style = {{fontSize : 16,}}
-                            placeholder = "Search / Add Product by clicking '+'"
-                            onChangeText = {(text) => searchProduct(text)}
-                            value = {searchTextProduct}
-                            onFocus = {()=>setInputFocus(true)}
-                            onBlur = {()=>setInputFocus(false)}
-                        />
+                    <View style = {{flex : 1, paddingVertical: 10, marginHorizontal : 5, flexDirection : 'row', justifyContent : 'space-between', borderRadius : 10, borderWidth : 1, borderColor : '#888', paddingHorizontal : 5}}>
+                        <View style = {{flex : 1 , }}>
+                            <TextInput style = {{fontSize : 16,}}
+                                placeholder = "Search / Add Product by clicking '+'"
+                                onChangeText = {(text) => searchProduct(text)}
+                                value = {searchTextProduct}
+                                multiline
+                                onFocus = {()=>setInputFocus(true)}
+                                onBlur = {()=>setInputFocus(false)}
+                            />
+                            </View>
                         <TouchableOpacity 
-                            style = {{padding : 2 ,  marginRight : 10, justifyContent :'center', alignItems:'center',}}
+                            style = {{width : 30, padding : 2 ,  marginRight : 5, justifyContent :'center', alignItems:'center',}}
                             disabled = {plusDisable}
                             onPress = {()=>onClickSearchItemChild(searchTextProduct,0)} >
                             <AntDesign name = "plus" size = {24} color = {theme} />
@@ -665,14 +668,15 @@ const AddReview1 = () => {
                         }
                         <TouchableOpacity onPress = {longReview}
                             style = {{flexDirection : 'row' , borderWidth : 1 , borderColor : '#bbb', backgroundColor : '#EEE' ,
-                            borderRadius : 2, padding : 5, marginTop : 10, height : 50, justifyContent: 'space-between', 
+                            borderRadius : 2, padding : 5, marginTop : 10,  justifyContent: 'space-between', width : Dimensions.get('screen').width - 10,
                             alignItems:'center'}}>
-                            <Text style = {{color : "#999"}}>
-                                Blog about this product (More than 500 characters)
-                            </Text>
-
+                            <View style = {{flex : 1 ,  }}>
+                                <Text style = {{color : "#999", fontSize : 12}}>
+                                    Blog about this product (More than 500 characters)
+                                </Text>
+                            </View>
                             <TouchableOpacity 
-                            style = {{ paddingTop : 2, paddingBottom : 2, paddingLeft : 5, paddingRight: 5, justifyContent : 'center' , alignItems : 'center', borderRadius : 5 }}
+                            style = {{ width : 30 , paddingTop : 2, paddingBottom : 2, paddingLeft : 5, paddingRight: 5, justifyContent : 'center' , alignItems : 'center', borderRadius : 5 }}
                             onPress = {longReview}
                             >
                             <Entypo name = "text-document" size = {20} color = {theme} />

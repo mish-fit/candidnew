@@ -16,6 +16,7 @@ import { mySummaryStyle } from '../../Styles/MySummary'
 import MyEarns from './MyEarns'
 import MyRedeems from './MyRedeems'
 import * as Amplitude from 'expo-analytics-amplitude';
+import { Avatar } from 'react-native-paper'
 
 
 const Tab = createMaterialTopTabNavigator()
@@ -115,24 +116,31 @@ const MySummaryTab = () => {
 
     return (
         <View style = {{flex :1 , backgroundColor : 'white'  }}>
-            <View style = {{height : 80 , flexDirection : 'row-reverse', alignItems : 'center', justifyContent : 'space-between'}}>
-                <TouchableOpacity
-                    style = {{marginRight : 30}}
-                    onPress = {()=>navigation.navigate("MyDetails")}
-                    >
-                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : alttheme}}>{userInfo.user_name}</Text>
-                </TouchableOpacity>
-                <View style = {{marginLeft : 20, flexDirection : 'row', alignItems : 'center'}}>
-                    <View style = {{justifyContent : 'center', marginLeft : 10}}>
-                        <LottieView
-                        progress = {progress}
-                        style={{width : 60 , height : 60}}
-                        source={require('../../assets/animation/coins-money.json')}
-                      //  autoPlay
-                        />
+            <View 
+            style = {{ 
+                backgroundColor : 'white', flex : 1 ,
+                height : 50 , 
+                position: 'absolute',  zIndex: 100, width: '100%',  left: 0,right: 0,
+                flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
+                    <TouchableOpacity style = {{marginLeft : 10, height : 30}} onPress={()=>navigation.openDrawer()}>
+                        {userInfo.user_profile_image && userInfo.user_profile_image != "" ? 
+                        <Image source = {{uri : userInfo.user_profile_image + "?" + moment().format('YYYY-MM-DD')}} 
+                            style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 30, height : 30 , width : 30}} />
+                        : <Avatar.Image style = {{ }}
+                        source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userInfo.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                        size={30}/> }
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style = {{marginLeft : 10, flex : 1 }}
+                        onPress = {()=>{
+                            navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
+                            }
+                        >
+                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : alttheme}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
+                    </TouchableOpacity>
+                    <View style = {{alignItems : 'center', justifyContent : 'flex-end',flexDirection : 'row-reverse' , marginRight : 10 }}>
+                        <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
                     </View>
-                    <Text style = {{marginLeft : 5 , fontSize : 20, fontWeight : 'bold' , color : theme}}>{userSummary && userSummary.coins_available ? userSummary.coins_available : "0" }</Text>
-                </View>
             </View>
             
             <View style = {{height: 40, backgroundColor : themeLightest }}>

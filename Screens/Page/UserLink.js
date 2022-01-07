@@ -138,35 +138,9 @@ const FeedItemComponent = ({item,id, userInfo}) => {
     return(
         <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
-                <View style = {{marginRight : 10}}>
-                {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
-                    <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
-                    source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
-                    size={40}/> }  
-                </View>  
                 <View style = {{flex : 1}}>
-                    <View style = {{flexDirection : 'row', marginLeft : 5}}>
-                        <TouchableOpacity onPress = {()=> {
-                         //   console.log(" user info ",userInfo, " item " , item)
-                            navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : item.user_name , userId : item.user_id , isFollowing : item.isFollowing}
-                        
-                        )}}>
-                            <Text style = {{fontSize : 15 , fontWeight : 'bold'}}>{item.user_name}</Text>
-                        </TouchableOpacity> 
-                        { item.isFollowing ? null :
-                        tempFollow ?
-                        <View>
-                            <Text style = {{color : '#AAA', marginLeft : 10 }}>Following</Text>
-                        </View> :
-                        <TouchableOpacity onPress = {followUser}>
-                            <Text style = {{color : 'skyblue', marginLeft : 10 }}>Follow</Text>
-                        </TouchableOpacity>
-                        }
-                    </View>
-               
-                    <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
+                    <View style = {{marginVertical : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
+                        <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 20 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -189,11 +163,11 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                             borderRadius : 40, 
                         }} 
                     />
-                   <TouchableOpacity 
+                   {item.buy_url != "" ? <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
                     style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> 
+                    </TouchableOpacity> : null }
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
@@ -216,11 +190,11 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         count = {5}
                         unSelectedColor = "transparent"
                         />
-                    <TouchableOpacity 
+                    {item.buy_url != "" ? <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
                     style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, flex : 1}}>BUY</Text>
-                    </TouchableOpacity> 
+                    </TouchableOpacity> : null }
                 </View>
                 }
                 <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
@@ -310,7 +284,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
                     <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_count_buys > 0 ? item.feed_count_buys + " friends bought this" : ""}</Text>
                     
                 </View>
-                <TouchableOpacity 
+                {item.buy_url != "" ? <TouchableOpacity 
                 onPress = {()=>{
                     Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , user_name : item.user_name , product_name : item.product_name})
                     redirect(item.buy_url)}}
@@ -320,7 +294,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
                     padding : 5 , height : 30,
                     borderBottomRightRadius : 20}}>
                     <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 16 , color : colorsArray[colorNo]}}>BUY</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> : null }
             </View>    
         </View>
         
@@ -410,7 +384,7 @@ const UserLink = () => {
     }
 
     React.useEffect(()=>{
-        Amplitude.logEventAsync('USER PAGE')     
+        Amplitude.logEventAsync('USER LINK PAGE')     
         Animated.timing(progress, {
             toValue: 1,
             duration: 2000,

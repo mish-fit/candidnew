@@ -38,7 +38,7 @@ const Search = () => {
     
 
     React.useEffect(()=>{
-        Amplitude.logEventAsync('ADD PRODUCT')
+        Amplitude.logEventAsync('SEARCH PRODUCT')
         Animated.timing(progress, {
             toValue: 1,
             duration: 10000,

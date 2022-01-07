@@ -112,7 +112,7 @@ const Coupon = () => {
         <View style = {{flex : 1, backgroundColor : 'white' , padding : 20}}>
             <View style = {style.editUserDetailsElementContainer}>
                 <View style = {{flexDirection : 'row'}}>
-                  <Text style = {{fontWeight : 'bold', fontSize : 25 , color : theme }}>Coupon Code</Text>
+                  <Text style = {{fontWeight : 'bold', fontSize : 25 , color : theme }}>Referral Code</Text>
                   <View style = {{marginLeft : 10,alignItems :'center', justifyContent :'center'}}>
                     {couponCodeAccepted ?
                     <AntDesign name = "checkcircle" color = "green" size = {30} /> :
@@ -161,7 +161,7 @@ const Coupon = () => {
               </Pressable>
             </View>
             <View style = {{marginTop : 20 , padding : -10, paddingTop : 20 , borderTopColor : themeLightest , borderTopWidth : 1,}}>
-              <Text style = {{color : !couponCodeAccepted ? '#888' : themeLight }}>By entering valid coupon code , you and your referrer both will get 500 free coins equivalent to Rs. 50</Text>
+              <Text style = {{color : !couponCodeAccepted ? '#888' : themeLight }}>By entering valid referral code , you and your referrer both will get 500 free coins </Text>
               {couponCodeAccepted ?
                 <Text style = {{color : theme , marginTop : 20}}>Congrats! {coinsValue} coins will be credited in your and {username}'s account in a day</Text>
               : null

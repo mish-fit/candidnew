@@ -209,19 +209,29 @@ const onSubmit = async () => {
         onPress={onPressLogin}
         disabled={loginClick || !valid}
         >
-          <Text style = {{color : 'white'}}>GET OTP</Text>
-        </TouchableOpacity>
-        <View style = {{justifyContent : 'center', alignItems : 'center', marginHorizontal : 10 , marginBottom : 10 , marginTop : 100}}>
+        <Text style = {{color : 'white'}}>GET OTP</Text>
+      </TouchableOpacity>
+      <View style = {{justifyContent : 'center', alignItems : 'center', marginHorizontal : 10 , marginBottom : 10 , marginTop : 100}}>
         <Text style = {{fontSize : 12}}>
           <Ionicons name = "shield-checkmark-outline" size = {20} color = "green" /> 100% Safe. We don't use any private information 
         </Text>
-        <Hyperlink  linkStyle={ { color: '#2980b9', fontSize: 12 } }
-                    linkText={ url => url === 'https://www.getcandid.app/termsandconditions' ? 'Terms and Conditions' : url === 'https://www.getcandid.app/privacypolicy' ?  'Privacy Policy' : url}>
+        <Hyperlink  
+        onPress={ (url, text) => {
+          try {
+            Linking.openURL(url)
+          }
+          catch {
+            ToastAndroid.show("Link invalid", ToastAndroid.SHORT)
+          }
+           
+        }}
+        linkStyle={ { color: '#2980b9', fontSize: 12 } }
+        linkText={ url => url === 'https://www.getcandid.app/termsandconditions' ? 'Terms and Conditions' : url === 'https://www.getcandid.app/privacypolicy' ?  'Privacy Policy' : url}>
           <Text style={ { fontSize: 12, textAlign :'center' } }>
-           By continuing, you agree to our https://www.getcandid.app/termsandconditions and https://www.getcandid.app/privacypolicy
+          By continuing, you agree to our https://www.getcandid.app/termsandconditions and https://www.getcandid.app/privacypolicy
           </Text>
-        </Hyperlink>
-      </View>
+      </Hyperlink>
+    </View>
       {/* <View style = {{}} /> */}
       </View>
       ) : (

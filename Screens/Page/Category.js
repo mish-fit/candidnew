@@ -193,11 +193,11 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                             borderRadius : 40, 
                         }} 
                     />
-                   <TouchableOpacity 
+                   {item.buy_url != "" ? <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
                     style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> 
+                    </TouchableOpacity> : null }
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
@@ -220,11 +220,11 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
-                    <TouchableOpacity 
+                    {item.buy_url != "" ? <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
                     style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, flex : 1}}>BUY</Text>
-                    </TouchableOpacity> 
+                    </TouchableOpacity> : null }
                 </View>
                 }
                 <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
@@ -291,7 +291,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
     return(
         <View style = {{marginLeft : 10 ,  flexDirection : 'row', marginRight : 10 ,  marginTop : 10 , marginBottom : 5, borderRadius : 20 , borderWidth : 1, borderColor: "#EEE" }}>
             <View style = {{ justifyContent : 'center', alignItems : 'center' , }}>
-                <Image source = {{uri : item.feed_summary_image + "?" + new Date()}} 
+                <Image source = {{uri : item.feed_summary_image }} 
                     style = {{
                         width : Dimensions.get('screen').width * 0.46,
                         height: Dimensions.get('screen').width * 0.46,
@@ -307,7 +307,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
                     <Text style = {{fontSize : 13, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_recommendations} friends recommended this</Text>
                     <TouchableOpacity style = {{justifyContent  : 'flex-end',  alignItems : 'flex-end', alignItems : 'center', justifyContent : 'center'}} onPress = {()=>contextClick(item.product_id)}><Text style = {{fontSize : 10, fontStyle : 'italic',flexShrink : 1, borderBottomWidth : 1 , borderBottomColor : 'red',}}>Split by context</Text></TouchableOpacity>
                 </View>
-                <TouchableOpacity 
+                {item.buy_url != "" ? <TouchableOpacity 
                 onPress = {()=>{
                     Amplitude.logEventWithPropertiesAsync("BUY URL FROM CATEGORY FEED SUMMARY", { product_name : item.product_name})
                     redirect(item.buy_url)}
@@ -318,7 +318,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
                     padding : 5 , height : 30,
                     borderBottomRightRadius : 20}}>
                     <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 16 , color : colorsArray[colorNo]}}>BUY</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> : null }
             </View>    
         </View>
         
@@ -694,14 +694,14 @@ const Category = () => {
                         }}>
                             <Text style = {{fontWeight : 'bold', flex : 1,}}>{item.user_name}</Text>
                             <Text style = {{flex : 1, }}>{item.context_name}</Text>
-                            <TouchableOpacity 
+                            {item.buy_url != "" ? <TouchableOpacity 
                             onPress = {()=>{
                                 Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , user_name : item.user_name , product_name : item.product_name})
                                 redirect(item.buy_url)
                             }}
                             style = {{borderRadius: 10 , backgroundColor : 'red' , paddingHorizontal : 10 , paddingVertical : 5,}}>
                                 <Text style = {{color : 'white'}}>BUY</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> : null }
                     </View>
                 )                  
                 }) : null }

@@ -29,6 +29,7 @@ import { LoadingPage } from '../Exports/Pages';
 // import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useBackHandler } from '@react-native-community/hooks'
+import moment from 'moment';
 
 
 
@@ -73,7 +74,7 @@ const FriendsCarousel = ({DATA , onClickItem}) => {
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
                     <View style = {{flex: 1  , width : ITEM_SIZE, height : ITEM_SIZE-20, backgroundColor : background}}>
                      {item.user_profile_image ? 
-                     <Image source = {{uri : item.user_profile_image + "?" + new Date()}} 
+                     <Image source = {{uri : item.user_profile_image + "?" + moment().format('YYYY-MM-DD')}} 
                           style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 10 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
                    : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.following_user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
@@ -155,7 +156,7 @@ const FollowingCarousel = ({DATA , isFollowing, onClickItem , onClickFollow}) =>
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0, marginRight : 10 , }]} onPress = {() => {itemClick(item)}}>
                     <View style = {{flex: 1  , width : ITEM_SIZE, height : ITEM_SIZE-20, backgroundColor : background }}>
                     {item.user_profile_image ? 
-                     <Image source = {{uri : item.user_profile_image + "?" + new Date()}} 
+                     <Image source = {{uri : item.user_profile_image + "?" + moment().format('YYYY-MM-DD')}} 
                           style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 10 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
                    : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
@@ -239,7 +240,7 @@ const TrendingProducts = ({DATA , onClickItem }) => {
                 <TouchableOpacity style = {[home.mainViewCarouselScrollableItemButton,{borderWidth : 0, marginRight : 10 , }]} onPress = {() => {itemClick(item)}}>
                     <View style = {{flex: 1  , width : ITEM_SIZE, height : ITEM_SIZE-20, backgroundColor : background }}>
                     {item.product_image ? 
-                        <Image source = {{uri : item.product_image + "?" + new Date()}} 
+                        <Image source = {{uri : item.product_image}} 
                             style = {[home.mainViewCarouselScrollableItemImageBackground, {opacity : 1 , backgroundColor : background, borderRadius : 10 , width : ITEM_SIZE-20, height : ITEM_SIZE-20 , marginLeft : 10} ]} />
                     : <Avatar.Image style = {{marginTop : 10 , marginLeft : 20 ,  }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.product_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
@@ -455,7 +456,11 @@ const FeedAlt = () => {
             if (user != null) {
                 axios.get(URL + "/user/info",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
-                  //  console.log("OUTPUT", responseData)
+                    console.log("OUTPUT", responseData)
+                    console.log(moment().diff(moment(responseData[0].created_at),'hours'))
+                    if(moment().diff(moment(responseData[0].created_at),'hours') < 2 ) {
+                        setModalVisible(true)
+                    }
                     setUserInfo(responseData[0])
                 })
                 .catch(function(error) {
@@ -676,8 +681,8 @@ const share = async () => {
                 propagateSwipe={true}
                 >
                 <ScrollView style = {{backgroundColor : 'white' , borderRadius : 30 , paddingBottom : 60 , }}>
-                    <Text style = {{fontWeight : 'bold', textAlign :'center', color : theme, fontSize : 30}}>Congratulations</Text>
-                    <Text style = {{textAlign : 'center' , fontSize : 20}}>You just earned 500 coins</Text>
+                    <Text style = {{fontWeight : 'bold', textAlign :'center', color : theme, fontSize : 30, marginTop : 10}}>Congratulations</Text>
+                    <Text style = {{textAlign : 'center' , fontSize : 20}}>You earned 500 coins for signing up </Text>
                     <View style = {{justifyContent :'center', alignItems : 'center'}}>
                         <GiftComponent />
                     </View>
@@ -708,7 +713,7 @@ const share = async () => {
                 flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
                     <TouchableOpacity style = {{marginLeft : 10, height : 30}} onPress={()=>navigation.openDrawer()}>
                         {userInfo.user_profile_image && userInfo.user_profile_image != "" ? 
-                        <Image source = {{uri : userInfo.user_profile_image + "?" + new Date()}} 
+                        <Image source = {{uri : userInfo.user_profile_image + "?" + moment().format('YYYY-MM-DD')}} 
                             style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 30, height : 30 , width : 30}} />
                         : <Avatar.Image style = {{ }}
                         source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userInfo.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
@@ -853,7 +858,7 @@ const share = async () => {
                     style = {{ backgroundColor :'white', borderRadius : 10,
                         width : Dimensions.get('screen').width*0.305 , height : Dimensions.get('screen').width*0.305, marginHorizontal : Dimensions.get('screen').width*0.01 , marginVertical : Dimensions.get('screen').width*0.02
                         }}>
-                        <ImageBackground source={{uri : item.master_category_image + "?" + new Date()}} resizeMode="cover" style={{flex : 1, padding : 5, justifyContent : 'center', alignItems : 'center'}} imageStyle={{ borderRadius: 10,  opacity:0.2}}> 
+                        <ImageBackground source={{uri : item.master_category_image}} resizeMode="cover" style={{flex : 1, padding : 5, justifyContent : 'center', alignItems : 'center'}} imageStyle={{ borderRadius: 10,  opacity:0.2}}> 
                             <Text style = {{fontSize : 16, fontWeight : 'bold'}} >{item.master_category_name}</Text>
                         </ImageBackground>
                     </Pressable>)

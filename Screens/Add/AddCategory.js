@@ -87,7 +87,7 @@ const AddCategory = () => {
                     style = {{ backgroundColor :'white', borderRadius : 10,
                         width : Dimensions.get('screen').width*0.3 , height : Dimensions.get('screen').width*0.3, marginHorizontal : Dimensions.get('screen').width*0.01 , marginVertical : Dimensions.get('screen').width*0.02
                         }}>
-                        <ImageBackground source={{uri : item.master_category_image + "?" + new Date()}} resizeMode="cover" style={{flex : 1, padding : 5, justifyContent : 'center', alignItems : 'center', backgroundColor : '#888', borderRadius : 20}} imageStyle={{ borderRadius: 20,  opacity:0.7}}> 
+                        <ImageBackground source={{uri : item.master_category_image }} resizeMode="cover" style={{flex : 1, padding : 5, justifyContent : 'center', alignItems : 'center', backgroundColor : '#888', borderRadius : 20}} imageStyle={{ borderRadius: 20,  opacity:0.7}}> 
                             <Text style = {{fontSize : 15, fontWeight : 'bold', color : 'white'}} >{item.master_category_name}</Text>
                         </ImageBackground>
                     </Pressable>)
@@ -104,7 +104,7 @@ const AddCategory = () => {
                     style = {{ backgroundColor :'white', borderRadius : 10,
                         width : Dimensions.get('screen').width*0.3 , height : Dimensions.get('screen').width*0.3, marginHorizontal : Dimensions.get('screen').width*0.01 , marginVertical : Dimensions.get('screen').width*0.02
                         }}>
-                        <ImageBackground source={{uri : item.category_image + "?" + new Date()}} resizeMode="cover" style={{flex : 1, padding : 5, justifyContent : 'center', alignItems : 'center', backgroundColor : '#888', borderRadius : 20}} imageStyle={{ borderRadius: 20,  opacity:0.7}}> 
+                        <ImageBackground source={{uri : item.category_image }} resizeMode="cover" style={{flex : 1, padding : 5, justifyContent : 'center', alignItems : 'center', backgroundColor : '#888', borderRadius : 20}} imageStyle={{ borderRadius: 20,  opacity:0.7}}> 
                             <Text style = {{fontSize : 15, fontWeight : 'bold', color : 'white'}} >{item.category_name}</Text>
                         </ImageBackground>
                     </Pressable>)

@@ -22,7 +22,7 @@ const BurnItemComponent = ({item , id}) => {
             <View style = {[mySummaryStyle.activityComponent,{flexDirection : 'row' ,}]}>
                 <View style = {{height : 50 , width : 50 , }}>
                     <Image 
-                        source = {{uri : company_logo + "?" + new Date()}}
+                        source = {{uri : company_logo + "?" + moment().format('YYYY-MM-DD')}}
                         style = {{height : 50 , width : 50 , }}
                     />
                 </View>
@@ -79,7 +79,7 @@ const MyRedeems = ({user_id}) => {
     const emptyComponent = () => {
         return(
             <View style = {{padding : 20 }}>
-                <Text>You haven't redeemed your coins yet. Click on REDEEM NOW in the bottom for exciting gift vouchers</Text>
+                <Text>You haven't redeemed your coins yet. Click on REDEEM NOW or icon in the bottom for exciting gift vouchers</Text>
             </View>
         )
     }

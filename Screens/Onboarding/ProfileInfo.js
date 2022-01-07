@@ -406,7 +406,7 @@ const ProfileInfo = () => {
                 })
             }
             
-            ToastAndroid.show("Hi " + userbody.user_name, ToastAndroid.LONG)
+            ToastAndroid.show("Hi " + userbody.user_name , ToastAndroid.LONG)
                     setTimeout(function(){
                     navigation.navigate("Home", {source : "Onboarding", body : userbody})
                     }, 300);        
@@ -526,7 +526,7 @@ const ProfileInfo = () => {
                           value = {userName}
                   />
                   
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                   style = {{justifyContent : 'center', alignItems : 'center'}}
                   onPress = {userNameRefresh}
                   >
@@ -535,7 +535,7 @@ const ProfileInfo = () => {
                       style={{width : 20 , height : 20, marginRight : 10}}
                       source={require('../../assets/animation/refresh.json')}
                       />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
               </View>
               <View style = {style.editUserDetailsElementContainer}>

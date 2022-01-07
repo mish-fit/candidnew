@@ -78,7 +78,8 @@ const EditProfile = () => {
        const getUserInfo = () => {
         axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout:5000})
         .then(res => res.data).then(function(responseData) {
-     //       console.log("USER INFO",responseData)
+            console.log("USER INFO",responseData[0])
+            console.log("USER INFO1",JSON.parse(responseData[0].social_handles).aboutme)
             setUserInfo(responseData)
             setUserName(responseData[0].user_name)
             setImage(responseData[0].user_profile_image)
@@ -88,9 +89,8 @@ const EditProfile = () => {
             setInstagram(responseData[0].instagram_user_name)
             setTwitter(responseData[0].twitter_user_name)
             setSocialHandles(responseData[0].social_handles)
-            if(responseData[0].social_handles && JSON.parse(responseData[0].socialHandles) && JSON.parse(responseData[0].socialHandles).aboutme && JSON.parse(responseData[0].socialHandles).aboutme != "" ) {
-              setAboutMe(JSON.parse(responseData[0].socialHandles).aboutme)
-            }
+            setAboutMe(JSON.parse(responseData[0].social_handles).aboutme)
+            
             
         })
         .catch(function(error) {
@@ -267,7 +267,7 @@ const EditProfile = () => {
                           value = {userName}
                   />
                   
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                   style = {{justifyContent : 'center', alignItems : 'center'}}
                   onPress = {userNameRefresh}
                   >
@@ -276,7 +276,7 @@ const EditProfile = () => {
                       style={{width : 20 , height : 20, marginRight : 10}}
                       source={require('../../assets/animation/refresh.json')}
                       />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
               </View>
               <View style = {style.editUserDetailsElementContainer}>

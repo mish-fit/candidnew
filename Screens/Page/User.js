@@ -1,5 +1,5 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking, BackHandler } from 'react-native'
+import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking, BackHandler, ToastAndroid } from 'react-native'
 import { backArrow, colorsArray, theme, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
@@ -21,6 +21,7 @@ import {Avatar} from 'react-native-paper'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
 import { LoadingPage } from '../Exports/Pages';
+import HyperLink from 'react-native-hyperlink';
 
 const FeedItemComponent = ({item,id, userInfo}) => {
     const [randomNo, userId] = React.useContext(RandomContext)
@@ -144,35 +145,9 @@ const FeedItemComponent = ({item,id, userInfo}) => {
     return(
         <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
-                <View style = {{marginRight : 10}}>
-                {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
-                    <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
-                    source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
-                    size={40}/> }  
-                </View>  
-                <View style = {{flex : 1}}>
-                    <View style = {{flexDirection : 'row', marginLeft : 5}}>
-                        <TouchableOpacity onPress = {()=> {
-                         //   console.log(" user info ",userInfo, " item " , item)
-                            navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : item.user_name , userId : item.user_id , isFollowing : item.isFollowing ? item.isFollowing : false}
-                        
-                        )}}>
-                            <Text style = {{fontSize : 15 , fontWeight : 'bold'}}>{item.user_name}</Text>
-                        </TouchableOpacity> 
-                        { item.isFollowing ? null :
-                        tempFollow ?
-                        <View>
-                            <Text style = {{color : '#AAA', marginLeft : 10 }}>Following</Text>
-                        </View> :
-                        <TouchableOpacity onPress = {followUser}>
-                            <Text style = {{color : 'skyblue', marginLeft : 10 }}>Follow</Text>
-                        </TouchableOpacity>
-                        }
-                    </View>
-               
-                    <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item && item.product_name && item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
+                <View style = {{flex : 1}}>              
+                    <View style = {{marginVertical : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
+                        <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 20 , color : "#555" }}>{item && item.product_name && item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
                     </View>
                 </View> 
             </View>
@@ -195,11 +170,11 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                             borderRadius : 40, 
                         }} 
                     />
-                   <TouchableOpacity 
+                   {item.buy_url != "" ? <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
                     style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> 
+                    </TouchableOpacity> : null }
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
@@ -222,11 +197,12 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
+                    {item.buy_url != "" ? 
                     <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
                     style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, flex : 1}}>BUY</Text>
-                    </TouchableOpacity> 
+                    </TouchableOpacity> : null }
                 </View>
                 }
                 <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
@@ -316,7 +292,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
                     <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_count_buys > 0 ? item.feed_count_buys + " friends bought this" : ""}</Text>
                     
                 </View>
-                <TouchableOpacity 
+                {item.buy_url != "" ? <TouchableOpacity 
                 onPress = {()=>{
                     Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , user_name : item.user_name , product_name : item.product_name})
                     redirect(item.buy_url)}}
@@ -326,7 +302,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
                     padding : 5 , height : 30,
                     borderBottomRightRadius : 20}}>
                     <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 16 , color : colorsArray[colorNo]}}>BUY</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> : null }
             </View>    
         </View>
         
@@ -677,9 +653,20 @@ const User = () => {
                         <View style = {{marginBottom : 5, }}>
                             <Text style = {{fontWeight : 'bold' , color : "#555"}}>About</Text>
                         </View>
-                        <View> 
+                        <HyperLink
+                            onPress={(url) => {
+                                try {
+                                    Linking.openURL(url)
+                                }
+                                catch {
+                                    ToastAndroid.show("URL Invalid", ToastAndroid.SHORT)
+                                }
+                            }}
+                            linkStyle={{ color: '#2980b9', fontSize: 15 }}
+                        > 
                             <Text style = {{}}>{followingUserInfo && followingUserInfo.social_handles && followingUserInfo.social_handles != "" && JSON.parse(followingUserInfo.social_handles) && JSON.parse(followingUserInfo.social_handles).aboutme && JSON.parse(followingUserInfo.social_handles).aboutme != "" ? JSON.parse(followingUserInfo.social_handles).aboutme : ""}</Text>
-                        </View>
+                        </HyperLink>
+                        
                     </View> : null }
             {/* <Modal 
                 isVisible={filterContextModalVisible}
@@ -761,7 +748,7 @@ const User = () => {
                 keyExtractor = {(item,index)=>index.toString()}
                 ref = {ref}
                 style = {{}}
-                contentContainerStyle = {{paddingTop : headerHeight}}
+                contentContainerStyle = {{paddingTop : followingUserInfo && followingUserInfo.social_handles && followingUserInfo.social_handles != "" && JSON.parse(followingUserInfo.social_handles) && JSON.parse(followingUserInfo.social_handles).aboutme && JSON.parse(followingUserInfo.social_handles).aboutme != "" ? 10 : 60}}
                 data = {feedData}
                 renderItem = {FeedItem}
                 onScroll = {handleScroll}

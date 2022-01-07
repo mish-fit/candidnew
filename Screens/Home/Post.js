@@ -53,7 +53,7 @@ const Post = () => {
     
 
     React.useEffect(() => {
-    
+        Amplitude.logEventAsync("Detailed Post Visit")
 
      //   console.log(userInfo)
 
@@ -227,11 +227,11 @@ const Post = () => {
                             borderRadius : 40, 
                         }} 
                     />
-                   <TouchableOpacity 
+                   {item.buy_url != "" ? <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
                     style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> 
+                    </TouchableOpacity> : null }
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
@@ -254,11 +254,11 @@ const Post = () => {
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
-                    <TouchableOpacity 
+                    {item.buy_url != "" ? <TouchableOpacity 
                     onPress = {()=>buyItem(item.buy_url)}
                     style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , borderRadius : 20}}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, flex : 1}}>BUY</Text>
-                    </TouchableOpacity> 
+                    </TouchableOpacity> : null }
                 </View>
                 }
                 <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>

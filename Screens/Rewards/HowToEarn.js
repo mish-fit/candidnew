@@ -18,6 +18,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import Markdown from 'react-native-markdown-display';
 import HTMLView from 'react-native-htmlview';
 import * as Amplitude from 'expo-analytics-amplitude';
+import moment from 'moment'
 
 
 const FeedItemComponent = ({item,id}) => {
@@ -25,7 +26,7 @@ const FeedItemComponent = ({item,id}) => {
         <View style = {{ borderRadius : 10, marginTop : 5 , marginBottom : 5, justifyContent : 'center' , alignItems : 'center' }}>
             <View style = {{}}>
             {item.reward_image && item.reward_image != "None" && item.reward_image != "" ?
-                <Image source = {{uri : item.reward_image + "?" + new Date()}} style = {{width : Dimensions.get('screen').width*0.95, height : Dimensions.get('screen').width*0.5343 , borderRadius : 40  }}/> :
+                <Image source = {{uri : item.reward_image + "?" + moment().format('YYYY-MM-DD')}} style = {{width : Dimensions.get('screen').width*0.95, height : Dimensions.get('screen').width*0.5343 , borderRadius : 40  }}/> :
                 null}  
             </View>    
         </View>
