@@ -20,6 +20,7 @@ import {Avatar} from 'react-native-paper'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
 import * as firebase from "firebase";
+import LinearGradient from 'react-native-linear-gradient';
 
 const FeedItemComponent = ({item,id, userInfo}) => {
     const [randomNo, userId] = React.useContext(RandomContext)
@@ -163,11 +164,13 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                             borderRadius : 40, 
                         }} 
                     />
-                   {item.buy_url != "" ? <TouchableOpacity 
-                    onPress = {()=>buyItem(item.buy_url)}
-                    style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
-                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> : null }
+                   {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , 
+                    backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
+                        <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
+                            <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
+                        </TouchableOpacity> 
+                    </LinearGradient> : null }
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
@@ -190,14 +193,18 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         count = {5}
                         unSelectedColor = "transparent"
                         />
-                    {item.buy_url != "" ? <TouchableOpacity 
-                    onPress = {()=>buyItem(item.buy_url)}
-                    style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , borderRadius : 20}}>
-                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, flex : 1}}>BUY</Text>
-                    </TouchableOpacity> : null }
+                    {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , 
+                    borderRadius : 20}}>
+                        <TouchableOpacity 
+                        onPress = {()=>buyItem(item.buy_url)}
+                        >
+                            <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
+                        </TouchableOpacity> 
+                    </LinearGradient> : null }
                 </View>
                 }
-                <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
+                {/* <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
                     <TouchableOpacity 
                     disabled={dislike}
                     onPress = {likePost}
@@ -210,7 +217,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     >
                         <AntDesign name = "dislike2" color = {dislike ? "red" : like ? "#EEE" :"#AAA"} size = {20} />
                     </TouchableOpacity>
-                </View>
+                </View> */}
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
                     <Text style = {{fontWeight : 'bold'}}>{item.title}</Text>
                 </View>
@@ -222,84 +229,6 @@ const FeedItemComponent = ({item,id, userInfo}) => {
         )
 }
 
-
-
-const FeedItemSummaryComponent = ({item,id}) => {
-    const [randomNo] = React.useContext(RandomContext)
-    const [colorNo,setColorNo] = React.useState(0) 
-    const [tempFollow,setTempFollow] = React.useState(false)
-    const [like,setLike] = React.useState(item.like)
-    const [dislike,setDislike] = React.useState(item.dislike)
-
-
-
-    React.useEffect(() => {
-        setColorNo((randomNo+id)%(colorsArray.length-1))
-    },[])
-
-    const followUser = () => {
-        setTempFollow(true)
-    }
-
-    const redirect = async (buyURL) => {
-        try {   
-            Linking.openURL(buyURL)
-        } catch (error) {
-            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
-            alert("Browser not reachable")
-        }
-    };
-
-
-    return(
-        <View style = {{marginLeft : 10 ,  flexDirection : 'row', marginRight : 10 ,  marginTop : 10 , marginBottom : 5, borderRadius : 20 , borderWidth : 1, borderColor: "#EEE" }}>
-            <View style = {{ justifyContent : 'center', alignItems : 'center' , }}>
-                <Image source = {{uri : item.feed_image}} 
-                    style = {{
-                        width : Dimensions.get('screen').width * 0.46,
-                        height: Dimensions.get('screen').width * 0.46,
-                        borderTopLeftRadius : 20 , borderBottomLeftRadius : 20 ,
-                    }} 
-                />
-            </View>  
-            <View style = {{ justifyContent : 'space-between', borderTopRightRadius : 20 , borderBottomRightRadius : 20 , flexShrink : 1, flex : 1}}>
-                <View style = {{paddingTop : 5 ,paddingLeft : 5 , flexDirection : 'row', flexWrap : 'wrap' , flexShrink : 1,}}>
-                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
-                </View>
-                <View style = {{paddingHorizontal: 5, paddingVertical : 2,  flexShrink : 1}}>
-                    <View style = {{flexDirection : 'row', justifyContent : 'space-between', }}>
-                        <TouchableOpacity 
-                        style = {{alignItems : 'center', justifyContent : 'center'}} >
-                            <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1, backgroundColor : '#DDD' , borderRadius : 10, padding : 3}}>
-                                {item.category_name}
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                        style = {{alignItems : 'center', justifyContent : 'center'}} >
-                            <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1, borderColor : '#DDD' , borderWidth : 1, borderRadius : 10, padding : 3}}>
-                                {item.context_name}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_count_buys > 0 ? item.feed_count_buys + " friends bought this" : ""}</Text>
-                    
-                </View>
-                {item.buy_url != "" ? <TouchableOpacity 
-                onPress = {()=>{
-                    Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , user_name : item.user_name , product_name : item.product_name})
-                    redirect(item.buy_url)}}
-                style = {{
-                    backgroundColor : 'white' , 
-                    alignItems : 'center' , 
-                    padding : 5 , height : 30,
-                    borderBottomRightRadius : 20}}>
-                    <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 16 , color : colorsArray[colorNo]}}>BUY</Text>
-                </TouchableOpacity> : null }
-            </View>    
-        </View>
-        
-        )
-}
 
 const FollowItemComponent = () => {
     return(
@@ -330,7 +259,7 @@ const UserLink = () => {
     const [isFollowing,setFollowing] = React.useState(false)
     const [userName,setUserName] = React.useState()
     
-    const [followingUserName,setFollowingUserName] = React.useState(route.params?.user_name)
+    const [followingUserName,setFollowingUserName] = React.useState(route.params?.user)
     const [followingUserId,setFollowingUserId] = React.useState()
     const [pageNumber,setPageNumber] = React.useState(0)
     const [feedData,setFeedData] = React.useState([])
@@ -403,7 +332,7 @@ const UserLink = () => {
                             axios.get(URL + "/web/userlink",{params:{user_name : followingUserName}} , {timeout : 5000})
                             .then(res => res.data).then(function(responseData) {
                                 console.log("user link ", responseData)
-                                setFollowingUserId(responseData[0].id)
+                                setFollowingUserId(responseData[0].user_id)
                             })
                             .catch(function(error) {
                                 console.log(error)

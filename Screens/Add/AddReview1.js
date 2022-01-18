@@ -1,6 +1,6 @@
 import { NavigationContainer , useNavigation , useRoute } from '@react-navigation/native'
 import React from 'react'
-import { PermissionsAndroid, StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, Dimensions, ToastAndroid, Share} from 'react-native'
+import { PermissionsAndroid, StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, Dimensions, ToastAndroid, Share, Linking} from 'react-native'
 import {AntDesign , FontAwesome5, Entypo,MaterialCommunityIcons} from 'react-native-vector-icons'
 import { RandomContext } from '../Exports/Context'
 import { alttheme, backArrow, background, colorsArray, themeLightest } from '../Exports/Colors'
@@ -18,6 +18,12 @@ import { nanoid } from 'nanoid'
 import * as ImagePicker from 'expo-image-picker';
 import { s3URL, uploadImageOnS3 } from '../Exports/S3'
 import  Modal  from 'react-native-modal'
+import debounce from 'lodash.debounce';
+import HyperLink from 'react-native-hyperlink'
+import { fontSize } from 'styled-system'
+
+
+
 
 const AddReview1 = () => {
 
@@ -95,17 +101,16 @@ const AddReview1 = () => {
         "coupon" : ""
     })
 
+    const debouncedResults = React.useMemo(() => {
+        return debounce((text)=>searchProduct(text), 500);
+      }, []);
+
+
     React.useEffect(()=>{
         
       //  console.log("body in add product use effect", body)
         Amplitude.logEventAsync('ADD PRODUCT')
-        Animated.timing(progress, {
-            toValue: 1,
-            duration: 10000,
-            easing: Easing.linear,
-            useNativeDriver : true
-            },).start();
-
+        
         axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
         //    console.log(responseData)
@@ -138,6 +143,10 @@ const AddReview1 = () => {
             console.log(error)
             setSearchLoading(false)
         });
+
+        return () => {
+            debouncedResults.cancel();
+        };
     },[])
     
     const onClickSearchItemChild = (name, id) => {
@@ -211,7 +220,7 @@ const AddReview1 = () => {
         if(text.length > 1) {
             setPlusDisable(false)
         }
-        setSearchTextProduct(text)
+        
         setSearchLoading(true)
         axios.get(URL + "/search/product", {params:{product_text : text , category_id : categoryId}} , {timeout : 3000})
           .then(res => res.data).then(function(responseData) {
@@ -223,6 +232,11 @@ const AddReview1 = () => {
               setSearchLoading(false)
         });
     }
+
+    
+       
+
+
 
     const rating = (rating1) => {
             setRatingValue(rating1)
@@ -313,9 +327,9 @@ const AddReview1 = () => {
                         data: {...body, product_id : res.data}
                     }, {timeout : 5000})
                     .then(res => {
-                    //       console.log(res)
+                            setBody({...body, id : res.data})
                             ToastAndroid.show("Wohoo!! It's posted. Coins will be credited within 48 hours.", ToastAndroid.SHORT)
-                            setPostCompletedModalVisible(true)
+                            showModal()
                         })
                     .catch((e) => {
                         ToastAndroid.show("Error posting your review. Please try again later!!", ToastAndroid.SHORT)
@@ -332,7 +346,7 @@ const AddReview1 = () => {
             .then(res => {
              //       console.log(res)
                     ToastAndroid.show("Wohoo!! It's posted. Coins will be credited within 48 hours.", ToastAndroid.SHORT)
-                    setPostCompletedModalVisible(true)
+                    showModal()
                 })
             .catch((e) => {
                 ToastAndroid.show("Error posting your review. Please try again later!!", ToastAndroid.SHORT)
@@ -340,6 +354,17 @@ const AddReview1 = () => {
         }
 
         
+    }
+
+    const showModal = () => {
+        Animated.timing(progress, {
+            toValue: 1,
+            duration: 3000,
+            easing: Easing.linear,
+            useNativeDriver : true
+            },).start();
+        setPostCompletedModalVisible(true)
+
     }
 
     const contextCheckFunc = (index, id,name, type ) => {
@@ -413,7 +438,7 @@ const AddReview1 = () => {
         Amplitude.logEventWithPropertiesAsync('REFERRAL', {userId : body.user_name })
         try {
             const result = await Share.share({
-              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/user?user_name=' + body.user_name + " . Use my coupon code : " + body.coupon 
+              message: 'Hey, I just posted a review on https://www.getcandid.app/' + body.user_name + " . Start shopping from my recommendations. Signup using my referral code : " + body.coupon 
             });
             if (result.action === Share.sharedAction) {
               if (result.activityType) {
@@ -435,7 +460,7 @@ const AddReview1 = () => {
     return (
         !showLongComment ? 
         <ScrollView 
-        contentContainerStyle = {{paddingBottom : 60}}
+        contentContainerStyle = {{paddingBottom : 20, flex : 1}}
         style = {{flex : 1 ,backgroundColor : 'white'}}>
             <Modal 
                 isVisible={postCompletedModalVisible}
@@ -446,16 +471,40 @@ const AddReview1 = () => {
                 swipeDirection="left"
                 style = {{marginHorizontal : 20 , marginVertical : Dimensions.get('screen').height*0.2}}
                 >
-                <View style = {{borderRadius : 20, backgroundColor :'white' }}>
-                    <View style = {{padding : 10, height : 80 }}>
-                        <Text style = {{color : themeLight}}>Share this post on your social handles and earn exciting rewards !</Text>
+                <View style = {{borderRadius : 20, backgroundColor : 'rgba(250,250,250,0.95)' }}>
+                    <View style = {{justifyContent : 'center', alignItems : 'center'}}>
+                        <LottieView
+                            progress = {progress}
+                            style={{width : Dimensions.get('screen').width*0.3 , height : Dimensions.get('screen').width*0.2}}
+                            source={require('../../assets/animation/congratulation.json')}
+                            />
                     </View>
-                    <Pressable 
-                    android_ripple = {{color : 'black'}}
-                    onPress = {share}
-                    style = {{backgroundColor : theme , borderRadius : 20 , padding : 10 , alignItems : 'center', margin : 10 }}>
-                        <Text style = {{color : 'white', marginRight : 10 }}>Share</Text>
-                    </Pressable>
+                    <View style = {{padding : 10}}>
+                        <Text style = {{color : "#222", fontWeight : 'bold', fontSize : 16}}>Congrats! You earned 200 coins. Let your friends know you posted on Candid to get more rewards</Text>
+                    </View>
+                    <View style = {{padding : 10, backgroundColor : 'rgba(200,200,200,0.2)' , borderRadius : 5, marginHorizontal : 10,}}>
+                        <HyperLink
+                            onPress={(url) => {
+                                try {
+                                    Linking.openURL(url)
+                                }
+                                catch {
+                                    ToastAndroid.show("URL Invalid", ToastAndroid.SHORT)
+                                }
+                            }}
+                            linkStyle={{ color: '#2980b9', fontSize: 14 }}
+                        > 
+                            <Text style = {{color : "#777", fontWeight : '500', fontSize : 14, textAlign :'auto'}}>{"Hey, I just posted a review at https://www.getcandid.app/" + body.user_name + " : Start shopping from my recommendations. Signup using my referral code : " + body.coupon}</Text>
+                        </HyperLink>
+                    </View>
+                    <View style = {{justifyContent : 'center', alignItems :'center'}}>
+                        <Pressable 
+                        android_ripple = {{color : 'black'}}
+                        onPress = {share}
+                        style = {{backgroundColor :  theme ,  borderRadius : 20 , padding : 10 , alignItems : 'center', margin : 10 , width : 100}}>
+                            <Text style = {{color :  'white',  fontWeight : 'bold' }}>Share</Text>
+                        </Pressable>
+                    </View>
                 </View>
             </Modal>
             <Animated.View 
@@ -469,23 +518,29 @@ const AddReview1 = () => {
                     style = {add.headerTitle}
                     disabled
                     >
-                    <Text style = {add.headerTitleText}>Recommend / Review</Text>
+                    <Text style = {add.headerTitleText}>{productSelected ? "Rate" : "Select Product"}</Text>
                 </TouchableOpacity>
             </Animated.View>
             <View style = {{marginTop : 50 , borderTopColor : "#EEE" , borderTopWidth : 2, flex : 1}}>
-                <View style={add.element}>
+                <View style={{marginTop : 10}}>
                     {!productSelected ? 
-                    <View style = {{flex : 1, paddingVertical: 10, marginHorizontal : 5, flexDirection : 'row', justifyContent : 'space-between', borderRadius : 10, borderWidth : 1, borderColor : '#888', paddingHorizontal : 5}}>
-                        <View style = {{flex : 1 , }}>
+                    <View style = {{paddingVertical: 5, marginHorizontal : 5, 
+                    height :50, 
+                    flexDirection : 'row', justifyContent : 'space-between', borderRadius : 5, borderWidth : 1, borderColor : '#EEE', paddingHorizontal : 5}}>
+                        <View style = {{ }}>
                             <TextInput style = {{fontSize : 16,}}
                                 placeholder = "Search / Add Product by clicking '+'"
-                                onChangeText = {(text) => searchProduct(text)}
+                                onChangeText = {(text) => {
+                                    setSearchTextProduct(text)
+                                    debouncedResults(text)
+                                    }}
+                                style = {{flex : 1,}}
                                 value = {searchTextProduct}
                                 multiline
                                 onFocus = {()=>setInputFocus(true)}
                                 onBlur = {()=>setInputFocus(false)}
                             />
-                            </View>
+                        </View>
                         <TouchableOpacity 
                             style = {{width : 30, padding : 2 ,  marginRight : 5, justifyContent :'center', alignItems:'center',}}
                             disabled = {plusDisable}
@@ -533,7 +588,7 @@ const AddReview1 = () => {
                 {productSelected && categorySelected? 
                 <View style = {{marginHorizontal : 5, marginVertical : 5, }}>
                 {contextArray.length > 0 ? 
-                <View style = {{borderColor : "#AAA" , borderWidth : 1 , borderRadius : 3, padding : 5, }} >
+                <View style = {{borderColor : "#EEE" , borderWidth : 1 , borderRadius : 3, padding : 5, }} >
                     <Text style = {{fontWeight : 'bold' , marginTop : 0 , color : "#555", fontSize : 15, textAlign : 'left', marginBottom : 10, }}>Usage Context</Text>
                     <View style = {{flexDirection : 'row' , flexWrap : 'wrap' , }}>
                     {contextArray.map((item,index)=>{
@@ -543,15 +598,15 @@ const AddReview1 = () => {
                             key = {index.toString()}
                             android_ripple = {{color : themeLightest}}
                             onPress = {()=> contextCheckFunc(index, item.context_id , item.context_name, false)}
-                            style = {{backgroundColor : themeLightest ,flexDirection : 'row' , borderWidth : 1, borderColor : themeLightest, borderRadius : 10 , padding : 5 , alignItems : 'center', marginRight : 5 , marginTop : 5,paddingHorizontal : 10, }}>
-                                <Text style = {{color : theme, fontWeight : 'bold'}}>{item.context_name}</Text> 
+                            style = {{backgroundColor : themeLightest ,flexDirection : 'row' , borderWidth : 1, borderColor : themeLightest, borderRadius : 10 , padding : 3 , alignItems : 'center', marginRight : 3 , marginTop : 3,paddingHorizontal : 5, }}>
+                                <Text style = {{color : theme, fontWeight : 'bold', fontSize : 10 }}>{item.context_name}</Text> 
                             </Pressable>:
                             <Pressable 
                             key = {index.toString()}
                             onPress = {()=> contextCheckFunc(index, item.context_id,   item.context_name , true)}
                             android_ripple = {{color : themeLightest}}
-                            style = {{backgroundColor : 'white', flexDirection : 'row' , borderRadius : 10 , borderWidth : 1, borderColor : '#AAA', padding : 5 , marginRight : 5, marginTop : 5, paddingHorizontal : 10, }}>
-                                <Text style = {{color : 'black' }}>{item.context_name}</Text>
+                            style = {{backgroundColor : 'white', flexDirection : 'row' , borderRadius : 10 , borderWidth : 1, borderColor : '#AAA', padding : 3 , marginRight : 3, marginTop : 3, paddingHorizontal : 5, }}>
+                                <Text style = {{color : 'black', fontSize : 10 }}>{item.context_name}</Text>
                             </Pressable>
                     )                  
                     })}
@@ -606,7 +661,7 @@ const AddReview1 = () => {
                         </View>
                         <View style = {{marginTop : 20, borderColor : "#AAA", borderWidth : 1, padding : 10 , borderRadius : 3}}>
                             <TextInput style = {{fontSize : 14, flexWrap : 'wrap', textAlignVertical: 'top', fontWeight : 'bold', color : "#555"}}
-                                placeholder = "Most important thing about this product in 250 characters or less"
+                                placeholder = "Review (Optional)"
                                 onChangeText = {(text) => {
                                     setBody({...body, title : text})
                                     setTitle(text)
@@ -666,7 +721,7 @@ const AddReview1 = () => {
                             </TouchableOpacity>
                         </View>
                         }
-                        <TouchableOpacity onPress = {longReview}
+                        {/* <TouchableOpacity onPress = {longReview}
                             style = {{flexDirection : 'row' , borderWidth : 1 , borderColor : '#bbb', backgroundColor : '#EEE' ,
                             borderRadius : 2, padding : 5, marginTop : 10,  justifyContent: 'space-between', width : Dimensions.get('screen').width - 10,
                             alignItems:'center'}}>
@@ -681,17 +736,17 @@ const AddReview1 = () => {
                             >
                             <Entypo name = "text-document" size = {20} color = {theme} />
                             </TouchableOpacity>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                 </View> : null }
                  {productSelected && categorySelected ?
-                <View style = {{justifyContent : 'flex-end', alignItems :'flex-end', marginTop : 15,marginRight : 10}}>
-                <TouchableOpacity 
-                disabled = {!productSelected || !categorySelected || !ratingSelected}
-                onPress = {next}
-                style = {{backgroundColor : productSelected && categorySelected && ratingSelected ? theme : "#888", borderRadius : 5 , width : Dimensions.get('screen').width * 0.3, padding : 10, justifyContent :'center', alignItems : 'center'}}>
-                    <Text style = {{color : 'white', fontWeight : 'bold' }}>Post</Text>
-                </TouchableOpacity>
+                <View style = {{justifyContent : 'flex-end', alignItems :'flex-end', position : 'absolute' , bottom : 20 , right : 10}}>
+                    <TouchableOpacity 
+                    disabled = {!productSelected || !categorySelected || !ratingSelected}
+                    onPress = {next}
+                    style = {{backgroundColor : productSelected && categorySelected && ratingSelected ? theme : "#888", borderRadius : 5 , width : Dimensions.get('screen').width * 0.3, padding : 10, justifyContent :'center', alignItems : 'center'}}>
+                        <Text style = {{color : 'white', fontWeight : 'bold' }}>Post</Text>
+                    </TouchableOpacity>
                 </View>
                  : null }
             </View>

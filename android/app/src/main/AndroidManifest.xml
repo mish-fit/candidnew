@@ -16,7 +16,7 @@
     <intent>
       <action android:name="android.intent.action.VIEW"/>
       <category android:name="android.intent.category.BROWSABLE"/>
-      <data android:scheme="https"/>
+      <data android:scheme="https" android:host="www.getcandid.app"/>
     </intent>
   </queries>
   <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="true" android:theme="@style/AppTheme" android:usesCleartextTraffic="true">
@@ -47,6 +47,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="https" android:host="www.getcandid.app"/>
         <data android:scheme="candid"/>
+        <data android:scheme="app" android:host="com.candid.app"/>
         <data android:scheme="com.candid.app"/>
       </intent-filter>
     </activity>

@@ -12,7 +12,7 @@ import { FlatList } from 'react-native-gesture-handler'
 import {Menu,MenuOptions,MenuOption,MenuTrigger,} from 'react-native-popup-menu';
 import LottieView from 'lottie-react-native'
 import { Rating, AirbnbRating } from 'react-native-ratings';
-import {Avatar,Title} from 'react-native-paper'
+import {Avatar,Snackbar,Title} from 'react-native-paper'
 import * as Amplitude from 'expo-analytics-amplitude';
 import { add } from '../../Styles/Add'
 import { fontWeight } from 'styled-system'
@@ -224,6 +224,26 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
             } 
     }
 
+    const sharePost = async () => {
+        //   console.log(userInfo)
+           Amplitude.logEventWithPropertiesAsync('SHARE Post', {userName : userInfo.user_name })
+           try {
+               const result = await Share.share({
+                 message: 'Hey, I reviewed ' + item.product_name + " at https://www.getcandid.app/post?id=" + item.feed_id
+               });
+               if (result.action === Share.sharedAction) {
+                 if (result.activityType) {
+                //     console.log(result.activityType)
+                   } 
+                 else {
+               //  console.log(result)
+               }
+               } 
+             } catch (error) {
+               console.log(error.message);
+             }
+           }
+
 
     return(
         <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
@@ -237,6 +257,9 @@ const FeedItemComponent = ({item,id, userInfo, deleteItem}) => {
                         <Entypo name = "dots-three-vertical" size = {15} color = '#AAA'/>
                     </MenuTrigger>
                     <MenuOptions style = {{}}>
+                        <MenuOption onSelect = {sharePost}>
+                            <Text>Share</Text>
+                        </MenuOption>
                         <MenuOption onSelect = {deletePost}>
                             <Text>Delete</Text>
                         </MenuOption>
@@ -315,6 +338,13 @@ const MyDetails = () => {
     const [userImage,setUserImage] = React.useState("")
     const [feedData,setFeedData] = React.useState([])
     const [isFollowing,setFollowing] = React.useState([])
+
+    const [trustSnackVisible,setTrustSnackVisible] = React.useState(false)
+
+    const onToggleSnackBar = () => setTrustSnackVisible(!trustSnackVisible);
+
+    const onDismissSnackBar = () => setTrustSnackVisible(false);
+
 
     React.useEffect(() => {
             Amplitude.logEventAsync('MyDetails')
@@ -404,7 +434,7 @@ const MyDetails = () => {
         Amplitude.logEventWithPropertiesAsync('SHARE PROFILE', {userName : userInfo.user_name })
         try {
             const result = await Share.share({
-              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/user?user_name=' + userInfo.user_name + " . Use my coupon code : " + userInfo.coupon 
+              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/user?user_name=' + userInfo.user_name + " . Use my referral code : " + userInfo.coupon 
             });
             if (result.action === Share.sharedAction) {
               if (result.activityType) {
@@ -476,8 +506,10 @@ const MyDetails = () => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style = {{}}
-                                    onPress = {()=>ToastAndroid.show("Post Authentic reviews to get higher trust score and rewards",ToastAndroid.LONG)}
-                                    >
+                                    onPress = {()=>{
+                                        onToggleSnackBar()
+                                     //   ToastAndroid.show("Post Authentic reviews to get higher trust score and rewards",ToastAndroid.LONG)
+                                    }} >
                                     <View style = {home.headingHeaderView}>
                                         <Text style = {[home.headingHeader,{color : theme}]}>Trust Score</Text>
                                     </View>
@@ -639,6 +671,20 @@ const MyDetails = () => {
                     <AntDesign name = "plus" size = {30} color = "white" />
                 </View>
             </TouchableOpacity> */}
+
+            <Snackbar
+                visible={trustSnackVisible}
+                onDismiss={onDismissSnackBar}
+                duration={2000}
+                action={{
+                label: 'OK',
+                onPress: () => {
+                    // Do something
+                },
+                }}>
+                Post Authentic reviews to get higher trust score and rewards
+            </Snackbar>
+
         </View>
     )
 }

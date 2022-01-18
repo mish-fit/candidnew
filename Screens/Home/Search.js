@@ -74,7 +74,7 @@ const Search = () => {
         
         axios.get(URL + "/search/feedproducts", {params:{product_text : text }} , {timeout : 3000})
           .then(res => res.data).then(function(responseData) {
-         //     console.log("SearchArray",responseData)
+              console.log("SearchArray",responseData)
               setSearchLoading(false)
               setSearchArray(responseData)
           //    console.log("Reached Here response")

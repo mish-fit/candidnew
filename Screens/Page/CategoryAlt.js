@@ -14,6 +14,7 @@ import * as Amplitude from 'expo-analytics-amplitude';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import LottieView from 'lottie-react-native';
 import { LoadingPage } from '../Exports/Pages';
+import LinearGradient from 'react-native-linear-gradient';
 
 
 const FeedItemComponent = ({item,id, userInfo}) => {
@@ -184,11 +185,13 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                             borderRadius : 40, 
                         }} 
                     />
-                   {item.buy_url != "" ? <TouchableOpacity 
-                    onPress = {()=>buyItem(item.buy_url)}
-                    style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
+                   {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , 
+                    backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
+                    <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> : null }
+                    </TouchableOpacity> 
+                    </LinearGradient>: null }
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
@@ -211,11 +214,13 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
-                    {item.buy_url != "" ? <TouchableOpacity 
-                    onPress = {()=>buyItem(item.buy_url)}
-                    style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , borderRadius : 20}}>
-                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, flex : 1}}>BUY</Text>
-                    </TouchableOpacity> : null }
+                    {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , 
+                    borderRadius : 20}}>
+                    <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
+                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
+                    </TouchableOpacity>
+                    </LinearGradient> : null }
                 </View>
                 }
                 <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
@@ -290,18 +295,20 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
                     <Text style = {{fontSize : 13, fontStyle : 'italic',flexShrink : 1, color : alttheme, fontWeight : 'bold'}}>{item.feed_recommendations} friends recommended this</Text>
                     <TouchableOpacity style = {{justifyContent  : 'flex-end',  alignItems : 'flex-end', alignItems : 'center', justifyContent : 'center'}} onPress = {()=>contextClick(item.product_id)}><Text style = {{fontSize : 10, fontStyle : 'italic',flexShrink : 1, borderBottomWidth : 1 , borderBottomColor : 'red',}}>Split by context</Text></TouchableOpacity>
                 </View>
-                {item.buy_url != "" ? <TouchableOpacity 
-                onPress = {()=>{
-                    Amplitude.logEventWithPropertiesAsync("BUY URL FROM CATEGORY FEED SUMMARY", { product_name : item.product_name})
-                    redirect(item.buy_url)}
-                    }
-                style = {{
+                {item.buy_url != "" ? 
+                <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{
                     backgroundColor : 'white' , 
                     alignItems : 'center' , 
                     padding : 5 , height : 30,
                     borderBottomRightRadius : 20}}>
+                <TouchableOpacity 
+                onPress = {()=>{
+                    Amplitude.logEventWithPropertiesAsync("BUY URL FROM CATEGORY FEED SUMMARY", { product_name : item.product_name})
+                    redirect(item.buy_url)}
+                    }>
                     <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 16 , color : theme}}>BUY</Text>
-                </TouchableOpacity> : null }
+                </TouchableOpacity>
+                </LinearGradient> : null }
             </View>    
         </View>
         
@@ -761,14 +768,16 @@ const CategoryAlt = () => {
                         }}>
                             <Text style = {{fontWeight : 'bold', flex : 1,}}>{item.user_name}</Text>
                             <Text style = {{flex : 1, }}>{item.context_name}</Text>
-                            {item.buy_url != "" ? <TouchableOpacity 
+                            {item.buy_url != "" ? 
+                            <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{borderRadius: 10 , backgroundColor : 'red' , paddingHorizontal : 10 , paddingVertical : 5,}}>
+                            <TouchableOpacity 
                             onPress = {()=>{
                                 Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , user_name : item.user_name , product_name : item.product_name})
                                 redirect(item.buy_url)
-                            }}
-                            style = {{borderRadius: 10 , backgroundColor : 'red' , paddingHorizontal : 10 , paddingVertical : 5,}}>
+                            }}>
                                 <Text style = {{color : 'white'}}>BUY</Text>
-                            </TouchableOpacity> : null }
+                            </TouchableOpacity>
+                            </LinearGradient> : null }
                     </View>
                 )                  
                 }) : null }
@@ -781,8 +790,8 @@ const CategoryAlt = () => {
                 ref = {ref}
                 style = {{}}
                 contentContainerStyle = {{paddingTop : headerHeight}}
-                data = {toggled ? feedSummary : feedData}
-                renderItem = {toggled ? FeedItemSummary : FeedItem}
+                data = {feedData}
+                renderItem = {FeedItem}
                 onScroll = {handleScroll}
                 showsVerticalScrollIndicator = {false}
                 ListHeaderComponent = {HeaderComponent}
@@ -797,7 +806,7 @@ const CategoryAlt = () => {
                     <AntDesign name = "plus" size = {40} color = "white" />
                 </View>
             </TouchableOpacity> */}
-            <View 
+            {/* <View 
             style = {{width: width, height : 40,
             backgroundColor : themeLightest, 
             justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
@@ -817,7 +826,7 @@ const CategoryAlt = () => {
                         <Text style = {{color : theme, fontSize : 18,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Summary</Text>
                     </View>
                 </View>
-            </View>
+            </View> */}
         </View>
     )
 }

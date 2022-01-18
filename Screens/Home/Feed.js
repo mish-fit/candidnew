@@ -1,5 +1,5 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView } from 'react-native'
+import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView, ToastAndroid } from 'react-native'
 import { alttheme, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
@@ -26,6 +26,7 @@ import { home } from '../../Styles/Home';
 import  Modal  from 'react-native-modal'
 import { LoadingPage } from '../Exports/Pages';
 import Clipboard from '@react-native-clipboard/clipboard';
+import LinearGradient from 'react-native-linear-gradient';
 
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
@@ -167,15 +168,6 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         )}}>
                             <Text style = {{fontSize : 15 , fontWeight : 'bold' , color : "#555"}}>{item.user_name}</Text>
                         </TouchableOpacity> 
-                        { item.isFollowing ? null :
-                        tempFollow ?
-                        <View>
-                            <Text style = {{color : '#AAA', marginLeft : 10 }}>Following</Text>
-                        </View> :
-                        <TouchableOpacity onPress = {followUser}>
-                            <Text style = {{color : 'skyblue', marginLeft : 10 }}>Follow</Text>
-                        </TouchableOpacity>
-                        }
                     </View>
                
                     <TouchableOpacity 
@@ -205,11 +197,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                             borderRadius : 40, 
                         }} 
                     />
-                   {item.buy_url != "" ? <TouchableOpacity 
-                    onPress = {()=>buyItem(item.buy_url)}
-                    style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
-                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> : null }
+                   {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{position : 'absolute', bottom : 10 , 
+                        left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , 
+                        alignItems : 'center' , padding : 5 , borderRadius : 20 }}>
+                        <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
+                            <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
+                        </TouchableOpacity> 
+                    </LinearGradient> : null }
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
@@ -232,11 +227,13 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
-                    {item.buy_url != "" ? <TouchableOpacity 
-                    onPress = {()=>buyItem(item.buy_url)}
-                    style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , borderRadius : 20}}>
-                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, flex : 1}}>BUY</Text>
-                    </TouchableOpacity> : null }
+                    {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , 
+                    borderRadius : 20}} >
+                        <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
+                            <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, }}>BUY</Text>
+                        </TouchableOpacity> 
+                    </LinearGradient> : null }
                 </View>
                 }
                
@@ -497,11 +494,14 @@ const Feed = () => {
             
                     axios.get(URL + "/feed/home",{params:{user_id : user.phoneNumber.slice(1,13), page : pageNumber}} , {timeout : 5000})
                     .then(res => res.data).then(function(responseData) {
+                            console.log("feed",responseData)
                             setLoading(false)
                             setFeedData(responseData)
                     })
                     .catch(function(error) {
+                        console.log("ERROR",error)
                         setError(true)
+                        setLoading(false)
                     });
             
                    
@@ -560,7 +560,26 @@ const Feed = () => {
 
     
 
-
+    const EmptyComponent = () => {
+        return(
+            <View style = {{marginTop : 10 }}>
+                <View style = {{justifyContent : 'center'}}>
+                    <LottieView
+                    progress = {progress}
+                    style={{width : Dimensions.get('screen').width*0.4 , height : Dimensions.get('screen').width*0.4}}
+                    source={require('../../assets/animation/astronaut.json')}
+                    autoPlay
+                    />
+                </View>
+                <View style = {{justifyContent : 'center', alignItems :'center'}}>
+                    <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No new reviews to be shown</Text>
+                    <TouchableOpacity onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
+                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Reviewing</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
     
 
 
@@ -659,7 +678,7 @@ const Feed = () => {
                         style = {{marginLeft : 10, flex : 1 }}
                         onPress = {()=>{
                             Clipboard.setString(userInfo.coupon)
-                            ToastAndroid.show("Your coupon code : " + userInfo.coupon + " is copied", ToastAndroid.SHORT)
+                            ToastAndroid.show("Your referral code : " + userInfo.coupon + " is copied", ToastAndroid.SHORT)
                             Amplitude.logEventAsync("Clicked on My Details on Home")
                             navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
                             }
@@ -688,19 +707,20 @@ const Feed = () => {
             onScroll = {handleScroll}
             showsVerticalScrollIndicator = {false}
            // ListHeaderComponent={HeaderComponent}
-            
+            ListEmptyComponent={EmptyComponent}
             />
             }
-            <TouchableOpacity 
-            onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
-            style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
+            <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
             backgroundColor : theme
-            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , left : Dimensions.get('screen').width*.1   }}>
-                <View>
-                    <Text style = {{color : 'white', fontWeight : 'bold'}}>POST REVIEW AND EARN COINS</Text>
-                </View>
-        </TouchableOpacity>
-            
+            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , left : Dimensions.get('screen').width*.1   }} >
+                <TouchableOpacity 
+                onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
+                >
+                    <View>
+                        <Text style = {{color : 'white', fontWeight : 'bold'}}>POST REVIEW AND EARN COINS</Text>
+                    </View>
+                </TouchableOpacity>
+            </LinearGradient>
         </View>
     )
 }

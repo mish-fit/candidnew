@@ -43,7 +43,8 @@ const config = {
   screens: {
     HomeStack: {
       screens: {
-        UserLink: 'user',
+        UserLink: ':user',
+        PostLink : 'post'
       },
     }
   }
@@ -75,7 +76,7 @@ const App = () => {
       firebase.auth().onAuthStateChanged(user => {
         if (user != null) {
           AppCenter.setUserId(user.phoneNumber);
-         // console.log("firebase",user)
+        //  console.log("firebase",user)
           Amplitude.setUserIdAsync(user.phoneNumber)
           Amplitude.logEventWithPropertiesAsync('USER_VISIT', {"userPhoneNumber": user.phoneNumber})
           setLoggedIn(true)

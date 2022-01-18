@@ -5,7 +5,7 @@ import { home } from '../../Styles/Home'
 import { URL } from '../Exports/Config'
 import React from 'react'
 import {Animated, FlatList, Easing,  StyleSheet, Text, View , TouchableOpacity, Dimensions, Image, ToastAndroid, Alert, Linking} from 'react-native'
-import { alttheme, colorsArray, theme } from '../Exports/Colors'
+import { alttheme, backArrow, colorsArray, theme } from '../Exports/Colors'
 
 import { useNavigation, useRoute } from '@react-navigation/core'
 import LottieView from 'lottie-react-native';
@@ -19,7 +19,8 @@ import Markdown from 'react-native-markdown-display';
 import HTMLView from 'react-native-htmlview';
 import * as Amplitude from 'expo-analytics-amplitude';
 import moment from 'moment'
-
+import {AntDesign} from 'react-native-vector-icons'
+import { RewardsComponent } from '../Exports/Components'
 
 const FeedItemComponent = ({item,id}) => {
     return(
@@ -71,25 +72,23 @@ const HowToEarn = () => {
 
     const HeaderComponent = () => {
         return(
-            <View style = {{height : 70 , flexDirection : 'row-reverse', alignItems : 'center', justifyContent : 'space-between'}}>
-                <TouchableOpacity
-                    style = {{marginRight : 30}}
-                    onPress = {()=>navigation.navigate("MyDetails")}
-                    >
-                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : alttheme}}>{userInfo.user_name}</Text>
-                </TouchableOpacity>
-                <View style = {{marginLeft : 20, flexDirection : 'row', alignItems : 'center'}}>
-                    <TouchableOpacity 
-                    onPress = {()=>navigation.navigate("MyRewards")}
-                    style = {{justifyContent : 'center', marginLeft : 10}}>
-                        <LottieView
-                        progress = {progress}
-                        style={{width : 60 , height : 60}}
-                        source={require('../../assets/animation/coins-money.json')}
-                        autoPlay
-                        />
+            <View style = {{ backgroundColor : 'white', flex : 1 , height : 50 ,  width: '100%',  
+                flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
+                <View style = {{marginLeft : 10, height : 30,alignItems :"center", justifyContent : 'center'}} >
+                    <TouchableOpacity style = {{alignItems :"center", justifyContent : 'center'}} onPress={()=>navigation.goBack()}>
+                        <AntDesign name = "arrowleft" size = {20} color = {backArrow}/>
                     </TouchableOpacity>
-                    <Text style = {{marginLeft : 5 , fontSize : 20, fontWeight : 'bold' , color : theme}}>{userSummary && userSummary.coins_available ? userSummary.coins_available : "0" }</Text>
+                </View>
+                <TouchableOpacity
+                    style = {{marginLeft : 10, flex : 1 }}
+                    onPress = {()=>{
+                        navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
+                        }
+                    >
+                    <Text style = {{fontWeight : 'bold', fontSize : 20, color : backArrow}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
+                </TouchableOpacity>
+                <View style = {{alignItems : 'center', justifyContent : 'flex-end',flexDirection : 'row-reverse' , marginRight : 10 }}>
+                    <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
                 </View>
             </View>
         )
@@ -99,7 +98,7 @@ const HowToEarn = () => {
     return (
             <FlatList
                 keyExtractor = {(item,index)=>index.toString()}
-                style = {{}}
+                style = {{backgroundColor  : 'white' , flex : 1}}
                 contentContainerStyle = {{paddingTop : 0}}
                 data = {feedData}
                 renderItem = {FeedItem}

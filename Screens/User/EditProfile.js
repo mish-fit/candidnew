@@ -1,5 +1,5 @@
 import React , {useState,useEffect , useContext} from 'react'
-import { Animated, Easing, View,Text , Image ,ImageBackground, TouchableOpacity , TextInput , Dimensions , Button, ToastAndroid , ScrollView , PermissionsAndroid } from 'react-native'
+import { Animated, Easing, View,Text , Image ,ImageBackground, TouchableOpacity , TextInput , Dimensions , Button, ToastAndroid , ScrollView , PermissionsAndroid, Pressable } from 'react-native'
 
 import moment from 'moment';
 import * as ImagePicker from 'expo-image-picker';
@@ -24,7 +24,8 @@ import LottieView from 'lottie-react-native';
 import 'react-native-get-random-values'
 import { nanoid , customAlphabet} from 'nanoid'
 import * as Amplitude from 'expo-analytics-amplitude';
-
+import { TextInputMask } from 'react-native-masked-text'
+import LinearGradient from 'react-native-linear-gradient';
 
 
 
@@ -67,9 +68,15 @@ const EditProfile = () => {
   const hideDatePicker = () => {setDatePickerVisibility(false);};
   
   const handleConfirm = (date) => {
-      setUserDob(moment(date).format("YYYY-MM-DD"))
+      setUserDob(moment(date).format("DD/MM/YYYY"))
       hideDatePicker();
   };
+
+
+  const [genderValues,setGenderValues] = React.useState(["Male","Female"])
+  
+
+
 
     useEffect(() => {
       Amplitude.logEventWithPropertiesAsync('EDIT PROFILE',{user_id : userId.slice(1,13) })
@@ -84,7 +91,7 @@ const EditProfile = () => {
             setUserName(responseData[0].user_name)
             setImage(responseData[0].user_profile_image)
             setUserImage(responseData[0].user_profile_image)
-            setUserDob(responseData[0].user_dob)
+            setUserDob(moment(responseData[0].user_dob).format("DD/MM/YYYY"))
             setGender(responseData[0].user_gender)
             setInstagram(responseData[0].instagram_user_name)
             setTwitter(responseData[0].twitter_user_name)
@@ -140,7 +147,7 @@ const EditProfile = () => {
           "twitter_user_name" : twitter,
           "social_handles" : socialHandles
         }
-  //    console.log("USER BODY",userbody)
+      console.log("USER BODY",userbody)
  
       axios({
       method: 'post',
@@ -321,9 +328,9 @@ const EditProfile = () => {
               </View>
 
               <View style = {style.editUserDetailsElementContainer}>
-                <Text style = {style.editUserDetailsElementText}>Birthday</Text>
+                <Text style = {style.editUserDetailsElementText}>Birthday (dd/mm/yyyy)</Text>
                 <View style = {{flexDirection : 'row'}}>
-                  <Text style = {[style.editUserDetailsElementTextInput,{flex : 1}]}> 
+                  {/* <Text style = {[style.editUserDetailsElementTextInput,{flex : 1}]}> 
                       { userDob && userDob != "0000-00-00" ? userDob.replace('"','').substring(0,10) : ""} 
                   </Text>
                   <TouchableOpacity style = {style.datepicker} onPress={showDatePicker}>
@@ -334,12 +341,21 @@ const EditProfile = () => {
                       mode="date"
                       onConfirm={handleConfirm}
                       onCancel={hideDatePicker}
+                  /> */}
+                  <TextInputMask
+                    style = {{borderBottomColor : '#EEE' , borderBottomWidth : 1}}
+                    type={'datetime'}
+                    options={{
+                      format: 'DD/MM/YYYY'
+                    }}
+                    value={userDob}
+                    onChangeText={text => setUserDob(text) }
                   />
                 </View>
               </View>
               <View style = {style.editUserDetailsElementContainer}>
                 <Text style = {style.editUserDetailsElementText}>Gender</Text>
-                <View style = {{flexDirection : 'row' ,  justifyContent : 'flex-end', alignItems : 'flex-end' }}>
+                {/* <View style = {{flexDirection : 'row' ,  justifyContent : 'flex-end', alignItems : 'flex-end' }}>
                   <Text style = {{ borderBottomWidth : 1 ,borderBottomColor : "#CCC",flex : 1 , paddingBottom : 5,}}> 
                       { gender && gender != "NA" ? gender : ""} 
                   </Text>
@@ -356,8 +372,32 @@ const EditProfile = () => {
                     <Picker.Item label="Others" value="Others" />
                     <Picker.Item label="Prefer not to say" value="Prefer Not to say" />
                   </Picker>
-                </View> 
+                </View>  */}
+                <View style = {{flexDirection : 'row', justifyContent : 'space-between',marginTop : 5,}}>
+                {genderValues.map((item,index)=>{
+                  return(
+                    <Pressable 
+                  onPress = {()=>setGender(item)}
+                  style = {{width : Dimensions.get('screen').width * 0.4 , borderRadius : 4 , height : 30, 
+                  justifyContent : 'center', alignItems :'center',
+                  backgroundColor : gender == "Male" && item == "Male" ? "#d42a40" : gender == "Female" && item == "Female" ? "#dd6b8e" : "#EEE"
+                  }}>
+                    <Text 
+                    style = {{color : gender == item ? 'white' : 'black'}}>{item}</Text>
+                 
+                  </Pressable>
+                
+                  )
+                })}
+                </View>
               </View>
+              {/* <View style = {{marginTop : 20, flex : 1, justifyContent : 'center', alignItems : 'center'}}>
+                <TouchableOpacity style = {{borderBottomColor : "#888", borderBottomWidth : 1}}
+                onPress={()=>navigation.navigate("Affiliates")}
+                >
+                  <Text style = {{color : '#AAA', fontSize : 10, textAlign : 'center'}}>Click here to enter your affiliate codes !!</Text>
+                </TouchableOpacity>
+              </View> */}
               <View style = {{ marginTop : 30, width : Dimensions.get('screen').width*0.9,
                  alignItems:'flex-end'}}>
                 <TouchableOpacity 

@@ -15,14 +15,15 @@ const Blank = () => {
             if (user != null) {
                 axios.get(URL + "/user/info",{params:{user_id : user.phoneNumber.slice(1,13)}} , {timeout : 5000})
                     .then(res => res.data).then(async function(responseData) {
+                       
                         if(responseData.length && responseData[0].user_name) {
                             navigation.navigate("Home",{phoneNumber : user.phoneNumber, body : responseData[0] })
                         }
                         else {
-                            navigation.navigate("Coupon",{phoneNumber : user.phoneNumber})
+                            navigation.navigate("ProfileInfo",{phoneNumber : user.phoneNumber})
                         }
                     }).catch(function(error) {
-          
+                        console.log(error)
                     });
                 }
             })

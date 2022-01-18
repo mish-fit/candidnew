@@ -1,6 +1,6 @@
 import React from 'react'
 import {Animated, Easing,  StyleSheet, Text, View , TouchableOpacity, Dimensions, Image, ToastAndroid, Alert, ScrollView} from 'react-native'
-import { alttheme, colorsArray, theme } from '../Exports/Colors'
+import { alttheme, backArrow, colorsArray, theme } from '../Exports/Colors'
 import { RewardsComponent } from '../Exports/Components'
 import { RandomContext } from '../Exports/Context'
 import {Button,Box,Heading,VStack,Center,NativeBaseProvider} from "native-base"
@@ -13,6 +13,7 @@ import { URL } from '../Exports/Config'
 import { LoadingPage } from '../Exports/Pages'
 import * as Amplitude from 'expo-analytics-amplitude';
 import moment from 'moment'
+import { Avatar } from 'react-native-paper'
 
 
 const Redemptions = () => {
@@ -131,26 +132,24 @@ const Redemptions = () => {
 
     return (
         pageLoading ? <LoadingPage /> :
-        <ScrollView style = {{flex :1 , backgroundColor : 'white'  }} contentContainerStyle = {{paddingBottom : 60}}>
-            <View style = {{height : 70 , flexDirection : 'row-reverse', alignItems : 'center', justifyContent : 'space-between'}}>
-                <TouchableOpacity
-                    style = {{marginRight : 30}}
-                    onPress = {()=>navigation.navigate("MyDetails")}
-                    >
-                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : alttheme}}>{userInfo.user_name}</Text>
-                </TouchableOpacity>
-                <View style = {{marginLeft : 20, flexDirection : 'row', alignItems : 'center'}}>
-                    <TouchableOpacity 
-                    onPress = {()=>navigation.navigate("MyRewards")}
-                    style = {{justifyContent : 'center', marginLeft : 10}}>
-                        <LottieView
-                        progress = {progress}
-                        style={{width : 60 , height : 60}}
-                        source={require('../../assets/animation/coins-money.json')}
-                      //  autoPlay
-                        />
+        <ScrollView style = {{flex :1 , backgroundColor : 'white'}} contentContainerStyle = {{paddingBottom : 60 , paddingTop : 50}}>
+            <View style = {{ backgroundColor : 'white', flex : 1 ,height : 50 , position: 'absolute',  zIndex: 100, width: '100%',  
+            left: 0,right: 0,flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
+                <View style = {{marginLeft : 10, height : 30,alignItems :"center", justifyContent : 'center'}} >
+                    <TouchableOpacity style = {{alignItems :"center", justifyContent : 'center'}} onPress={()=>navigation.goBack()}>
+                        <AntDesign name = "arrowleft" size = {20} color = {backArrow}/>
                     </TouchableOpacity>
-                    <Text style = {{marginLeft : 5 , fontSize : 20, fontWeight : 'bold' , color : theme }}>{userSummary && userSummary.coins_available ? userSummary.coins_available : "0" }</Text>
+                </View>
+                <TouchableOpacity
+                    style = {{marginLeft : 10, flex : 1 }}
+                    onPress = {()=>{
+                        navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
+                        }
+                    >
+                    <Text style = {{fontWeight : 'bold', fontSize : 20, color : backArrow}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
+                </TouchableOpacity>
+                <View style = {{alignItems : 'center', justifyContent : 'flex-end',flexDirection : 'row-reverse' , marginRight : 10 }}>
+                    <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
                 </View>
             </View>
             <View style = {{flex : 1, backgroundColor : 'white', width: '100%' }}>
@@ -165,12 +164,12 @@ const Redemptions = () => {
                         <View style = {{ justifyContent : 'center', alignItems : 'center', flex : 1 , }}>
                             <View>
                                 <Image source = {{uri : item.company_logo + "?" + moment().format('YYYY-MM-DD')}} 
-                                style = {{width : 100, height : 100 }} />
+                                style = {{width : 100, height : 100 ,opacity : myRewardsCoins < item.coins_value ?  0.3 : 1}} />
                             </View>  
                             <View style = {{height : 50 ,  width : '100%', justifyContent : 'center', alignItems : 'center', borderWidth : 1 , padding : 5, borderColor : "#AAA", justifyContent : 'center' }}>
                                 <Text style = {{
                                     color : myRewardsCoins < item.coins_value ? "#888" : "#222",
-                                    fontWeight : 'bold', fontSize : 12,}}>{item.company} voucher worth Rs.{item.cash_value}</Text>
+                                    fontWeight : 'bold', fontSize : 12,}}>{item.company_name} Gift Card worth Rs.{item.cash_value}</Text>
                             </View>        
                         </View>
                         <View style = {{flex : 1 , justifyContent : 'center', alignItems : 'center' }}> 
@@ -181,22 +180,7 @@ const Redemptions = () => {
                                     fontWeight : 'bold'
                                 }}>{item.coins_value}</Text>
                             </View>
-                            <TouchableOpacity 
-                            style = {{marginBottom : 5}}
-                            onPress = {()=>importantInstructions(item.company)}>
-                                <Text style = {{
-                                    color : myRewardsCoins < item.coins_value ? "#888" : "#222",
-                                    fontSize : 12, borderBottomWidth : 1 , paddingBottom : 1 ,  
-                                    borderBottomColor : myRewardsCoins < item.coins_value ? "#888" : colorsArray[(randomNo-1+index)%(colorsArray.length-1)]}}>Important Instructions</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                             style = {{marginBottom : 5}}
-                            onPress = {()=>howToUse(item.company)}>
-                                <Text style = {{
-                                    color : myRewardsCoins < item.coins_value ? "#888" : "#222",
-                                    fontSize : 12, borderBottomWidth : 1 , paddingBottom : 1 ,  
-                                    borderBottomColor : myRewardsCoins < item.coins_value ? "#888" : colorsArray[(randomNo-1+index)%(colorsArray.length-1)]}}>How to use</Text>
-                            </TouchableOpacity>
+                            
                             
                             <TouchableOpacity 
                             onPress = {()=>

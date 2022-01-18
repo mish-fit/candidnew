@@ -22,7 +22,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode" : 17,
+      "versionCode" : 21,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#D7354A"

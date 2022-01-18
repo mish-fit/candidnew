@@ -43,6 +43,10 @@ import { Animated, Dimensions, StyleSheet, View, Text, TouchableOpacity } from '
 import { alttheme, altthemeLight, altthemeLightest, backArrow, background, theme, themeLightest } from './Exports/Colors';
 import {FontAwesome5} from 'react-native-vector-icons'
 import MySummaryTab from './Rewards/MySummaryTab';
+import Affiliates from './User/Affiliates';
+import EditAffiliates from './User/EditAffiliates';
+import ProfileImage from './Onboarding/ProfileImage';
+import PostLink from './Home/PostLink';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator()
@@ -209,6 +213,10 @@ const HomeStack = () => {
       <Stack.Screen name="AltAdd1" component={AltAdd1} /> 
       <Stack.Screen name="AddReview" component={AddReview} /> 
       <Stack.Screen name="AddReview1" component={AddReview1} /> 
+      <Stack.Screen name="Affiliates" component={Affiliates} /> 
+      <Stack.Screen name="EditAffiliates" component={EditAffiliates} /> 
+      <Stack.Screen name="ProfileImage" component={ProfileImage} /> 
+      <Stack.Screen name="PostLink" component={PostLink} /> 
     </Stack.Navigator>
   );
 }

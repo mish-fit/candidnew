@@ -30,6 +30,7 @@ import { LoadingPage } from '../Exports/Pages';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useBackHandler } from '@react-native-community/hooks'
 import moment from 'moment';
+import LinearGradient from 'react-native-linear-gradient';
 
 
 
@@ -389,6 +390,7 @@ const FeedAlt = () => {
 
 
     useFocusEffect(
+        
         React.useCallback(() => {
             const onBackPress = () => {
                 if (route.name == "TabHome") {
@@ -408,6 +410,14 @@ const FeedAlt = () => {
             };
 
             BackHandler.addEventListener('hardwareBackPress', onBackPress);
+            axios.get(URL + "/user/summary",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
+                .then(res => res.data).then(function(responseData) {
+                  //  console.log(responseData)
+                    setUserSummary(responseData[0])
+                })
+                .catch(function(error) {
+                  
+                })
 
             return () =>
             BackHandler.removeEventListener('hardwareBackPress', onBackPress);
@@ -458,7 +468,7 @@ const FeedAlt = () => {
                 .then(res => res.data).then(function(responseData) {
                     console.log("OUTPUT", responseData)
                     console.log(moment().diff(moment(responseData[0].created_at),'hours'))
-                    if(moment().diff(moment(responseData[0].created_at),'hours') < 2 ) {
+                    if(moment().diff(moment(responseData[0].created_at),'hours') < 6 ) {
                         setModalVisible(true)
                     }
                     setUserInfo(responseData[0])
@@ -467,14 +477,7 @@ const FeedAlt = () => {
                 //  console.log(error)
                 });   
                 
-                axios.get(URL + "/user/summary",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
-                .then(res => res.data).then(function(responseData) {
-                  //  console.log(responseData)
-                    setUserSummary(responseData[0])
-                })
-                .catch(function(error) {
-                  
-                });
+                
         
                 axios.get(URL + "/user/followingusers",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
                 .then(res => res.data).then(function(responseData) {
@@ -638,7 +641,7 @@ const share = async () => {
     Amplitude.logEventWithPropertiesAsync('SHARE PROFILE', {userName : userInfo.user_name })
     try {
         const result = await Share.share({
-          message: 'Shop from the amazing products I recommended on https://www.getcandid.app/user?user_name=' + userInfo.user_name + " . Use my coupon code : " + userInfo.coupon 
+          message: 'Shop from the amazing products I recommended on https://www.getcandid.app/user?user_name=' + userInfo.user_name + " . Use my referral code : " + userInfo.coupon 
         });
         if (result.action === Share.sharedAction) {
           if (result.activityType) {
@@ -723,7 +726,7 @@ const share = async () => {
                         style = {{marginLeft : 10, flex : 1 }}
                         onPress = {()=>{
                             Clipboard.setString(userInfo.coupon)
-                            ToastAndroid.show("Your coupon code : " + userInfo.coupon + " is copied", ToastAndroid.SHORT)
+                            ToastAndroid.show("Your referral code : " + userInfo.coupon + " is copied", ToastAndroid.SHORT)
                             Amplitude.logEventAsync("Clicked on My Details on Home")
                             navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
                             }
@@ -866,16 +869,18 @@ const share = async () => {
             </View>
             
         </ScrollView> 
+        <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} 
+        style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
+            backgroundColor : theme
+            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , left : Dimensions.get('screen').width*.1  }} >
         <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
-            style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
-            backgroundColor : theme
-            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , left : Dimensions.get('screen').width*.1  }}>
+            >
                 <View>
                     <Text style = {{color : 'white', fontWeight : 'bold'}}>POST REVIEW AND EARN COINS</Text>
                 </View>
         </TouchableOpacity>
-        
+        </LinearGradient>
     </View>
         : <LoadingPage />
     )
