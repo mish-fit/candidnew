@@ -1,23 +1,22 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking } from 'react-native'
-import { alttheme, backArrow, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
-import { RandomContext } from '../Exports/Context'
+import {Animated, Dimensions, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing, Pressable, Linking } from 'react-native'
 import {AntDesign} from 'react-native-vector-icons';
-import { NavigationContainer, useNavigation , useRoute} from '@react-navigation/native';
-import {dataRetrieve, URL} from '../Exports/Config'
+import { useNavigation , useRoute} from '@react-navigation/native';
 import  Modal  from 'react-native-modal'
 import axios from 'axios';
-import { width } from '../Exports/Constants';
 import {Avatar} from 'react-native-paper'
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import LottieView from 'lottie-react-native';
-import { LoadingPage } from '../Exports/Pages';
 import LinearGradient from 'react-native-linear-gradient';
+import { LoadingPage } from '../Exports/Pages';
+import {dataRetrieve, URL} from '../Exports/Config'
+import { RandomContext } from '../Exports/Context'
+import { alttheme, backArrow, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 
 
-const FeedItemComponent = ({item,id, userInfo}) => {
+function FeedItemComponent({item,id, userInfo}) {
     const [randomNo, userId] = React.useContext(RandomContext)
     const [colorNo,setColorNo] = React.useState(0) 
     const [tempFollow,setTempFollow] = React.useState(false)
@@ -55,7 +54,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -80,7 +79,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -120,7 +119,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -138,7 +137,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
                     <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
-                    source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                    source={{uri: `https://ui-avatars.com/api/?rounded=true&name=${ item.user_name  }&size=64&background=D7354A&color=fff&bold=true`}} 
                     size={40}/> }  
                 </View>  
                 <View style = {{flex : 1}}>
@@ -168,7 +167,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             </View>
                 <View style = {{marginHorizontal : 20 , marginVertical : 5,flexDirection : 'row' , justifyContent : 'space-between'}}>
                     <TouchableOpacity 
-                    onPress = {()=>navigation.navigate("CategoryPage", {categoryId : item.category_id, categoryName : item.category_name , userInfo : userInfo, userName : userInfo.user_name})}
+                    onPress = {()=>navigation.navigate("CategoryPage", {categoryId : item.category_id, categoryName : item.category_name , userInfo, userName : userInfo.user_name})}
                     style = {{ paddingHorizontal: 5, paddingVertical : 2, backgroundColor :  "#888" , borderRadius : 10, }}>
                         <Text style = {{color : 'white',fontSize : 12, fontStyle : 'italic'}}>{item.category_name}</Text>
                     </TouchableOpacity>
@@ -195,10 +194,10 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
-                        readOnly = {true}
+                        readOnly
                         size={30}
                         showRating = {false}
-                        isDisabled = {true}
+                        isDisabled
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
@@ -207,10 +206,10 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <AirbnbRating
                         ratingContainerStyle = {{width : Dimensions.get('screen').width * 0.7, backgroundColor : 'transparent', flex : 1}}
                         defaultRating = {item.rating}
-                        readOnly = {true}
+                        readOnly
                         size={15}
                         showRating = {false}
-                        isDisabled = {true}
+                        isDisabled
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
@@ -238,7 +237,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </TouchableOpacity>
                 </View>
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
-                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
+                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item , id , userInfo})}>
                         <Text>
                             {item.title}
                             <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
@@ -250,7 +249,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
         )
 }
 
-const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
+function FeedItemSummaryComponent({item,id, contextClickCallback}) {
     const [randomNo] = React.useContext(RandomContext)
     const [colorNo,setColorNo] = React.useState(0) 
 
@@ -289,7 +288,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
             </View>  
             <View style = {{ justifyContent : 'space-between', borderTopRightRadius : 20 , borderBottomRightRadius : 20 , flexShrink : 1,}}>
                 <View style = {{paddingTop : 5 ,paddingLeft : 5 , flexDirection : 'row', flexWrap : 'wrap' , flexShrink : 1,}}>
-                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
+                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item.product_name.length > 100 ? `${item.product_name.substring(0,100)  } ...` : item.product_name}</Text>
                 </View>
                 <View style = {{paddingHorizontal: 5, paddingVertical : 2,  flexShrink : 1}}>
                     <Text style = {{fontSize : 13, fontStyle : 'italic',flexShrink : 1, color : alttheme, fontWeight : 'bold'}}>{item.feed_recommendations} friends recommended this</Text>
@@ -316,7 +315,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
 }
 
 
-const CategoryAlt = () => {
+function CategoryAlt() {
 
     const progress = React.useRef(new Animated.Value(0)).current
     const ref = React.useRef(null)
@@ -379,63 +378,61 @@ const CategoryAlt = () => {
 
         if(dataRetrieve  && categoryCarousel.filter(item => item.master_category_name == master_category_name ).map(i => i.category_id).length && userId) {
           //  console.log(categoryArray, userId)
-            axios.get(URL + "/feedsummary/bycategory",{params:{category_id : JSON.stringify(categoryCarousel.filter(item => item.master_category_name == master_category_name ).map(i => i.category_id)), user_id : userId.slice(1,13)}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+            axios.get(`${URL  }/feedsummary/bycategory`,{params:{category_id : JSON.stringify(categoryCarousel.filter(item => item.master_category_name == master_category_name ).map(i => i.category_id)), user_id : userId.slice(1,13)}} , {timeout : 5000})
+            .then(res => res.data).then((responseData) => {
                // console.log(responseData)
                 setFeedSummary(responseData)
                 setLoading(false)
             })
-            .catch(function(error) {
+            .catch((error) => {
                 setLoading(false)
             });
 
-            axios.get(URL + "/feed/category",{params:{
+            axios.get(`${URL  }/feed/category`,{params:{
                 category_id : JSON.stringify(categoryCarousel.filter(item => item.master_category_name == master_category_name ).map(i => i.category_id)), user_id : userId.slice(1,13), 
                 page : pageNumber,
                 user_id : userId.slice(1,13)}} , {timeout : 5000})
-                .then(res => res.data).then(function(responseData) {
+                .then(res => res.data).then((responseData) => {
                   //  console.log(responseData)
                     setFeedData(responseData)
                     setLoading(false)
                 })
-                .catch(function(error) {
+                .catch((error) => {
                     setLoading(false)
                 });
         } 
-
 
         
     },[])
 
     const contextClickCallback = (product_id) => {
       //  console.log(product_id)
-        axios.get(URL + "/feed/product",{params:{product_id : product_id , page : 0}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/feed/product`,{params:{product_id , page : 0}} , {timeout : 5000})
+            .then(res => res.data).then((responseData) => {
              //   console.log("FeedProduct",responseData)
                 setContextSplitData(responseData)
                 setSplitContextModalVisible(true)
             })
-            .catch(function(error) {
+            .catch((error) => {
             //  console.log(error)
             });
         
     }
 
-    const FeedItemSummary = ({item,index}) => (
-        <View key = {index.toString()}>
+    function FeedItemSummary({item,index}) {
+  return <View key = {index.toString()}>
             <FeedItemSummaryComponent item = {item} id = {index} contextClickCallback = {(contextName)=>contextClickCallback(contextName)}/>
-        </View> 
-    )
+        </View>
+}
 
-    const FeedItem = ({item,index}) => (
-        <View key = {index.toString()}>
+    function FeedItem({item,index}) {
+  return <View key = {index.toString()}>
             <FeedItemComponent item = {item} id = {index} userInfo = {userInfo}/>
-        </View> 
-    )
+        </View>
+}
 
 
-
-    const HeaderComponent = () => {
+    function HeaderComponent() {
         return(
         <View style = {{flexDirection : 'row', paddingRight : 10 , paddingLeft : 10 ,  justifyContent : 'space-between'}}>
             <View style = {{borderRadius : 10 , marginHorizontal : Dimensions.get('screen').width*0.05, alignItems : 'center' , justifyContent : 'center'}}>
@@ -446,8 +443,8 @@ const CategoryAlt = () => {
             style = {{width : Dimensions.get('screen').width*0.35,padding : 10 , borderRadius : 10 , marginRight : 10,   borderWidth : 2 , flexDirection: 'row', alignItems : 'center', justifyContent : 'space-between', paddingRight : 10 , backgroundColor :  !filterCategoryModalVisible ? "white" : "black"}}>
                 <Text style = {{fontWeight : 'bold', marginRight : 10 , color : filterCategoryModalVisible ? "white" : "black"}}>Categories</Text>
                 {filterCategoryModalVisible ?
-                <AntDesign name = "up" color = {"white"} size = {15} /> :
-                <AntDesign name = "down" color = {"black"} size = {15} />
+                <AntDesign name = "up" color = "white" size = {15} /> :
+                <AntDesign name = "down" color = "black" size = {15} />
                } 
             </TouchableOpacity> 
             {/* <TouchableOpacity 
@@ -465,13 +462,13 @@ const CategoryAlt = () => {
 
 
     const filterContextFunc = () => {
-        axios.get(URL + "/all/categories/context",{params:{category_id : JSON.stringify(categoriesRequest) , page : 0}} , {timeout : 5000})
-        .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/all/categories/context`,{params:{category_id : JSON.stringify(categoriesRequest) , page : 0}} , {timeout : 5000})
+        .then(res => res.data).then((responseData) => {
          //   console.log("FeedProduct",responseData)
             setContexts(responseData)
             setFilterContextModalVisible(!filterContextModalVisible)
         })
-        .catch(function(error) {
+        .catch((error) => {
         //  console.log(error)
         });   
     }
@@ -495,14 +492,14 @@ const CategoryAlt = () => {
         //  console.log(categoryId, contextsRequest)
           if(contextsRequest.length) 
           {
-              axios.get(URL + "/feedsummary/bycategory/context",{params:{category_id : JSON.stringify(categoriesRequest) , context_id : JSON.stringify(contextsRequest)}} , {timeout : 5000})
-              .then(res => res.data).then(function(responseData) {
+              axios.get(`${URL  }/feedsummary/bycategory/context`,{params:{category_id : JSON.stringify(categoriesRequest) , context_id : JSON.stringify(contextsRequest)}} , {timeout : 5000})
+              .then(res => res.data).then((responseData) => {
                //   console.log("context",responseData[0])
                   setFeedSummary(responseData)
                   
                   setFilterContextModalVisible(false)
               })
-              .catch(function(error) {
+              .catch((error) => {
              //   console.log(error)
               });
           } else {
@@ -519,23 +516,23 @@ const CategoryAlt = () => {
         console.log(categoriesRequest)
         if(categoriesRequest.length) 
         {
-            axios.get(URL + "/feedsummary/bycategory",{params:{category_id : JSON.stringify(categoriesRequest) , user_id : userId.slice(1,13) }} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+            axios.get(`${URL  }/feedsummary/bycategory`,{params:{category_id : JSON.stringify(categoriesRequest) , user_id : userId.slice(1,13) }} , {timeout : 5000})
+            .then(res => res.data).then((responseData) => {
     //           console.log("feedsummary category",responseData[0])
                 setFeedSummary(responseData)
                 setFilterCategoryModalVisible(false)
             })
-            .catch(function(error) {
+            .catch((error) => {
                console.log("summary",error)
             });
 
-            axios.get(URL + "/feed/category",{params:{category_id : JSON.stringify(categoriesRequest), page : 0 , user_id : userId.slice(1,13)}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
-                //console.log("feed category",responseData)
+            axios.get(`${URL  }/feed/category`,{params:{category_id : JSON.stringify(categoriesRequest), page : 0 , user_id : userId.slice(1,13)}} , {timeout : 5000})
+            .then(res => res.data).then((responseData) => {
+                // console.log("feed category",responseData)
                 setFeedData(responseData)
                 setFilterCategoryModalVisible(false)
             })
-            .catch(function(error) {
+            .catch((error) => {
                console.log("feed",error)
             setFilterCategoryModalVisible(false)
             });
@@ -547,7 +544,6 @@ const CategoryAlt = () => {
     const onCategoryModalClose = () => {    
         setFilterCategoryModalVisible(false)
     }
-
     
 
     const categoryCheckFunc = (index, name , type) => {
@@ -556,21 +552,21 @@ const CategoryAlt = () => {
         if(type == true) {
             console.log("categoriesRequest", categoriesRequest)
             console.log("categoriesChecked", categoriesChecked)
-            let newArray = [...categoriesChecked]
+            const newArray = [...categoriesChecked]
             newArray[index] = true
             setCategoriesChecked([...newArray])
-            let newArray1 = [...categoriesRequest]
+            const newArray1 = [...categoriesRequest]
             newArray1.push(name)
             setCategoriesRequest([...newArray1])
         } else if (type == false) {
             console.log("categoriesRequest", categoriesRequest)
             console.log("categoriesChecked", categoriesChecked)
-            let newArray = [...categoriesChecked]
+            const newArray = [...categoriesChecked]
             newArray[index] = false
             setCategoriesChecked([...newArray])
             
-            let newarray1 = [...categoriesRequest]
-            let index1 = newarray1.indexOf(name)
+            const newarray1 = [...categoriesRequest]
+            const index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
                 newarray1.splice(index1, 1);
                 setCategoriesRequest(newarray1)
@@ -582,19 +578,19 @@ const CategoryAlt = () => {
     const contextCheckFunc = (index, name , type) => {
           console.log(index , name , type)
           if(type) {
-              let newArray = [...contextsChecked]
+              const newArray = [...contextsChecked]
               newArray[index] = true
               setContextsChecked([...newArray])
-              let newArray1 = [...contextsRequest]
+              const newArray1 = [...contextsRequest]
               newArray1.push(name)
               setContextsRequest([...newArray1])
           } else {
-              let newArray = [...contextsChecked]
+              const newArray = [...contextsChecked]
               newArray[index] = false
               setContextsChecked([...newArray])
               
-              let newarray1 = [...contextsRequest]
-              let index1 = newarray1.indexOf(name)
+              const newarray1 = [...contextsRequest]
+              const index1 = newarray1.indexOf(name)
               if (index1 !== -1) {
                   newarray1.splice(index1, 1);
                   setContextsRequest(newarray1)
@@ -603,7 +599,7 @@ const CategoryAlt = () => {
        
       }
     
-    const EmptyComponent = () => {
+    function EmptyComponent() {
         return(
             <View style = {{marginTop : 10 }}>
                 <View style = {{justifyContent : 'center'}}>
@@ -623,7 +619,6 @@ const CategoryAlt = () => {
             </View>
         )
     }
-  
   
 
     return (
@@ -658,11 +653,10 @@ const CategoryAlt = () => {
                 transparent
                 backdropOpacity={0.2}
                 >
-                <View style={{transform:[{rotateZ:'45deg'}],width:16,height:16,backgroundColor:'white',position : 'absolute' , top : -8, right : Dimensions.get('screen').width * 0.15}}></View>
+                <View style={{transform:[{rotateZ:'45deg'}],width:16,height:16,backgroundColor:'white',position : 'absolute' , top : -8, right : Dimensions.get('screen').width * 0.15}} />
                 <ScrollView contentContainerStyle = {{backgroundColor :'white', borderRadius : 30, width : Dimensions.get('screen').width*0.8,paddingBottom : 40, flexDirection : 'row', flexWrap : 'wrap' }}
                 style = {{flexDirection : 'row' , flexWrap : 'wrap' ,  flex : 1}}>
-                {contexts.length && contexts.map((item,index)=>{
-                    return(
+                {contexts.length && contexts.map((item,index)=>(
                     contextsChecked[index]  == true ?
                             <Pressable 
                             key = {index.toString()}
@@ -680,8 +674,7 @@ const CategoryAlt = () => {
                                 <Text style = {{color : 'black' ,fontWeight : 'bold',}}>{item.context_name}</Text>
                                
                             </Pressable>
-                )                  
-                })}
+                ))}
                 <TouchableOpacity 
                 onPress={contextApply}
                 style = {{borderRadius : 10 ,justifyContent:'center', alignItems : 'center', position : 'absolute' , bottom : 0 , borderTopColor : '#DDD' , borderTopWidth : 1 , height : 40, width : '100%' }}>
@@ -699,15 +692,14 @@ const CategoryAlt = () => {
                 onSwipeComplete={onCategoryModalClose}
                 swipeDirection="left"
                 style = {{marginTop : 110 , borderRadius : 30, }}
-                //transparent
+                // transparent
                 backdropOpacity={0.1}
                 >
-                <View style={{transform:[{rotateZ:'45deg'}],width:16,height:16,backgroundColor:'white',position : 'absolute' , top : -8, right : Dimensions.get('screen').width * 0.15}}></View>
+                <View style={{transform:[{rotateZ:'45deg'}],width:16,height:16,backgroundColor:'white',position : 'absolute' , top : -8, right : Dimensions.get('screen').width * 0.15}} />
                 <ScrollView 
                 contentContainerStyle = {{backgroundColor :'white', borderRadius : 30, width : Dimensions.get('screen').width*0.8,paddingBottom : 40, flexDirection : 'row', flexWrap : 'wrap' }}
                 style = {{flexDirection : 'row' , flexWrap : 'wrap' ,  flex : 1}}>
-                {categories.map((item,index)=>{
-                    return(
+                {categories.map((item,index)=>(
                     categoriesChecked[index]  == true ?
                             <Pressable 
                             key = {index.toString()}
@@ -725,8 +717,7 @@ const CategoryAlt = () => {
                                 <Text style = {{color : 'black' , fontWeight : 'bold'}}>{item.category_name}</Text>
                                 {/* <AntDesign name = "plus" size = {15} color = {theme} /> */}
                             </Pressable>
-                )                  
-                })}
+                ))}
                
                 <TouchableOpacity 
                 onPress={categoryApply}
@@ -760,8 +751,7 @@ const CategoryAlt = () => {
                             <AntDesign name = "closecircleo" size = {20} color = "#666" />
                     </TouchableOpacity>
                     <ScrollView style = {{marginTop : 30 , }}>
-                    {contextSplitData.length ? contextSplitData.map((item,index)=>{
-                    return(
+                    {contextSplitData.length ? contextSplitData.map((item,index)=>(
                         <View key = {index.toString()} 
                         style = {{flexDirection: 'row' , padding : 5, marginTop : 5,borderWidth : 1, borderColor : "#EEE" , borderRadius : 10, 
                         justifyContent : 'center', alignItems : 'center',
@@ -779,8 +769,7 @@ const CategoryAlt = () => {
                             </TouchableOpacity>
                             </LinearGradient> : null }
                     </View>
-                )                  
-                }) : null }
+                )) : null }
                 </ScrollView>
                 </View>
             </Modal>

@@ -1,32 +1,27 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView, ToastAndroid } from 'react-native'
-import { alttheme, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
-import { RandomContext } from '../Exports/Context'
+import {Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,  Switch, ScrollView, ToastAndroid } from 'react-native'
 import {AntDesign} from 'react-native-vector-icons';
-import { NavigationContainer, useNavigation, useRoute , useIsFocused} from '@react-navigation/native';
+import { useNavigation, useRoute , useIsFocused } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { GiftComponent, RewardsComponent } from '../Exports/Components';
 import Constants from 'expo-constants'
-import {dataRetrieve, URL} from '../Exports/Config'
-import {homeFeed} from "../FakeData/HomeFeed"
-import Contacts from 'react-native-contacts';
 import {Avatar} from 'react-native-paper'
 import * as firebase from "firebase";
 import * as Notifications from 'expo-notifications'
-import * as Permissions from 'expo-permissions'
-import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StackActions } from '@react-navigation/native';
-import * as WebBrowser from 'expo-web-browser';
-import { width } from '../Exports/Constants';
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
-import { home } from '../../Styles/Home';
 import  Modal  from 'react-native-modal'
-import { LoadingPage } from '../Exports/Pages';
 import Clipboard from '@react-native-clipboard/clipboard';
 import LinearGradient from 'react-native-linear-gradient';
+import { LoadingPage } from '../Exports/Pages';
+import { home } from '../../Styles/Home';
+import {homeFeed} from "../FakeData/HomeFeed"
+import {dataRetrieve, URL} from '../Exports/Config'
+import { GiftComponent, RewardsComponent } from '../Exports/Components';
+import { width } from '../Exports/Constants';
+import { RandomContext } from '../Exports/Context'
+import { alttheme, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
@@ -35,7 +30,7 @@ catch {
     console.log("No Amplitude Tracking")
 }
 
-const FeedItemComponent = ({item,id, userInfo}) => {
+function FeedItemComponent({item,id, userInfo}) {
     const [randomNo, userId] = React.useContext(RandomContext)
     const [colorNo,setColorNo] = React.useState(0) 
     const [tempFollow,setTempFollow] = React.useState(false)
@@ -73,7 +68,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -98,7 +93,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -138,7 +133,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -156,7 +151,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
                     <Image source = {{uri : item.user_image }} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
-                    source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                    source={{uri: `https://ui-avatars.com/api/?rounded=true&name=${ item.user_name  }&size=64&background=D7354A&color=fff&bold=true`}} 
                     size={40}/> }  
                 </View>  
                 <View style = {{flex : 1,}}>
@@ -171,15 +166,15 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </View>
                
                     <TouchableOpacity 
-                    onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}
+                    onPress = {()=>navigation.navigate("Post", {item , id , userInfo})}
                     style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flex : 1, }}>
-                        <Text style = {{fontSize : 12 , color : "#555" , }}>{item.product_name.length > 100 ? item.product_name.substring(0,60) + "..." : item.product_name }</Text>
+                        <Text style = {{fontSize : 12 , color : "#555" , }}>{item.product_name.length > 100 ? `${item.product_name.substring(0,60)  }...` : item.product_name }</Text>
                     </TouchableOpacity>
                 </View> 
             </View>
                 <View style = {{marginHorizontal : 20 , marginVertical : 5,flexDirection : 'row' , justifyContent : 'space-between'}}>
                     <TouchableOpacity 
-                    onPress = {()=>navigation.navigate("CategoryPage", {categoryId : item.category_id, categoryName : item.category_name , userInfo : userInfo, userName : userInfo.user_name})}
+                    onPress = {()=>navigation.navigate("CategoryPage", {categoryId : item.category_id, categoryName : item.category_name , userInfo, userName : userInfo.user_name})}
                     style = {{ paddingHorizontal: 5, paddingVertical : 2, backgroundColor :  "#888" , borderRadius : 10, }}>
                         <Text style = {{color : 'white',fontSize : 12, fontStyle : 'italic'}}>{item.category_name}</Text>
                     </TouchableOpacity>
@@ -208,10 +203,10 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
-                        readOnly = {true}
+                        readOnly
                         size={30}
                         showRating = {false}
-                        isDisabled = {true}
+                        isDisabled
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
@@ -220,10 +215,10 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <AirbnbRating
                         ratingContainerStyle = {{width : Dimensions.get('screen').width * 0.7, backgroundColor : 'transparent', flex : 1}}
                         defaultRating = {item.rating}
-                        readOnly = {true}
+                        readOnly
                         size={15}
                         showRating = {false}
-                        isDisabled = {true}
+                        isDisabled
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
@@ -252,7 +247,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </TouchableOpacity>
                 </View>
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
-                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
+                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item , id , userInfo})}>
                         <Text>
                             {item.title}
                             <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
@@ -264,7 +259,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
         )
 }
 
-const UpdatedCarousel = ({DATA , onClickItem }) => {
+function UpdatedCarousel({DATA , onClickItem }) {
     const [randomNo] = React.useContext(RandomContext)
     const [data,setData] = React.useState([...DATA])
     const scrollX = React.useRef(new Animated.Value(0)).current
@@ -298,7 +293,7 @@ const UpdatedCarousel = ({DATA , onClickItem }) => {
             item.category_name ? 
             <Animated.View style={[{borderRadius : 20 , justifyContent : 'center', alignItems : 'center',padding : 5 , paddingHorizontal : 10, marginHorizontal : 5 , marginVertical : 5 ,borderWidth : 1,borderColor : "#888"}  , {transform : [{scale}]}]}>
                 <TouchableOpacity style = {[{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
-                    <Text style={[{margin:1 ,fontSize : 15 , color : "#444"}]}>{item.category_name.length > 20 ? item.category_name.substring(0,20) + "..." : item.category_name}</Text>
+                    <Text style={[{margin:1 ,fontSize : 15 , color : "#444"}]}>{item.category_name.length > 20 ? `${item.category_name.substring(0,20)  }...` : item.category_name}</Text>
                 </TouchableOpacity>
             </Animated.View> : null
         )
@@ -310,7 +305,7 @@ const UpdatedCarousel = ({DATA , onClickItem }) => {
             data={data}
             renderItem={renderItem}
             keyExtractor={(item,index) => index.toString()}
-            horizontal = {true}
+            horizontal
             style = {{width : Dimensions.get('screen').width}}
             contentContainerStyle = {{}}
             onScroll = {Animated.event(
@@ -390,9 +385,7 @@ const registerForDevicePushNotificationsAsync = async() => {
 }
 
 
-
-
-const Feed = () => {
+function Feed() {
 
     const progress = React.useRef(new Animated.Value(0)).current
     const ref = React.useRef(null)
@@ -483,27 +476,26 @@ const Feed = () => {
             firebase.auth().onAuthStateChanged(user => {
                 if (user != null) {
 
-                    axios.get(URL + "/user/info",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
-                        .then(res => res.data).then(function(responseData) {
+                    axios.get(`${URL  }/user/info`,{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
+                        .then(res => res.data).then((responseData) => {
                         //  console.log("OUTPUT", responseData)
                             setUserInfo(responseData[0])
                         })
-                        .catch(function(error) {
+                        .catch((error) => {
                         //  console.log(error)
                         });   
             
-                    axios.get(URL + "/feed/home",{params:{user_id : user.phoneNumber.slice(1,13), page : pageNumber}} , {timeout : 5000})
-                    .then(res => res.data).then(function(responseData) {
+                    axios.get(`${URL  }/feed/home`,{params:{user_id : user.phoneNumber.slice(1,13), page : pageNumber}} , {timeout : 5000})
+                    .then(res => res.data).then((responseData) => {
                             console.log("feed",responseData)
                             setLoading(false)
                             setFeedData(responseData)
                     })
-                    .catch(function(error) {
+                    .catch((error) => {
                         console.log("ERROR",error)
                         setError(true)
                         setLoading(false)
                     });
-            
                    
             
                 //     if(userInfo) {
@@ -523,21 +515,21 @@ const Feed = () => {
                 //         });
                 //     }
                         
-                    axios.get(URL + "/user/summary",{params:{user_id : user.phoneNumber.slice(1,13)}} , {timeout : 5000})
-                    .then(res => res.data).then(function(responseData) {
+                    axios.get(`${URL  }/user/summary`,{params:{user_id : user.phoneNumber.slice(1,13)}} , {timeout : 5000})
+                    .then(res => res.data).then((responseData) => {
                     //  console.log(responseData)
                         setUserSummary(responseData[0])
                     })
-                    .catch(function(error) {
+                    .catch((error) => {
                     
                     });
             
-                    axios.get(URL + "/all/categories",{params:{limit : 50}} , {timeout : 5000})
-                    .then(res => res.data).then(function(responseData) {
+                    axios.get(`${URL  }/all/categories`,{params:{limit : 50}} , {timeout : 5000})
+                    .then(res => res.data).then((responseData) => {
                     //  console.log("Categories",responseData)
                         setCategoryCarousel(responseData)
                     })
-                    .catch(function(error) {
+                    .catch((error) => {
                     
                     });
                 }
@@ -552,15 +544,14 @@ const Feed = () => {
       
     },[isFocused])
 
-    const FeedItem = ({item,index}) => (
-        <View key = {index.toString()}>
+    function FeedItem({item,index}) {
+  return <View key = {index.toString()}>
             <FeedItemComponent item = {item} id = {index} userInfo = {userInfo}/>
-        </View> 
-    )
-
+        </View>
+}
     
 
-    const EmptyComponent = () => {
+    function EmptyComponent() {
         return(
             <View style = {{marginTop : 10 }}>
                 <View style = {{justifyContent : 'center'}}>
@@ -580,7 +571,6 @@ const Feed = () => {
             </View>
         )
     }
-    
 
 
     // const HeaderComponent = () => {
@@ -603,7 +593,7 @@ const Feed = () => {
         setModalVisible(false)
     }
 
-    const HeaderComponent = () => {
+    function HeaderComponent() {
         return (<View 
             style = {{width: width-20, height : 40, borderRadius : 2,
             backgroundColor : themeLightest, marginleft : 5, flex : 1, marginHorizontal : 10,
@@ -615,13 +605,13 @@ const Feed = () => {
                     <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
                         <Switch
                             trackColor={{ true: theme , false: "white" }}
-                            thumbColor={'white'}
+                            thumbColor="white"
                             onValueChange={()=>{
                                 Amplitude.logEventAsync("HOME FEED TOGGLE")
                                 navigation.navigate("Home")
                                 }
                             }
-                            value={true}
+                            value
                         />
                     </View>
                     <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
@@ -671,16 +661,16 @@ const Feed = () => {
                         <Image source = {{uri : userInfo.user_profile_image }} 
                             style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 30, height : 30 , width : 30}} />
                         : <Avatar.Image style = {{ }}
-                        source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userInfo.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                        source={{uri: `https://ui-avatars.com/api/?rounded=true&name=${ userInfo.user_name  }&size=64&background=D7354A&color=fff&bold=true`}} 
                         size={30}/> }
                     </TouchableOpacity>
                     <TouchableOpacity
                         style = {{marginLeft : 10, flex : 1 }}
                         onPress = {()=>{
                             Clipboard.setString(userInfo.coupon)
-                            ToastAndroid.show("Your referral code : " + userInfo.coupon + " is copied", ToastAndroid.SHORT)
+                            ToastAndroid.show(`Your referral code : ${  userInfo.coupon  } is copied`, ToastAndroid.SHORT)
                             Amplitude.logEventAsync("Clicked on My Details on Home")
-                            navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
+                            navigation.navigate("MyDetails", {userInfo , userSummary})}
                             }
                         >
                         <Text style = {{fontWeight : 'bold', fontSize : 20, color : alttheme}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>

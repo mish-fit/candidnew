@@ -1,31 +1,27 @@
-import { NavigationContainer , useNavigation , useRoute } from '@react-navigation/native'
+import {  useNavigation , useRoute } from '@react-navigation/native'
 import React from 'react'
-import { PermissionsAndroid, StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, Dimensions, ToastAndroid, Share, Linking} from 'react-native'
-import {AntDesign , FontAwesome5, Entypo,MaterialCommunityIcons} from 'react-native-vector-icons'
-import { RandomContext } from '../Exports/Context'
-import { alttheme, backArrow, background, colorsArray, themeLightest } from '../Exports/Colors'
+import { StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView, Dimensions, ToastAndroid, Share, Linking} from 'react-native'
+import {AntDesign ,MaterialCommunityIcons} from 'react-native-vector-icons'
 import LottieView from 'lottie-react-native';
-import {theme, themeLight} from '../Exports/Colors'
 import axios from 'axios'
-import {URL} from '../Exports/Config'
-import { add } from '../../Styles/Add'
 import {Avatar} from 'react-native-paper'
 import * as Amplitude from 'expo-analytics-amplitude';
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { AirbnbRating } from 'react-native-ratings';
 
 import 'react-native-get-random-values'
 import { nanoid } from 'nanoid'
 import * as ImagePicker from 'expo-image-picker';
-import { s3URL, uploadImageOnS3 } from '../Exports/S3'
 import  Modal  from 'react-native-modal'
 import debounce from 'lodash.debounce';
 import HyperLink from 'react-native-hyperlink'
-import { fontSize } from 'styled-system'
+import { s3URL, uploadImageOnS3 } from '../Exports/S3'
+import { add } from '../../Styles/Add'
+import {URL} from '../Exports/Config'
+import {theme, alttheme, backArrow, themeLightest } from '../Exports/Colors'
+import { RandomContext } from '../Exports/Context'
 
 
-
-
-const AddReview1 = () => {
+function AddReview1() {
 
 
     const navigation = useNavigation()
@@ -101,9 +97,7 @@ const AddReview1 = () => {
         "coupon" : ""
     })
 
-    const debouncedResults = React.useMemo(() => {
-        return debounce((text)=>searchProduct(text), 500);
-      }, []);
+    const debouncedResults = React.useMemo(() => debounce((text)=>searchProduct(text), 500), []);
 
 
     React.useEffect(()=>{
@@ -111,35 +105,35 @@ const AddReview1 = () => {
       //  console.log("body in add product use effect", body)
         Amplitude.logEventAsync('ADD PRODUCT')
         
-        axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout : 3000})
-        .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/user/info`, {params:{user_id : userId.slice(1,13) }} , {timeout : 3000})
+        .then(res => res.data).then((responseData) => {
         //    console.log(responseData)
             if (url && url != "") {
                 setBody({...body, user_name : responseData[0].user_name , coupon : responseData[0].coupon , user_image : responseData[0].user_profile_image, buy_url : url})
             } else {
             setBody({...body, user_name : responseData[0].user_name , coupon : responseData[0].coupon , user_image : responseData[0].user_profile_image})
         }})
-        .catch(function(error) {
+        .catch((error) => {
             setSearchLoading(false)
             console.log(error)
         });  
 
-        axios.get(URL + "/search/context", {params:{context_text : "" , category_name : categoryName }} , {timeout : 3000})
-            .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/search/context`, {params:{context_text : "" , category_name : categoryName }} , {timeout : 3000})
+            .then(res => res.data).then((responseData) => {
           //      console.log("SearchArray",responseData)
                 setContextArray(responseData)
             })
-            .catch(function(error) {
+            .catch((error) => {
                 console.log(error)
             });
 
-        axios.get(URL + "/search/product", {params:{product_text : "" , category_id : categoryId.toString()}} , {timeout : 3000})
-        .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/search/product`, {params:{product_text : "" , category_id : categoryId.toString()}} , {timeout : 3000})
+        .then(res => res.data).then((responseData) => {
           //  console.log("product data", responseData)
             setSearchLoading(false)
             setSearchArray(responseData)
         })
-        .catch(function(error) {
+        .catch((error) => {
             console.log(error)
             setSearchLoading(false)
         });
@@ -155,24 +149,23 @@ const AddReview1 = () => {
         setProductSelected(true)
         setSearchTextProduct(name)
 
-        axios.get(URL + "/isexists/post", {params:{product_id : id , user_id : userId.slice(1,13)  }} , {timeout : 3000})
-            .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/isexists/post`, {params:{product_id : id , user_id : userId.slice(1,13)  }} , {timeout : 3000})
+            .then(res => res.data).then((responseData) => {
         
                 if(responseData.length > 0) { 
                     alert("You already added review for this product. Please delete the review in your profile to add it again")
                     navigation.navigate("MyDetails")
                 }
             })
-            .catch(function(error) {
+            .catch((error) => {
                
             });
 
 
-
         if(id > 0) {
             setBody((body) => ({...body, product_name : name, product_id : id}))
-            axios.get(URL + "/search/category/byproduct", {params:{product_id : id }} , {timeout : 3000})
-            .then(res => res.data).then(function(responseData) {
+            axios.get(`${URL  }/search/category/byproduct`, {params:{product_id : id }} , {timeout : 3000})
+            .then(res => res.data).then((responseData) => {
          //       console.log("search category by product",responseData)
                 setSearchLoading(false)
                 if(responseData.length) { 
@@ -181,24 +174,24 @@ const AddReview1 = () => {
                     setBody({...body, product_name : name, product_id : id})
                 }
             })
-            .catch(function(error) {
+            .catch((error) => {
                 setBody({...body, product_name : name, product_id : id})
                 setSearchLoading(false)
             });
     
-            axios.get(URL + "/search/category", {params:{product_text : "" }} , {timeout : 3000})
-            .then(res => res.data).then(function(responseData) {
+            axios.get(`${URL  }/search/category`, {params:{product_text : "" }} , {timeout : 3000})
+            .then(res => res.data).then((responseData) => {
                 
                 setSearchLoading(false)
                 setSearchCategoryArray(responseData)
             })
-            .catch(function(error) {
+            .catch((error) => {
                 setSearchLoading(false)
             });
         } 
         else {
-            axios.get(URL + "/isexists/product", {params:{product_name : body.product_name}} , {timeout : 3000})
-            .then(res => res.data).then(function(responseData) {
+            axios.get(`${URL  }/isexists/product`, {params:{product_name : body.product_name}} , {timeout : 3000})
+            .then(res => res.data).then((responseData) => {
                 setSearchCategoryLoading(false)
                 if(responseData.length) {
                     setBody((body) => ({...body, product_name : responseData[0].product_name, product_id : responseData[0].product_id}))
@@ -209,7 +202,7 @@ const AddReview1 = () => {
                     setNewProduct(true)
                 }
             })
-            .catch(function(error) {
+            .catch((error) => {
                
             });
         }
@@ -222,20 +215,16 @@ const AddReview1 = () => {
         }
         
         setSearchLoading(true)
-        axios.get(URL + "/search/product", {params:{product_text : text , category_id : categoryId}} , {timeout : 3000})
-          .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/search/product`, {params:{product_text : text , category_id : categoryId}} , {timeout : 3000})
+          .then(res => res.data).then((responseData) => {
               
               setSearchLoading(false)
               setSearchArray(responseData)
         })
-        .catch(function(error) {
+        .catch((error) => {
               setSearchLoading(false)
         });
     }
-
-    
-       
-
 
 
     const rating = (rating1) => {
@@ -272,13 +261,13 @@ const AddReview1 = () => {
             console.log(result.uri);
             setImageAdded(true)
             setPostImageShown(result.uri)
-            setBody({...body,feed_image : s3URL + "post/"+ imageId  });
-            uploadImageOnS3("post/"+ imageId , result.uri)
+            setBody({...body,feed_image : `${s3URL  }post/${ imageId}`  });
+            uploadImageOnS3(`post/${ imageId}` , result.uri)
         }
       }
 
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
+        const result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
           allowsEditing: true,
           aspect: [1, 1],
@@ -290,13 +279,13 @@ const AddReview1 = () => {
         if (!result.cancelled) {
             setImageAdded(true)
             setPostImageShown(result.uri)
-            setBody({...body,feed_image : s3URL + "post/"+ imageId  });
-            uploadImageOnS3("post/"+ imageId , result.uri)
+            setBody({...body,feed_image : `${s3URL  }post/${ imageId}`  });
+            uploadImageOnS3(`post/${ imageId}` , result.uri)
         }
     }; 
 
     const done = () => {
-        setBody({...body, comment : comment})
+        setBody({...body, comment})
         setShowLongComment(false)
     }
 
@@ -315,7 +304,7 @@ const AddReview1 = () => {
             }
             axios({
                 method: 'post',
-                url: URL + '/add/product',
+                url: `${URL  }/add/product`,
                 data: addNewProductBody
             }, {timeout : 5000})
             .then(res => {
@@ -323,7 +312,7 @@ const AddReview1 = () => {
                     setBody({...body, product_id : res.data})
                     axios({
                         method: 'post',
-                        url: URL + '/add/post',
+                        url: `${URL  }/add/post`,
                         data: {...body, product_id : res.data}
                     }, {timeout : 5000})
                     .then(res => {
@@ -340,7 +329,7 @@ const AddReview1 = () => {
         else {
             axios({
                 method: 'post',
-                url: URL + '/add/post',
+                url: `${URL  }/add/post`,
                 data: body
             }, {timeout : 5000})
             .then(res => {
@@ -370,12 +359,12 @@ const AddReview1 = () => {
     const contextCheckFunc = (index, id,name, type ) => {
      //   console.log(body)
         if(type) {
-            let newArray = []
+            const newArray = []
             newArray[index] = true
             setContextsChecked([...newArray])
             setBody({...body, context_name : name , context_id : id})
         } else {
-            let newArray = []
+            const newArray = []
             newArray[index] = false
             setContextsChecked([...newArray])
             setBody({...body, context_name : "" , context_id : 0})
@@ -385,7 +374,7 @@ const AddReview1 = () => {
 
     const addContext = () => {
         setAddContextFlag(true)
-        let newArray = []
+        const newArray = []
         setContextsChecked([...newArray])
 
     }
@@ -393,8 +382,8 @@ const AddReview1 = () => {
     const addContextDone = () => {
         
         setAddContextFlag(false)
-        axios.get(URL + "/isexists/context", {params:{context_name : newContext , category_id : body.category_id}} , {timeout : 3000})
-        .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/isexists/context`, {params:{context_name : newContext , category_id : body.category_id}} , {timeout : 3000})
+        .then(res => res.data).then((responseData) => {
             if(responseData.length) {
                 alert("Context already exists")
             } else { 
@@ -406,11 +395,11 @@ const AddReview1 = () => {
         //        console.log("context does not exists", addNewContextBody)
                 axios({
                     method: 'post',
-                    url: URL + '/add/context',
+                    url: `${URL  }/add/context`,
                     data: addNewContextBody
                   }, {timeout : 5000})
                 .then(res => {
-                    let newArray = []
+                    const newArray = []
                     newArray[contextArray.length] = true
          //           console.log("context id new created" , res.data )
                     setBody({...body, context_id : res.data, context_name : newContext})
@@ -421,10 +410,9 @@ const AddReview1 = () => {
 
             }
         })
-        .catch(function(error) {
+        .catch((error) => {
            
         });
-
     
 
     }
@@ -438,7 +426,7 @@ const AddReview1 = () => {
         Amplitude.logEventWithPropertiesAsync('REFERRAL', {userId : body.user_name })
         try {
             const result = await Share.share({
-              message: 'Hey, I just posted a review on https://www.getcandid.app/' + body.user_name + " . Start shopping from my recommendations. Signup using my referral code : " + body.coupon 
+              message: `Hey, I just posted a review on https://www.getcandid.app/${  body.user_name  } . Start shopping from my recommendations. Signup using my referral code : ${  body.coupon}` 
             });
             if (result.action === Share.sharedAction) {
               if (result.activityType) {
@@ -494,7 +482,7 @@ const AddReview1 = () => {
                             }}
                             linkStyle={{ color: '#2980b9', fontSize: 14 }}
                         > 
-                            <Text style = {{color : "#777", fontWeight : '500', fontSize : 14, textAlign :'auto'}}>{"Hey, I just posted a review at https://www.getcandid.app/" + body.user_name + " : Start shopping from my recommendations. Signup using my referral code : " + body.coupon}</Text>
+                            <Text style = {{color : "#777", fontWeight : '500', fontSize : 14, textAlign :'auto'}}>{`Hey, I just posted a review at https://www.getcandid.app/${  body.user_name  } : Start shopping from my recommendations. Signup using my referral code : ${  body.coupon}`}</Text>
                         </HyperLink>
                     </View>
                     <View style = {{justifyContent : 'center', alignItems :'center'}}>
@@ -561,8 +549,7 @@ const AddReview1 = () => {
                 { searchArray.length && !productSelected ?
                 <ScrollView style = {add.dropDownList} contentContainerStyle = {{paddingBottom : 60}}>
                 {
-                searchArray.map((item,index)=>{
-                    return(
+                searchArray.map((item,index)=>(
                     <TouchableOpacity 
                                 key = {index.toString()}
                                 style = {add.dropDownItem}
@@ -570,13 +557,13 @@ const AddReview1 = () => {
                         {item.product_image && item.product_image != "None" && item.product_image != "" ?
                         <Image source = {{uri : item.product_image}} style = {add.dropDownItemImage}/> :
                         <Avatar.Image style = {add.dropDownItemAvatar}
-                        source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.product_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                        source={{uri: `https://ui-avatars.com/api/?rounded=true&name=${ item.product_name  }&size=64&background=D7354A&color=fff&bold=true`}} 
                         size={30}/> }  
                         <View style = {add.dropDownView}>
                             <Text style = {add.dropDownText}>{item.product_name}</Text>
                         </View>
                     </TouchableOpacity>
-                       )})
+                       ))
                 }
                 <View style = {{margin : 5 , padding : 5 , marginTop : 20 , borderRadius : 10 , borderWidth : 1 , borderColor : "#EEE", justifyContent : 'center', alignItems : 'center'}}>
                     <Text style = {{color : "#AAA"}}>Product not found ? Don't worry. Type complete product name and press (+) button</Text>
@@ -591,8 +578,7 @@ const AddReview1 = () => {
                 <View style = {{borderColor : "#EEE" , borderWidth : 1 , borderRadius : 3, padding : 5, }} >
                     <Text style = {{fontWeight : 'bold' , marginTop : 0 , color : "#555", fontSize : 15, textAlign : 'left', marginBottom : 10, }}>Usage Context</Text>
                     <View style = {{flexDirection : 'row' , flexWrap : 'wrap' , }}>
-                    {contextArray.map((item,index)=>{
-                        return(
+                    {contextArray.map((item,index)=>(
                         contextsChecked[index]  == true ?
                             <Pressable 
                             key = {index.toString()}
@@ -608,8 +594,7 @@ const AddReview1 = () => {
                             style = {{backgroundColor : 'white', flexDirection : 'row' , borderRadius : 10 , borderWidth : 1, borderColor : '#AAA', padding : 3 , marginRight : 3, marginTop : 3, paddingHorizontal : 5, }}>
                                 <Text style = {{color : 'black', fontSize : 10 }}>{item.context_name}</Text>
                             </Pressable>
-                    )                  
-                    })}
+                    ))}
                     {!addContextFlag ?
                     <TouchableOpacity 
                     onPress = {addContext}
@@ -637,7 +622,7 @@ const AddReview1 = () => {
                             disabled = {plusContextDisable}
                             onPress = {addContextDone} >
                             {plusContextDisable ?
-                            <AntDesign name = "plus" size = {24} color = {"#DDD"} /> :
+                            <AntDesign name = "plus" size = {24} color = "#DDD" /> :
                             <AntDesign name = "plus" size = {24} color = {alttheme} /> }
                         </TouchableOpacity>
                     </View>
@@ -668,7 +653,7 @@ const AddReview1 = () => {
                                 }}
                                 value = {title}
                                 numberOfLines={4}
-                                multiline={true}
+                                multiline
                                 onFocus={()=>setTitleInputFocus(true)}
                                 onBlur={()=>setTitleInputFocus(false)}
                             />

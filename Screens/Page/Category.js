@@ -1,32 +1,21 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking } from 'react-native'
-import { backArrow, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
-import { RandomContext } from '../Exports/Context'
+import {Animated, Dimensions, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing, Pressable, Linking } from 'react-native'
 import {AntDesign} from 'react-native-vector-icons';
-import { NavigationContainer, useNavigation , useRoute} from '@react-navigation/native';
+import { useNavigation , useRoute} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { RewardsComponent } from '../Exports/Components';
-import Constants from 'expo-constants'
-import {dataRetrieve, URL} from '../Exports/Config'
-import {homeFeed} from "../FakeData/HomeFeed"
-import {products} from "../FakeData/SearchProducts"
-import Contacts from 'react-native-contacts';
 import  Modal  from 'react-native-modal'
-import * as Permissions from 'expo-permissions'
-import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { categories } from '../FakeData/SearchByCategory';
-import { follower } from '../FakeData/Follower';
-import { selectContext } from '../FakeData/SelectContext';
-import { splitContext } from '../FakeData/SplitContext';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import axios from 'axios';
-import { width } from '../Exports/Constants';
 import {Avatar} from 'react-native-paper'
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
-import { add } from '../../Styles/Add';
 import LinearGradient from 'react-native-linear-gradient';
+import {dataRetrieve, URL} from '../Exports/Config'
+import { add } from '../../Styles/Add';
+import { RandomContext } from '../Exports/Context'
+import { backArrow, colorsArray, themeLight } from '../Exports/Colors'
 
-const FeedItemComponent = ({item,id, userInfo}) => {
+function FeedItemComponent({item,id, userInfo}) {
     const [randomNo, userId] = React.useContext(RandomContext)
     const [colorNo,setColorNo] = React.useState(0) 
     const [tempFollow,setTempFollow] = React.useState(false)
@@ -64,7 +53,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -89,7 +78,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -129,7 +118,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -145,9 +134,9 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{marginRight : 10}}>
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                    <Image source = {{uri : `${item.user_image  }?${  new Date()}`}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
-                    source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                    source={{uri: `https://ui-avatars.com/api/?rounded=true&name=${ item.user_name  }&size=64&background=D7354A&color=fff&bold=true`}} 
                     size={40}/> }  
                 </View>  
                 <View style = {{flex : 1}}>
@@ -177,7 +166,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             </View>
                 <View style = {{marginHorizontal : 20 , marginVertical : 5,flexDirection : 'row' , justifyContent : 'space-between'}}>
                     <TouchableOpacity 
-                    onPress = {()=>navigation.navigate("CategoryPage", {categoryId : item.category_id, categoryName : item.category_name , userInfo : userInfo, userName : userInfo.user_name})}
+                    onPress = {()=>navigation.navigate("CategoryPage", {categoryId : item.category_id, categoryName : item.category_name , userInfo, userName : userInfo.user_name})}
                     style = {{ paddingHorizontal: 5, paddingVertical : 2, backgroundColor :  "#888" , borderRadius : 10, }}>
                         <Text style = {{color : 'white',fontSize : 12, fontStyle : 'italic'}}>{item.category_name}</Text>
                     </TouchableOpacity>
@@ -204,10 +193,10 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
-                        readOnly = {true}
+                        readOnly
                         size={30}
                         showRating = {false}
-                        isDisabled = {true}
+                        isDisabled
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
@@ -216,10 +205,10 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <AirbnbRating
                         ratingContainerStyle = {{width : Dimensions.get('screen').width * 0.7, backgroundColor : 'transparent', flex : 1}}
                         defaultRating = {item.rating}
-                        readOnly = {true}
+                        readOnly
                         size={15}
                         showRating = {false}
-                        isDisabled = {true}
+                        isDisabled
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
@@ -247,7 +236,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     </TouchableOpacity>
                 </View>
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
-                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
+                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item , id , userInfo})}>
                         <Text>
                             {item.title}
                             <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
@@ -260,8 +249,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 }
 
 
-
-const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
+function FeedItemSummaryComponent({item,id, contextClickCallback}) {
     const [randomNo] = React.useContext(RandomContext)
     const [colorNo,setColorNo] = React.useState(0) 
     const [tempFollow,setTempFollow] = React.useState(false)
@@ -333,7 +321,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
         )
 }
 
-const FollowItemComponent = () => {
+function FollowItemComponent() {
     return(
         <View style = {{flexDirection : 'row'}}>
             <Text>Name</Text>
@@ -343,11 +331,7 @@ const FollowItemComponent = () => {
 }
 
 
-
-
-
-const Category = () => {
-
+function Category() {
     
 
     const progress = React.useRef(new Animated.Value(0)).current
@@ -394,19 +378,19 @@ const Category = () => {
     const categoryCheckFunc = (index, name , type) => {
       //  console.log(index , name , type)
         if(type) {
-            let newArray = [...categoriesChecked]
+            const newArray = [...categoriesChecked]
             newArray[index] = true
             setCategoriesChecked([...newArray])
-            let newArray1 = [...categoriesRequest]
+            const newArray1 = [...categoriesRequest]
             newArray1.push(name)
             setCategoriesRequest([...newArray1])
         } else {
-            let newArray = [...categoriesChecked]
+            const newArray = [...categoriesChecked]
             newArray[index] = false
             setCategoriesChecked([...newArray])
             
-            let newarray1 = [...categoriesRequest]
-            let index1 = newarray1.indexOf(name)
+            const newarray1 = [...categoriesRequest]
+            const index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
                 newarray1.splice(index1, 1);
                 setCategoriesRequest(newarray1)
@@ -424,82 +408,78 @@ const Category = () => {
             easing: Easing.linear,
             useNativeDriver : true
               },).start()
-
-        
        
 
         if(dataRetrieve  && categoryArray.length && userId) {
             console.log(categoryArray, userId)
-            axios.get(URL + "/feedsummary/bycategory",{params:{category_id : JSON.stringify(categoryArray), user_id : userId.slice(1,13)}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+            axios.get(`${URL  }/feedsummary/bycategory`,{params:{category_id : JSON.stringify(categoryArray), user_id : userId.slice(1,13)}} , {timeout : 5000})
+            .then(res => res.data).then((responseData) => {
                 console.log(responseData)
                 setFeedSummary(responseData)
                
             })
-            .catch(function(error) {
+            .catch((error) => {
                 console.log(error)
             });
         } 
 
-        axios.get(URL + "/feed/category",{params:{
+        axios.get(`${URL  }/feed/category`,{params:{
             category_id : JSON.stringify(categoryArray), 
             page : pageNumber,
             user_id : userId.slice(1,13)}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+            .then(res => res.data).then((responseData) => {
                 console.log(responseData)
                 setFeedData(responseData)
             })
-            .catch(function(error) {
+            .catch((error) => {
                 console.log(error)
             });
-
         
         
     },[categoriesChecked])
 
     const contextClickCallback = (product_id) => {
       //  console.log(product_id)
-        axios.get(URL + "/feed/product",{params:{product_id : product_id , page : 0}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/feed/product`,{params:{product_id , page : 0}} , {timeout : 5000})
+            .then(res => res.data).then((responseData) => {
              //   console.log("FeedProduct",responseData)
                 setContextSplitData(responseData)
                 setSplitContextModalVisible(true)
             })
-            .catch(function(error) {
+            .catch((error) => {
             //  console.log(error)
             });
         
     }
 
-    const FeedItemSummary = ({item,index}) => (
-        <View key = {index.toString()}>
+    function FeedItemSummary({item,index}) {
+  return <View key = {index.toString()}>
             <FeedItemSummaryComponent item = {item} id = {index} contextClickCallback = {(contextName)=>contextClickCallback(contextName)}/>
-        </View> 
-    )
+        </View>
+}
 
-    const FeedItem = ({item,index}) => (
-        <View key = {index.toString()}>
+    function FeedItem({item,index}) {
+  return <View key = {index.toString()}>
             <FeedItemComponent item = {item} id = {index} userInfo = {userInfo}/>
-        </View> 
-    )
+        </View>
+}
 
-    const FollowItem = ({item,index}) => (
-    <View key = {index.toString()}>
+    function FollowItem({item,index}) {
+  return <View key = {index.toString()}>
         <FollowItemComponent item = {item} id = {index} />
-    </View> 
-    )
+    </View>
+}
 
     const filterContextFunc = () => {
-        axios.get(URL + "/all/categories/context",{params:{category_id : categoryId , page : 0}} , {timeout : 5000})
-        .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/all/categories/context`,{params:{category_id : categoryId , page : 0}} , {timeout : 5000})
+        .then(res => res.data).then((responseData) => {
          //   console.log("FeedProduct",responseData)
             setContexts(responseData)
             setFilterContextModalVisible(!filterContextModalVisible)
         })
-        .catch(function(error) {
+        .catch((error) => {
         //  console.log(error)
         });
-
 
         
     }
@@ -547,19 +527,19 @@ const Category = () => {
     const contextCheckFunc = (index, name , type) => {
       //  console.log(index , name , type)
         if(type) {
-            let newArray = [...contextsChecked]
+            const newArray = [...contextsChecked]
             newArray[index] = true
             setContextsChecked([...newArray])
-            let newArray1 = [...contextsRequest]
+            const newArray1 = [...contextsRequest]
             newArray1.push(name)
             setContextsRequest([...newArray1])
         } else {
-            let newArray = [...contextsChecked]
+            const newArray = [...contextsChecked]
             newArray[index] = false
             setContextsChecked([...newArray])
             
-            let newarray1 = [...contextsRequest]
-            let index1 = newarray1.indexOf(name)
+            const newarray1 = [...contextsRequest]
+            const index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
                 newarray1.splice(index1, 1);
                 setContextsRequest(newarray1)
@@ -573,14 +553,14 @@ const Category = () => {
       //  console.log(categoryId, contextsRequest)
         if(contextsRequest.length) 
         {
-            axios.get(URL + "/feedsummary/bycategory/context",{params:{category_id : categoryId , context_id : JSON.stringify(contextsRequest)}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+            axios.get(`${URL  }/feedsummary/bycategory/context`,{params:{category_id : categoryId , context_id : JSON.stringify(contextsRequest)}} , {timeout : 5000})
+            .then(res => res.data).then((responseData) => {
              //   console.log("context",responseData[0])
                 setFeedData(responseData)
                 
                 setFilterContextModalVisible(false)
             })
-            .catch(function(error) {
+            .catch((error) => {
            //   console.log(error)
             });
         } else {
@@ -597,7 +577,7 @@ const Category = () => {
         }
     };
 
-    const EmptyComponent = () => {
+    function EmptyComponent() {
         return(
             <View style = {{marginTop : 10 }}>
                 <View style = {{justifyContent : 'center'}}>
@@ -650,8 +630,7 @@ const Category = () => {
                 style = {{marginHorizontal : 20 , marginVertical : 40}}
                 >
                 <View style = {{flexDirection : 'row' , flexWrap : 'wrap' , }}>
-                {contexts.map((item,index)=>{
-                    return(
+                {contexts.map((item,index)=>(
                     contextsChecked[index]  == true ?
                             <Pressable 
                             android_ripple = {{color : 'black'}}
@@ -667,8 +646,7 @@ const Category = () => {
                                 <Text style = {{color : 'blue' , marginRight : 10}}>{item.context_name}</Text>
                                 <AntDesign name = "plus" size = {15} color = 'red' />
                             </Pressable>
-                )                  
-                })}
+                ))}
                 </View>
             </Modal>
             <Modal 
@@ -694,8 +672,7 @@ const Category = () => {
                             <AntDesign name = "closecircleo" size = {20} color = "#666" />
                     </TouchableOpacity>
                     <ScrollView style = {{marginTop : 30 , }}>
-                    {contextSplitData.length ? contextSplitData.map((item,index)=>{
-                    return(
+                    {contextSplitData.length ? contextSplitData.map((item,index)=>(
                         <View key = {index.toString()} 
                         style = {{flexDirection: 'row' , padding : 5, marginTop : 5,borderWidth : 1, borderColor : "#EEE" , borderRadius : 10, 
                         justifyContent : 'center', alignItems : 'center',
@@ -713,8 +690,7 @@ const Category = () => {
                             </TouchableOpacity> 
                             </LinearGradient> : null }
                     </View>
-                )                  
-                }) : null }
+                )) : null }
                 </ScrollView>
                 </View>
             </Modal>
