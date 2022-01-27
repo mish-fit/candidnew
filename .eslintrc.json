@@ -1,0 +1,63 @@
+{
+  "env": {
+    // "browser": true,
+    "es2021": true,
+    "react-native/react-native": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "airbnb",
+    "airbnb/hooks",
+    "prettier"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["react", "react-native", "unused-imports"],
+  "rules": {
+    "no-undef": "off",
+    "no-unsafe-optional-chaining": "off",
+    "no-shadow": "off",
+    "consistent-return": "off",
+    "eqeqeq": "off",
+    "array-callback-return": "off",
+    "no-alert": "off",
+    "no-lone-blocks": "off",
+    "no-underscore-dangle": "off",
+    "camelcase": "off",
+    "react/no-children-prop": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/order": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "no-nested-ternary": "off",
+    "react/jsx-no-bind": "off",
+    "react/jsx-no-undef": "off",
+    "react/jsx-no-duplicate-props": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/no-array-index-key": "off",
+    "react/destructuring-assignment": "off",
+    "no-console": "off",
+    "no-dupe-keys": "off",
+    "func-names": "off",
+    "global-require": "off",
+    "no-use-before-define": ["error", { "functions": false, "classes": false, "variables": false }],
+    "import/prefer-default-export": "off",
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
+    "react/no-unstable-nested-components": "off",
+
+    "no-unused-vars": "off", // or "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    // "unused-imports/no-unused-vars": [
+    //   "error",
+    //   { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+    // ],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "no-multiple-empty-lines": ["error", { "max": 2, "maxBOF": 1 }]
+  }
+}

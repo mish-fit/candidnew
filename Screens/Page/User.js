@@ -1,30 +1,23 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking, BackHandler, ToastAndroid } from 'react-native'
-import { backArrow, colorsArray, theme, themeLightest } from '../Exports/Colors'
-import { RandomContext } from '../Exports/Context'
+import {Animated, Dimensions, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing, Pressable, Linking, ToastAndroid } from 'react-native'
 import {AntDesign} from 'react-native-vector-icons';
-import { NavigationContainer, useNavigation , useRoute} from '@react-navigation/native';
+import { useNavigation , useRoute} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { RewardsComponent } from '../Exports/Components';
 
-import Constants from 'expo-constants'
-import {dataRetrieve, URL} from '../Exports/Config'
-import {homeFeed} from "../FakeData/HomeFeed"
-import {products} from "../FakeData/SearchProducts"
-import Contacts from 'react-native-contacts';
 import  Modal  from 'react-native-modal'
-import * as Permissions from 'expo-permissions'
 
 import axios from 'axios';
-import { width } from '../Exports/Constants';
 import {Avatar} from 'react-native-paper'
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
-import { LoadingPage } from '../Exports/Pages';
 import HyperLink from 'react-native-hyperlink';
 import LinearGradient from 'react-native-linear-gradient';
+import { LoadingPage } from '../Exports/Pages';
+import {dataRetrieve, URL} from '../Exports/Config'
+import { RandomContext } from '../Exports/Context'
+import { backArrow, colorsArray, theme, themeLightest } from '../Exports/Colors'
 
-const FeedItemComponent = ({item,id, userInfo}) => {
+function FeedItemComponent({item,id, userInfo}) {
     const [randomNo, userId] = React.useContext(RandomContext)
     const [colorNo,setColorNo] = React.useState(0) 
     const [tempFollow,setTempFollow] = React.useState(false)
@@ -67,7 +60,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -92,7 +85,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -132,7 +125,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/engagepost',
+            url: `${URL  }/engagement/engagepost`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -148,13 +141,13 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{flex : 1}}>              
                     <View style = {{marginVertical : 5 ,marginLeft : 5 , flexDirection : 'row', flexWrap : 'wrap'}}>
-                        <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 20 , color : "#555" }}>{item && item.product_name && item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
+                        <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 20 , color : "#555" }}>{item && item.product_name && item.product_name.length > 100 ? `${item.product_name.substring(0,100)  } ...` : item.product_name}</Text>
                     </View>
                 </View> 
             </View>
                 <View style = {{marginHorizontal : 20 , marginVertical : 5,flexDirection : 'row' , justifyContent : 'space-between'}}>
                     <TouchableOpacity 
-                    onPress = {()=>navigation.navigate("CategoryPage", {categoryId : item.category_id, categoryName : item.category_name , userInfo : userInfo, userName : userInfo.user_name})}
+                    onPress = {()=>navigation.navigate("CategoryPage", {categoryId : item.category_id, categoryName : item.category_name , userInfo, userName : userInfo.user_name})}
                     style = {{ paddingHorizontal: 5, paddingVertical : 2, backgroundColor :  "#888" , borderRadius : 10, }}>
                         <Text style = {{color : 'white',fontSize : 12, fontStyle : 'italic'}}>{item.category_name}</Text>
                     </TouchableOpacity>
@@ -183,10 +176,10 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <AirbnbRating
                         ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
                         defaultRating = {item.rating}
-                        readOnly = {true}
+                        readOnly
                         size={30}
                         showRating = {false}
-                        isDisabled = {true}
+                        isDisabled
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
@@ -195,10 +188,10 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     <AirbnbRating
                         ratingContainerStyle = {{width : Dimensions.get('screen').width * 0.7, backgroundColor : 'transparent', flex : 1}}
                         defaultRating = {item.rating}
-                        readOnly = {true}
+                        readOnly
                         size={15}
                         showRating = {false}
-                        isDisabled = {true}
+                        isDisabled
                         count = {5}
                         unSelectedColor = "rgba(200,200,200,0.9)"
                         />
@@ -237,14 +230,12 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 }
 
 
-
-const FeedItemSummaryComponent = ({item,id}) => {
+function FeedItemSummaryComponent({item,id}) {
     const [randomNo] = React.useContext(RandomContext)
     const [colorNo,setColorNo] = React.useState(0) 
     const [tempFollow,setTempFollow] = React.useState(false)
     const [like,setLike] = React.useState(item.like)
     const [dislike,setDislike] = React.useState(item.dislike)
-
 
 
     React.useEffect(() => {
@@ -278,7 +269,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
             </View>  
             <View style = {{ justifyContent : 'space-between', borderTopRightRadius : 20 , borderBottomRightRadius : 20 , flexShrink : 1, flex : 1}}>
                 <View style = {{paddingTop : 5 ,paddingLeft : 5 , flexDirection : 'row', flexWrap : 'wrap' , flexShrink : 1,}}>
-                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item && item.product_name && item.product_name.length > 100 ? item.product_name.substring(0,100) + " ..." : item.product_name}</Text>
+                    <Text style = {{ flexShrink : 1,fontWeight : 'bold', fontSize : 12 , color : "#555" }}>{item && item.product_name && item.product_name.length > 100 ? `${item.product_name.substring(0,100)  } ...` : item.product_name}</Text>
                 </View>
                 <View style = {{paddingHorizontal: 5, paddingVertical : 2,  flexShrink : 1}}>
                     <View style = {{flexDirection : 'row', justifyContent : 'space-between', }}>
@@ -295,7 +286,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_count_buys > 0 ? item.feed_count_buys + " friends bought this" : ""}</Text>
+                    <Text style = {{fontSize : 12, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_count_buys > 0 ? `${item.feed_count_buys  } friends bought this` : ""}</Text>
                     
                 </View>
                 {item.buy_url != "" ? 
@@ -318,7 +309,7 @@ const FeedItemSummaryComponent = ({item,id}) => {
         )
 }
 
-const FollowItemComponent = () => {
+function FollowItemComponent() {
     return(
         <View style = {{flexDirection : 'row'}}>
             <Text>Name</Text>
@@ -328,11 +319,7 @@ const FollowItemComponent = () => {
 }
 
 
-
-
-
-const User = () => {
-
+function User() {
     
 
     const progress = React.useRef(new Animated.Value(0)).current
@@ -381,19 +368,19 @@ const User = () => {
     const categoryCheckFunc = (index, name , type) => {
       //  console.log(index , name , type)
         if(type) {
-            let newArray = [...categoriesChecked]
+            const newArray = [...categoriesChecked]
             newArray[index] = true
             setCategoriesChecked([...newArray])
-            let newArray1 = [...categoriesRequest]
+            const newArray1 = [...categoriesRequest]
             newArray1.push(name)
             setCategoriesRequest([...newArray1])
         } else {
-            let newArray = [...categoriesChecked]
+            const newArray = [...categoriesChecked]
             newArray[index] = false
             setCategoriesChecked([...newArray])
             
-            let newarray1 = [...categoriesRequest]
-            let index1 = newarray1.indexOf(name)
+            const newarray1 = [...categoriesRequest]
+            const index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
                 newarray1.splice(index1, 1);
                 setCategoriesRequest(newarray1)
@@ -411,14 +398,12 @@ const User = () => {
             easing: Easing.linear,
             useNativeDriver : true
               },).start()
-
-        
        
 
         if(dataRetrieve  && userId) {
            
-            axios.get(URL + "/feedsummary/byuser",{params:{following_user_id : followingUserId, user_id : userId.slice(1,13)}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+            axios.get(`${URL  }/feedsummary/byuser`,{params:{following_user_id : followingUserId, user_id : userId.slice(1,13)}} , {timeout : 5000})
+            .then(res => res.data).then((responseData) => {
            //     console.log(responseData)
                 setLoading(false)
                 setFeedSummary(responseData)
@@ -427,76 +412,73 @@ const User = () => {
                 }
                
             })
-            .catch(function(error) {
+            .catch((error) => {
                 setLoading(false)
                 console.log(error)
             });
         } 
 
-        axios.get(URL + "/user/info",{params:{user_id : followingUserId}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/user/info`,{params:{user_id : followingUserId}} , {timeout : 5000})
+            .then(res => res.data).then((responseData) => {
                 console.log("OUTPUT", responseData[0].social_handles)
                 setFollowingUserInfo(responseData[0])
                 setUserImage(responseData[0].user_profile_image)
             })
-            .catch(function(error) {
+            .catch((error) => {
             //  console.log(error)
             });   
 
-        axios.get(URL + "/feed/user",{params:{
+        axios.get(`${URL  }/feed/user`,{params:{
             following_user_id : followingUserId, 
             page : pageNumber,
             user_id : userId.slice(1,13)}} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+            .then(res => res.data).then((responseData) => {
             //    console.log(responseData)
                 setLoading(false)
                 setFeedData(responseData)
             })
-            .catch(function(error) {
+            .catch((error) => {
                 setLoading(false)
                 console.log(error)
             });
-
         
         
     },[categoriesChecked])
 
 
-
-    const FeedItemSummary = ({item,index}) => (
-        <View key = {index.toString()}>
+    function FeedItemSummary({item,index}) {
+  return <View key = {index.toString()}>
             <FeedItemSummaryComponent item = {item} id = {index} />
-        </View> 
-    )
+        </View>
+}
 
-    const FeedItem = ({item,index}) => (
-        <View key = {index.toString()}>
+    function FeedItem({item,index}) {
+  return <View key = {index.toString()}>
             <FeedItemComponent item = {item} id = {index} userInfo = {userInfo}/>
-        </View> 
-    )
+        </View>
+}
 
-    const FollowItem = ({item,index}) => (
-    <View key = {index.toString()}>
+    function FollowItem({item,index}) {
+  return <View key = {index.toString()}>
         <FollowItemComponent item = {item} id = {index} />
-    </View> 
-    )
+    </View>
+}
 
     const filterCategoryFunc = () => {
-        axios.get(URL + "/all/byuser/categories",{params:{user_id : followingUserId}} , {timeout : 5000})
-        .then(res => res.data).then(function(responseData) {
+        axios.get(`${URL  }/all/byuser/categories`,{params:{user_id : followingUserId}} , {timeout : 5000})
+        .then(res => res.data).then((responseData) => {
         //    console.log("FeedProduct",responseData)
             setContexts(responseData)
             setFilterContextModalVisible(!filterContextModalVisible)
         })
-        .catch(function(error) {
+        .catch((error) => {
           console.log(error)
         });
-
 
         
     }
 
-    const HeaderComponent = () => {
+    function HeaderComponent() {
         return(
         
         <View style = {{flexDirection : 'row', paddingRight : 10 , paddingLeft : 10 ,  justifyContent : 'space-between'}}>
@@ -508,15 +490,14 @@ const User = () => {
             style = {{width : Dimensions.get('screen').width*0.35,padding : 10 , borderRadius : 10 , marginRight : 10,   borderWidth : 2 , flexDirection: 'row', alignItems : 'center', justifyContent : 'space-between', paddingRight : 10 , backgroundColor :  !filterContextModalVisible ? "white" : "black"}}>
                 <Text style = {{fontWeight : 'bold', marginRight : 10 , color : filterContextModalVisible ? "white" : "black"}}>Categories</Text>
                 {filterContextModalVisible ?
-                <AntDesign name = "up" color = {"white"} size = {15} /> :
-                <AntDesign name = "down" color = {"black"} size = {15} />
+                <AntDesign name = "up" color = "white" size = {15} /> :
+                <AntDesign name = "down" color = "black" size = {15} />
                } 
             </TouchableOpacity> 
         </View>
         
         )
     }
-
 
     
     const followUser = () => {
@@ -532,7 +513,7 @@ const User = () => {
 
         axios({
             method: 'post',
-            url: URL + '/engagement/followuser',
+            url: `${URL  }/engagement/followuser`,
             data: body
           }, {timeout : 5000})
         .then(res => {
@@ -550,19 +531,19 @@ const User = () => {
     const contextCheckFunc = (index, name , type) => {
       //  console.log(index , name , type)
         if(type) {
-            let newArray = [...contextsChecked]
+            const newArray = [...contextsChecked]
             newArray[index] = true
             setContextsChecked([...newArray])
-            let newArray1 = [...contextsRequest]
+            const newArray1 = [...contextsRequest]
             newArray1.push(name)
             setContextsRequest([...newArray1])
         } else {
-            let newArray = [...contextsChecked]
+            const newArray = [...contextsChecked]
             newArray[index] = false
             setContextsChecked([...newArray])
             
-            let newarray1 = [...contextsRequest]
-            let index1 = newarray1.indexOf(name)
+            const newarray1 = [...contextsRequest]
+            const index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
                 newarray1.splice(index1, 1);
                 setContextsRequest(newarray1)
@@ -576,13 +557,13 @@ const User = () => {
       //  console.log(categoryId, contextsRequest)
         if(contextsRequest.length) 
         {
-            axios.get(URL + "/feedsummary/bycategory",{params:{category_id : JSON.stringify(contextsRequest) , user_id : userId.slice(1,13) }} , {timeout : 5000})
-            .then(res => res.data).then(function(responseData) {
+            axios.get(`${URL  }/feedsummary/bycategory`,{params:{category_id : JSON.stringify(contextsRequest) , user_id : userId.slice(1,13) }} , {timeout : 5000})
+            .then(res => res.data).then((responseData) => {
              //   console.log("context",responseData)
                 setFeedSummary(responseData)
                 setFilterContextModalVisible(false)
             })
-            .catch(function(error) {
+            .catch((error) => {
            //   console.log(error)
             });
         } else {
@@ -598,7 +579,7 @@ const User = () => {
         }
     };
 
-    const EmptyComponent = () => {
+    function EmptyComponent() {
         return(
             <View style = {{marginTop : 10 }}>
                 <View style = {{justifyContent : 'center'}}>
@@ -633,10 +614,10 @@ const User = () => {
                     </TouchableOpacity>
                     <TouchableOpacity style = {{marginLeft : 10, height : 30}} disabled>
                         {followingUserInfo && followingUserInfo.user_profile_image && followingUserInfo.user_profile_image != "" ? 
-                        <Image source = {{uri : followingUserInfo.user_profile_image + "?" + new Date()}} 
+                        <Image source = {{uri : `${followingUserInfo.user_profile_image  }?${  new Date()}`}} 
                             style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 30, height : 30 , width : 30}} />
                         : <Avatar.Image style = {{ }}
-                        source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ followingUserName + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                        source={{uri: `https://ui-avatars.com/api/?rounded=true&name=${ followingUserName  }&size=64&background=D7354A&color=fff&bold=true`}} 
                         size={30}/> }
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -690,11 +671,10 @@ const User = () => {
                 transparent
                 backdropOpacity={0.2}
                 >
-                <View style={{transform:[{rotateZ:'45deg'}],width:16,height:16,backgroundColor:'white',position : 'absolute' , top : -8, right : Dimensions.get('screen').width * 0.15}}></View>
+                <View style={{transform:[{rotateZ:'45deg'}],width:16,height:16,backgroundColor:'white',position : 'absolute' , top : -8, right : Dimensions.get('screen').width * 0.15}} />
                 <ScrollView contentContainerStyle = {{backgroundColor :'white', borderRadius : 30, width : Dimensions.get('screen').width*0.8,paddingBottom : 40, flexDirection : 'row', flexWrap : 'wrap' }}
                 style = {{flexDirection : 'row' , flexWrap : 'wrap' ,  flex : 1}}>
-                {contexts.length && contexts.map((item,index)=>{
-                    return(
+                {contexts.length && contexts.map((item,index)=>(
                     contextsChecked[index]  == true ?
                             <Pressable 
                             android_ripple = {{color : themeLightest}}
@@ -710,8 +690,7 @@ const User = () => {
                                 <Text style = {{color : 'black' ,fontWeight : 'bold',}}>{item.category_name}</Text>
                                
                             </Pressable>
-                )                  
-                })}
+                ))}
                 <TouchableOpacity 
                 onPress={categoryApply}
                 style = {{borderRadius : 10 ,justifyContent:'center', alignItems : 'center', position : 'absolute' , bottom : 0 , borderTopColor : '#DDD' , borderTopWidth : 1 , height : 40, width : '100%' }}>
