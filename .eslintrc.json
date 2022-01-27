@@ -20,7 +20,6 @@
   },
   "plugins": ["react", "react-native", "unused-imports"],
   "rules": {
-    "no-undef": "off",
     "no-unsafe-optional-chaining": "off",
     "no-shadow": "off",
     "consistent-return": "off",

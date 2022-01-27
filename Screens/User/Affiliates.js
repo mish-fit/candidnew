@@ -71,7 +71,7 @@ function Affiliates() {
   };
 
   const done = () => {
-    console.log(inputs.filter((item, index) => item.value && item.code && id));
+    console.log(inputs.filter((item, index) => item.value && item.code && item.id));
   };
 
   return (

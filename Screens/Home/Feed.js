@@ -12,6 +12,7 @@ import {
   Switch,
   ScrollView,
   ToastAndroid,
+  Platform,
 } from 'react-native';
 import { AntDesign } from 'react-native-vector-icons';
 import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';

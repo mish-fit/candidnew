@@ -497,6 +497,7 @@ function User() {
     route?.params?.isFollowing ? route?.params?.isFollowing : false
   );
   const [userName, setUserName] = React.useState(route.params?.homeUserName);
+  const [userImage, setUserImage] = React.useState('');
   const [followingUserName, setFollowingUserName] = React.useState(route.params?.userName);
   const [followingUserId, setFollowingUserId] = React.useState(route.params?.userId);
   const [pageNumber, setPageNumber] = React.useState(0);

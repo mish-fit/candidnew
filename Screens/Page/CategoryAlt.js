@@ -519,6 +519,7 @@ function CategoryAlt() {
   const [filterCategoryModalVisible, setFilterCategoryModalVisible] = React.useState(false);
   const [contexts, setContexts] = React.useState([]);
   const [categories, setCategories] = React.useState([]);
+  const [contextsRequest, setContextsRequest] = React.useState([]);
 
   const [loading, setLoading] = React.useState(true);
 

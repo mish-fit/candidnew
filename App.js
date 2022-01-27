@@ -13,7 +13,6 @@ import axios from 'axios';
 import * as Amplitude from 'expo-analytics-amplitude';
 import { firebaseConfig, URL } from './Screens/Exports/Config';
 import { LoadingPage } from './Screens/Exports/Pages';
-import PushController from './PushController';
 
 // import codePush from 'react-native-code-push';
 
@@ -143,7 +142,6 @@ function App() {
           <LoadingPage />
         </View>
       )}
-      <PushController />
     </View>
   );
 }

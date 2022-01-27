@@ -741,6 +741,7 @@ function MyDetails() {
                 </View>
               </TouchableOpacity>
             </View>
+
             <View
               style={{
                 flexDirection: 'row',

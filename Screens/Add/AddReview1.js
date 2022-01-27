@@ -215,10 +215,7 @@ function AddReview1() {
           //       console.log("search category by product",responseData)
           setSearchLoading(false);
           if (responseData.length) {
-            onClickSearchItemChildCategory(
-              responseData[0].category_name,
-              responseData[0].category_id
-            );
+            //  onClickSearchItemChildCategory(responseData[0].category_name,responseData[0].category_id)
           } else {
             setBody({ ...body, product_name: name, product_id: id });
           }
@@ -255,10 +252,7 @@ function AddReview1() {
               product_id: responseData[0].product_id,
             }));
             setSearchTextCategory(responseData[0].category_name);
-            onClickSearchItemChildCategory(
-              responseData[0].category_name,
-              responseData[0].category_id
-            );
+            //   onClickSearchItemChildCategory(responseData[0].category_name,responseData[0].category_id)
           } else {
             setBody((body) => ({ ...body, product_name: name }));
             setNewProduct(true);

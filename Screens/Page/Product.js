@@ -362,6 +362,7 @@ function Product() {
   const progress = React.useRef(new Animated.Value(0)).current;
   const ref = React.useRef(null);
   const navigation = useNavigation();
+  const [randomNo, userId] = React.useContext(RandomContext);
   const route = useRoute();
   const { product_name, product_id, userInfo } = route?.params;
 

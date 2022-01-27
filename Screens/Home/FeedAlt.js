@@ -15,6 +15,7 @@ import {
   ToastAndroid,
   Share,
   Alert,
+  Platform,
 } from 'react-native';
 import { Fontisto, FontAwesome5 } from 'react-native-vector-icons';
 import { useNavigation, useRoute, useIsFocused, useFocusEffect } from '@react-navigation/native';
@@ -596,6 +597,9 @@ function FeedAlt() {
   const [heroLinkExists, setHeroLinkExists] = React.useState([]);
   const [heroBanner, setHeroBanner] = React.useState([]);
   const [heroSearchText, setHeroSearchText] = React.useState('');
+
+  const [feedData, setFeedData] = React.useState([]);
+  const [a, setA] = React.useState([]);
 
   useFocusEffect(
     React.useCallback(() => {

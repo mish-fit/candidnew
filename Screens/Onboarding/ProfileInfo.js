@@ -8,6 +8,7 @@ import {
   ToastAndroid,
   ScrollView,
   PermissionsAndroid,
+  Platform,
 } from 'react-native';
 
 import axios from 'axios';
