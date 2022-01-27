@@ -177,9 +177,7 @@ function AddContext() {
                   style={add.dropDownItem}
                   onPress={() => onClickSearchItemChild(item.context_name)}
                 >
-                  {item.context_image &&
-                  item.context_image != 'None' &&
-                  item.context_image != '' ? (
+                  {item.context_image && item.context_image !== 'None' ? (
                     <Image source={{ uri: item.context_image }} style={add.dropDownItemImage} />
                   ) : (
                     <Avatar.Image

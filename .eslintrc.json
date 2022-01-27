@@ -23,7 +23,6 @@
     "no-unsafe-optional-chaining": "off",
     "no-shadow": "off",
     "consistent-return": "off",
-    "eqeqeq": "off",
     "array-callback-return": "off",
     "no-alert": "off",
     "no-lone-blocks": "off",

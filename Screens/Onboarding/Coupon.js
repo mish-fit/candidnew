@@ -98,7 +98,7 @@ function Coupon() {
     const couponValue = text;
     // var couponValue = text.toLowerCase().replace(/[^a-zA-Z0-9]/g, "")
     //  console.log(" text ",text , " length " , text.length, " coupon " , coupon , "coupon Value ", couponValue)
-    if (text.length == 6) {
+    if (text.length === 6) {
       //    console.log("text ",text , " length " , text.length, " coupon " , coupon)
       setCoupon(couponValue);
       axios

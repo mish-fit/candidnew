@@ -221,7 +221,7 @@ function FeedItemComponent({ item, id, userInfo }) {
           <Text style={{ fontSize: 12, fontStyle: 'italic' }}>{item.context_name}</Text>
         </View>
       </View>
-      {item.feed_image && item.feed_image != 'None' && item.feed_image != '' ? (
+      {item.feed_image && item.feed_image !== 'None' ? (
         <View style={{ marginTop: 5, justifyContent: 'center', alignItems: 'center' }}>
           <Image
             source={{ uri: item.feed_image }}
@@ -231,7 +231,7 @@ function FeedItemComponent({ item, id, userInfo }) {
               borderRadius: 40,
             }}
           />
-          {item.buy_url != '' ? (
+          {item.buy_url ? (
             <LinearGradient
               colors={['#ed4b60', '#E7455A', '#D7354A']}
               style={{
@@ -282,7 +282,7 @@ function FeedItemComponent({ item, id, userInfo }) {
             count={5}
             unSelectedColor="rgba(200,200,200,0.9)"
           />
-          {item.buy_url != '' ? (
+          {item.buy_url ? (
             <LinearGradient
               colors={['#ed4b60', '#E7455A', '#D7354A']}
               style={{
@@ -434,7 +434,7 @@ function FeedItemSummaryComponent({ item, id }) {
             {item.feed_count_buys > 0 ? `${item.feed_count_buys} friends bought this` : ''}
           </Text>
         </View>
-        {item.buy_url != '' ? (
+        {item.buy_url ? (
           <LinearGradient
             colors={['#ed4b60', '#E7455A', '#D7354A']}
             style={{
@@ -851,9 +851,7 @@ function User() {
           <AntDesign name="arrowleft" size={20} color={backArrow} />
         </TouchableOpacity>
         <TouchableOpacity style={{ marginLeft: 10, height: 30 }} disabled>
-          {followingUserInfo &&
-          followingUserInfo.user_profile_image &&
-          followingUserInfo.user_profile_image != '' ? (
+          {followingUserInfo && followingUserInfo.user_profile_image ? (
             <Image
               source={{ uri: `${followingUserInfo.user_profile_image}?${new Date()}` }}
               style={{
@@ -895,10 +893,8 @@ function User() {
       </Animated.View>
       {followingUserInfo &&
       followingUserInfo.social_handles &&
-      followingUserInfo.social_handles != '' &&
       JSON.parse(followingUserInfo.social_handles) &&
-      JSON.parse(followingUserInfo.social_handles).aboutme &&
-      JSON.parse(followingUserInfo.social_handles).aboutme != '' ? (
+      JSON.parse(followingUserInfo.social_handles).aboutme ? (
         <View
           style={{
             marginTop: 50,
@@ -925,10 +921,8 @@ function User() {
             <Text style={{}}>
               {followingUserInfo &&
               followingUserInfo.social_handles &&
-              followingUserInfo.social_handles != '' &&
               JSON.parse(followingUserInfo.social_handles) &&
-              JSON.parse(followingUserInfo.social_handles).aboutme &&
-              JSON.parse(followingUserInfo.social_handles).aboutme != ''
+              JSON.parse(followingUserInfo.social_handles).aboutme
                 ? JSON.parse(followingUserInfo.social_handles).aboutme
                 : ''}
             </Text>
@@ -976,7 +970,7 @@ function User() {
         >
           {contexts.length &&
             contexts.map((item, index) =>
-              contextsChecked[index] == true ? (
+              contextsChecked[index] ? (
                 <Pressable
                   android_ripple={{ color: themeLightest }}
                   onPress={() => contextCheckFunc(index, item.category_id, false)}
@@ -1043,10 +1037,8 @@ function User() {
             paddingTop:
               followingUserInfo &&
               followingUserInfo.social_handles &&
-              followingUserInfo.social_handles != '' &&
               JSON.parse(followingUserInfo.social_handles) &&
-              JSON.parse(followingUserInfo.social_handles).aboutme &&
-              JSON.parse(followingUserInfo.social_handles).aboutme != ''
+              JSON.parse(followingUserInfo.social_handles).aboutme
                 ? 10
                 : 60,
           }}

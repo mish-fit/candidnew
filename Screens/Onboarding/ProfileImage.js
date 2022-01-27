@@ -38,14 +38,10 @@ function ProfileImage() {
   const [phoneNumber, setPhoneNumber] = React.useState(route.params?.phoneNumber);
   const [userName, setUserName] = React.useState(route.params?.userName);
   const [refereeId, setRefereeId] = React.useState(
-    route.params?.refereeId && route.params?.refereeId != '' ? route.params?.refereeId : ''
+    route.params?.refereeId ? route.params?.refereeId : ''
   );
-  const [refereeName, setRefereeName] = React.useState(
-    route.params?.refereeName && route.params?.refereeName != '' ? route.params?.refereeName : ''
-  );
-  const [coinsValue, setCoinsValue] = React.useState(
-    route.params?.coinsValue && route.params?.coinsValue != 0 ? route.params?.coinsValue : 0
-  );
+  const [refereeName, setRefereeName] = React.useState(route.params?.refereeName || '');
+  const [coinsValue, setCoinsValue] = React.useState(route.params?.coinsValue || 0);
   const [submitted, setSubmitted] = React.useState(false);
 
   const onSubmitOnboarding = () => {
@@ -143,7 +139,7 @@ function ProfileImage() {
                 .catch((e) => {
                   console.log(e);
                 });
-              if (refereeId && refereeId != '') {
+              if (refereeId) {
                 axios({
                   method: 'post',
                   url: `${URL}/rewards/earn`,
@@ -260,7 +256,7 @@ function ProfileImage() {
         >
           <ImageBackground
             source={
-              image && image != 'None'
+              image && image !== 'None'
                 ? { uri: image }
                 : { uri: 'https://ui-avatars.com/api/?rounded=true&name&size=512' }
             }

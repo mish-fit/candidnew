@@ -1,0 +1,4 @@
+# Ignore artifacts:
+android
+assets
+.expo-shared

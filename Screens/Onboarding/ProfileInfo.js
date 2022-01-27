@@ -60,7 +60,7 @@ function ProfileInfo() {
 
   const couponCodeChange = (text) => {
     const couponValue = text;
-    if (text.length == 6) {
+    if (text.length === 6) {
       setReferralCode(couponValue);
       axios
         .get(`${URL}/isexists/coupon`, { params: { coupon: couponValue } }, { timeout: 5000 })
@@ -208,14 +208,14 @@ function ProfileInfo() {
             .then(() => {
               console.log('Reached Here', dbPhoneNumbers.length);
               // console.log(dbPhoneNumbers.filter((val,id,array) => array.indexOf(val) == id))
-              setDbContacts(dbPhoneNumbers.filter((val, id, array) => array.indexOf(val) == id));
+              setDbContacts(dbPhoneNumbers.filter((val, id, array) => array.indexOf(val) === id));
 
               if (dbPhoneNumbers.length) {
                 const contactsBody = {
                   user_id: phoneNumber.slice(1, 13),
                   user_name: '',
                   val: JSON.stringify(
-                    dbPhoneNumbers.filter((val, id, array) => array.indexOf(val) == id)
+                    dbPhoneNumbers.filter((val, id, array) => array.indexOf(val) === id)
                   ),
                 };
 
@@ -288,7 +288,7 @@ function ProfileInfo() {
   const userNameChange = (e) => {
     const str = e.nativeEvent.text;
     const ascii = str.charAt(str.length - 1).charCodeAt();
-    if ((ascii > 47 && ascii < 58) || (ascii > 96 && ascii < 123) || str.length == 0) {
+    if ((ascii > 47 && ascii < 58) || (ascii > 96 && ascii < 123) || !str.length) {
       setUserName(e.nativeEvent.text);
     } else {
       setUserNameSnackVisible(true);
@@ -299,7 +299,7 @@ function ProfileInfo() {
       .then((res) => res.data)
       .then((responseData) => {
         //      console.log("username" , userName , "Check", responseData)
-        if (responseData.length == 0 && str.length > 4) {
+        if (!responseData.length && str.length > 4) {
           setUserNameAccepted(true);
         } else {
           setUserNameAccepted(false);

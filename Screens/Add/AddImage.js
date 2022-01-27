@@ -203,7 +203,7 @@ function AddImage() {
             }}
             onPress={pickImage}
           >
-            {postImageShown && postImageShown != 'None' && postImageShown != '' ? (
+            {postImageShown && postImageShown !== 'None' ? (
               <ImageBackground
                 source={{ uri: postImageShown }}
                 style={{

@@ -92,7 +92,7 @@ function AddCategory() {
                 //       console.log(categoryArray.filter((item1)=>item1.master_category_name==item.master_category_name))
                 setCategoryFilteredArray(
                   categoryArray.filter(
-                    (item1) => item1.master_category_name == item.master_category_name
+                    (item1) => item1.master_category_name === item.master_category_name
                   )
                 );
                 setMasterCategorySelected(true);

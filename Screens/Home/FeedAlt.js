@@ -604,7 +604,7 @@ function FeedAlt() {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (route.name == 'TabHome') {
+        if (route.name === 'TabHome') {
           Alert.alert('Wait!!', 'Do you want to exit the app ?', [
             {
               text: 'Cancel',
@@ -637,7 +637,7 @@ function FeedAlt() {
     console.log(route.name);
     setLoading(true);
     console.log('source', source);
-    if (source == 'Onboarding') {
+    if (source === 'Onboarding') {
       setSource('');
       setModalVisible(true);
     } else {
@@ -668,7 +668,7 @@ function FeedAlt() {
     if (dataRetrieve) {
       //  console.log(URL)
       firebase.auth().onAuthStateChanged((user) => {
-        if (user != null) {
+        if (user) {
           axios
             .get(
               `${URL}/user/info`,
@@ -781,22 +781,22 @@ function FeedAlt() {
 
   const heroBannerClick = (link) => {
     console.log(link);
-    if (link.slice(0, 4) == 'http') {
+    if (link.slice(0, 4) === 'http') {
       WebBrowser.openBrowserAsync(link);
-    } else if (link == 'AddCategory') {
+    } else if (link === 'AddCategory') {
       navigation.navigate('AddCategory', {
         user_id: userId.slice(1, 13),
         user_name: userInfo.user_name,
         user_image: userInfo.user_image,
       });
-    } else if (link.slice(0, 9) == 'Category-') {
+    } else if (link.slice(0, 9) === 'Category-') {
       navigation.navigate('CategoryAlt', {
         categoryCarousel,
         master_category_name: link.slice(9).toString(),
         userInfo,
         userSummary,
       });
-    } else if (link == 'HowToEarn') {
+    } else if (link === 'HowToEarn') {
       navigation.navigate('HowToEarn', { userInfo, userSummary });
     }
   };
@@ -961,7 +961,7 @@ function FeedAlt() {
             style={{ marginLeft: 10, height: 30 }}
             onPress={() => navigation.openDrawer()}
           >
-            {userInfo.user_profile_image && userInfo.user_profile_image != '' ? (
+            {userInfo.user_profile_image ? (
               <Image
                 source={{ uri: `${userInfo.user_profile_image}?${moment().format('YYYY-MM-DD')}` }}
                 style={{

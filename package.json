@@ -5,7 +5,7 @@
     "ios": "react-native run-ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "lint": "eslint . --fix"
+    "lint": "npx prettier --write . && eslint . --fix"
   },
   "dependencies": {
     "@freakycoder/react-native-bounceable": "^0.2.5",

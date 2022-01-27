@@ -160,7 +160,7 @@ function FeedItemComponent({ item, id, userInfo }) {
         style={{ marginTop: 5, marginLeft: 10, flexDirection: 'row', justifyContent: 'flex-start' }}
       >
         <View style={{ marginRight: 10 }}>
-          {item.user_image && item.user_image != 'None' && item.user_image != '' ? (
+          {item.user_image && item.user_image !== 'None' ? (
             <Image
               source={{ uri: `${item.user_image}?${moment().format('YYYY-MM-DD')}` }}
               style={{ width: 40, height: 40, borderRadius: 40, marginTop: 5, marginLeft: 5 }}
@@ -246,7 +246,7 @@ function FeedItemComponent({ item, id, userInfo }) {
           <Text style={{ fontSize: 12, fontStyle: 'italic' }}>{item.context_name}</Text>
         </View>
       </View>
-      {item.feed_image && item.feed_image != 'None' && item.feed_image != '' ? (
+      {item.feed_image && item.feed_image !== 'None' ? (
         <View style={{ marginTop: 5, justifyContent: 'center', alignItems: 'center' }}>
           <Image
             source={{ uri: item.feed_image }}
@@ -256,7 +256,7 @@ function FeedItemComponent({ item, id, userInfo }) {
               borderRadius: 40,
             }}
           />
-          {item.buy_url != '' ? (
+          {item.buy_url ? (
             <LinearGradient
               colors={['#ed4b60', '#E7455A', '#D7354A']}
               style={{
@@ -307,7 +307,7 @@ function FeedItemComponent({ item, id, userInfo }) {
             count={5}
             unSelectedColor="rgba(200,200,200,0.9)"
           />
-          {item.buy_url != '' ? (
+          {item.buy_url ? (
             <LinearGradient
               colors={['#ed4b60', '#E7455A', '#D7354A']}
               style={{

@@ -70,7 +70,7 @@ function FriendsCarousel({ DATA, onClickItem }) {
               alignItems: 'center',
             }}
           >
-            {item.user_profile_image && item.user_profile_image != '' ? (
+            {item.user_profile_image ? (
               <Image
                 source={{ uri: `${item.user_profile_image}?${new Date()}` }}
                 style={{
@@ -434,7 +434,7 @@ function FeedItemComponent({ item, id, userInfo, deleteItem }) {
           <Text style={{ fontSize: 12, fontStyle: 'italic' }}>{item.context_name}</Text>
         </View>
       </View>
-      {item.feed_image && item.feed_image != 'None' && item.feed_image != '' ? (
+      {item.feed_image && item.feed_image !== 'None' ? (
         <View style={{ marginTop: 5, justifyContent: 'center', alignItems: 'center' }}>
           <Image
             source={{ uri: item.feed_image }}
@@ -665,7 +665,7 @@ function MyDetails() {
           }}
         >
           <View style={{}}>
-            {userImage && userImage != 'None' && userImage != '' ? (
+            {userImage && userImage !== 'None' ? (
               <Image
                 source={{ uri: `${userImage}?${new Date()}` }}
                 style={{ width: 100, height: 100, borderRadius: 100 }}
@@ -786,8 +786,7 @@ function MyDetails() {
         {userInfo &&
         userInfo.social_handles &&
         JSON.parse(userInfo.social_handles) &&
-        JSON.parse(userInfo.social_handles).aboutme &&
-        JSON.parse(userInfo.social_handles).aboutme != '' ? (
+        JSON.parse(userInfo.social_handles).aboutme ? (
           <View style={{ flex: 1, paddingTop: 10, paddingHorizontal: 10, paddingBottom: 10 }}>
             <View style={{ marginBottom: 5 }}>
               <Text style={{ fontWeight: 'bold', color: '#555' }}>About</Text>
@@ -797,8 +796,7 @@ function MyDetails() {
                 {userInfo &&
                 userInfo.social_handles &&
                 JSON.parse(userInfo.social_handles) &&
-                JSON.parse(userInfo.social_handles).aboutme &&
-                JSON.parse(userInfo.social_handles).aboutme != ''
+                JSON.parse(userInfo.social_handles).aboutme
                   ? JSON.parse(userInfo.social_handles).aboutme
                   : ''}
               </Text>
@@ -882,7 +880,7 @@ function MyDetails() {
 
   const deletePostItem = (id) => {
     Amplitude.logEventWithPropertiesAsync('DELETE POST', { feed_id: id });
-    setFeedData(feedData.filter((item, index) => item.feed_id != id));
+    setFeedData(feedData.filter((item, index) => item.feed_id !== id));
   };
 
   function FeedItem({ item, index }) {

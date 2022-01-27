@@ -211,7 +211,7 @@ function FeedItemComponent({ item, id, userInfo }) {
           <Text style={{ fontSize: 12, fontStyle: 'italic' }}>{item.context_name}</Text>
         </View>
       </View>
-      {item.feed_image && item.feed_image != 'None' && item.feed_image != '' ? (
+      {item.feed_image && item.feed_image !== 'None' ? (
         <View style={{ marginTop: 5, justifyContent: 'center', alignItems: 'center' }}>
           <Image
             source={{ uri: item.feed_image }}
@@ -221,7 +221,7 @@ function FeedItemComponent({ item, id, userInfo }) {
               borderRadius: 40,
             }}
           />
-          {item.buy_url != '' ? (
+          {item.buy_url ? (
             <LinearGradient
               colors={['#ed4b60', '#E7455A', '#D7354A']}
               style={{
@@ -272,7 +272,7 @@ function FeedItemComponent({ item, id, userInfo }) {
             count={5}
             unSelectedColor="transparent"
           />
-          {item.buy_url != '' ? (
+          {item.buy_url ? (
             <LinearGradient
               colors={['#ed4b60', '#E7455A', '#D7354A']}
               style={{
@@ -397,7 +397,7 @@ function UserLink() {
     }).start();
 
     firebase.auth().onAuthStateChanged((user) => {
-      if (user != null) {
+      if (user) {
         axios
           .get(
             `${URL}/user/info`,
@@ -752,7 +752,7 @@ function UserLink() {
         >
           {contexts.length &&
             contexts.map((item, index) =>
-              contextsChecked[index] == true ? (
+              contextsChecked[index] ? (
                 <Pressable
                   android_ripple={{ color: themeLightest }}
                   onPress={() => contextCheckFunc(index, item.category_id, false)}
