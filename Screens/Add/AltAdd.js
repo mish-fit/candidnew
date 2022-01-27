@@ -95,7 +95,7 @@ function AltAdd() {
       .then((res) => res.data)
       .then((responseData) => {
         //      console.log(responseData)
-        if (url && url != '') {
+        if (url) {
           setBody({
             ...body,
             user_name: responseData[0].user_name,
@@ -267,7 +267,7 @@ function AltAdd() {
                 style={add.dropDownItem}
                 onPress={() => onClickSearchItemChild(item.product_name, item.product_id)}
               >
-                {item.product_image && item.product_image != 'None' && item.product_image != '' ? (
+                {item.product_image && item.product_image !== 'None' ? (
                   <Image source={{ uri: item.product_image }} style={add.dropDownItemImage} />
                 ) : (
                   <Avatar.Image

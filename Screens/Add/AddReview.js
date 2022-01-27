@@ -114,7 +114,7 @@ function AddReview() {
       .then((res) => res.data)
       .then((responseData) => {
         //    console.log(responseData)
-        if (url && url != '') {
+        if (url) {
           setBody({
             ...body,
             user_name: responseData[0].user_name,
@@ -516,7 +516,7 @@ function AddReview() {
                 style={add.dropDownItem}
                 onPress={() => onClickSearchItemChild(item.product_name, item.product_id)}
               >
-                {item.product_image && item.product_image != 'None' && item.product_image != '' ? (
+                {item.product_image && item.product_image !== 'None' ? (
                   <Image source={{ uri: item.product_image }} style={add.dropDownItemImage} />
                 ) : (
                   <Avatar.Image
@@ -610,9 +610,7 @@ function AddReview() {
                 style={add.dropDownItem}
                 onPress={() => onClickSearchItemChildCategory(item.category_name, item.category_id)}
               >
-                {item.category_image &&
-                item.category_image != 'None' &&
-                item.category_image != '' ? (
+                {item.category_image && item.category_image !== 'None' ? (
                   <Image source={{ uri: item.category_image }} style={add.dropDownItemImage} />
                 ) : (
                   <Avatar.Image
@@ -649,7 +647,7 @@ function AddReview() {
                 </Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                   {contextArray.map((item, index) =>
-                    contextsChecked[index] == true ? (
+                    contextsChecked[index] ? (
                       <Pressable
                         key={index.toString()}
                         android_ripple={{ color: themeLightest }}

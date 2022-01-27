@@ -36,7 +36,7 @@ function Affiliates() {
   };
 
   const deleteHandler = (key) => {
-    const _inputs = inputs.filter((input, index) => index != key);
+    const _inputs = inputs.filter((input, index) => index !== key);
     setInputs(_inputs);
   };
 
@@ -65,13 +65,13 @@ function Affiliates() {
     const _inputs = [...inputs];
     _inputs[key].affiliate_code = text;
     setInputs(_inputs);
-    if (_inputs[key].value != '' && _inputs[key].code != '') {
+    if (_inputs[key].value && _inputs[key].code) {
       setPlusDisable(false);
     }
   };
 
   const done = () => {
-    console.log(inputs.filter((item, index) => item.value != '' && item.code != '' && id != 0));
+    console.log(inputs.filter((item, index) => item.value && item.code && id));
   };
 
   return (
@@ -168,7 +168,7 @@ function Affiliates() {
               </TouchableOpacity>
             </View>
             {searchArray &&
-              key == inputs.length - 1 &&
+              key === inputs.length - 1 &&
               searchArray.length > 0 &&
               searchArray.map((item, index) => (
                 <TouchableOpacity

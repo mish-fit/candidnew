@@ -32,7 +32,7 @@ function InApp() {
           </Text>
         </TouchableOpacity>
       </Animated.View>
-      {url != '' && url != 'none' ? <WebView source={{ uri: url }} /> : <EmptyComponent />}
+      {url && url !== 'none' ? <WebView source={{ uri: url }} /> : <EmptyComponent />}
     </View>
   );
 }

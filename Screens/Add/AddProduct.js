@@ -201,9 +201,7 @@ function AddProduct() {
                   style={add.dropDownItem}
                   onPress={() => onClickSearchItemChild(item.product_name, item.product_id)}
                 >
-                  {item.product_image &&
-                  item.product_image != 'None' &&
-                  item.product_image != '' ? (
+                  {item.product_image && item.product_image !== 'None' ? (
                     <Image source={{ uri: item.product_image }} style={add.dropDownItemImage} />
                   ) : (
                     <Avatar.Image

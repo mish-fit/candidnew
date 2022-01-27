@@ -78,7 +78,7 @@ function FeedItemComponent({ item, id }) {
         style={{ marginTop: 5, marginLeft: 10, flexDirection: 'row', justifyContent: 'flex-start' }}
       >
         <View style={{ marginRight: 10 }}>
-          {item.user_image && item.user_image != 'None' && item.user_image != '' ? (
+          {item.user_image && item.user_image !== 'None' ? (
             <Image
               source={{ uri: `${item.user_image}?${moment().format('YYYY-MM-DD')}` }}
               style={{ width: 40, height: 40, borderRadius: 40, marginTop: 5, marginLeft: 5 }}
@@ -168,7 +168,7 @@ function FeedItemComponent({ item, id }) {
             borderRadius: 40,
           }}
         />
-        {item.buy_url != '' ? (
+        {item.buy_url ? (
           <LinearGradient
             colors={['#ed4b60', '#E7455A', '#D7354A']}
             style={{
@@ -402,7 +402,7 @@ function ByCategory() {
           </Pressable>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
             {categories.map((item, index) =>
-              categoriesChecked[index] == true ? (
+              categoriesChecked[index] ? (
                 <Pressable
                   android_ripple={{ color: 'black' }}
                   onPress={() => categoryCheckFunc(index, item.category_id, false)}

@@ -33,7 +33,7 @@ function FeedItemComponent({ item, id }) {
       }}
     >
       <View style={{}}>
-        {item.reward_image && item.reward_image != 'None' && item.reward_image != '' ? (
+        {item.reward_image && item.reward_image !== 'None' ? (
           <Image
             source={{ uri: `${item.reward_image}?${moment().format('YYYY-MM-DD')}` }}
             style={{

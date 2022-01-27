@@ -144,7 +144,7 @@ function Search() {
                 style={[add.dropDownItem, { marginTop: 5, padding: 5 }]}
                 onPress={() => onClickSearchItemChild(item.product_name, item.product_id)}
               >
-                {item.feed_image && item.feed_image != 'None' && item.feed_image != '' ? (
+                {item.feed_image && item.feed_image !== 'None' ? (
                   <Image
                     source={{ uri: item.feed_image }}
                     style={{ borderRadius: 5, width: 50, height: 50 }}

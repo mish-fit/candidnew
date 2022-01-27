@@ -139,7 +139,7 @@ function EditProfile() {
       user_name: userName,
       user_profile_image: profileImageChange
         ? `${s3URL + userId.slice(1, 13)}/profile`
-        : userImage != ''
+        : userImage !== ''
         ? `${s3URL + userId.slice(1, 13)}/profile`
         : '',
       user_gender: gender,
@@ -196,7 +196,7 @@ function EditProfile() {
       .then((res) => res.data)
       .then((responseData) => {
         //      console.log("username" , userName , "Check", responseData)
-        if (responseData.length == 0 && text.length > 4) {
+        if (!responseData.length && text.length > 4) {
           setUserNameAccepted(true);
         } else {
           setUserNameAccepted(false);
@@ -262,7 +262,7 @@ function EditProfile() {
           >
             <ImageBackground
               source={
-                image && image != 'None'
+                image && image !== 'None'
                   ? { uri: `${image}?${new Date()}` }
                   : { uri: 'https://ui-avatars.com/api/?rounded=true&name&size=512' }
               }
@@ -430,14 +430,14 @@ function EditProfile() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     backgroundColor:
-                      gender == 'Male' && item == 'Male'
+                      gender === 'Male' && item === 'Male'
                         ? '#d42a40'
-                        : gender == 'Female' && item == 'Female'
+                        : gender === 'Female' && item === 'Female'
                         ? '#dd6b8e'
                         : '#EEE',
                   }}
                 >
-                  <Text style={{ color: gender == item ? 'white' : 'black' }}>{item}</Text>
+                  <Text style={{ color: gender === item ? 'white' : 'black' }}>{item}</Text>
                 </Pressable>
               ))}
             </View>
