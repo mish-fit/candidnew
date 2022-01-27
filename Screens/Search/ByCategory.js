@@ -1,5 +1,5 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, FlatList,Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, ScrollView } from 'react-native'
+import { PermissionsAndroid,Animated, FlatList,Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, ScrollView, TouchableWithoutFeedback } from 'react-native'
 import { colorsArray, theme } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
@@ -17,6 +17,8 @@ import {Avatar} from 'react-native-paper'
 import * as Permissions from 'expo-permissions'
 import axios from 'axios';
 import * as Amplitude from 'expo-analytics-amplitude';
+import moment from 'moment';
+import LinearGradient from 'react-native-linear-gradient';
 
 // import { FlatList } from 'react-native-gesture-handler';
 // import { categories } from '../FakeData/SearchByCategory';
@@ -60,7 +62,7 @@ const FeedItemComponent = ({item,id}) => {
                 <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                     <View style = {{marginRight : 10}}>
                     {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                        <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                        <Image source = {{uri : item.user_image + "?" + moment().format('YYYY-MM-DD')}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                         <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                         source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                         size={40}/> }  
@@ -103,21 +105,24 @@ const FeedItemComponent = ({item,id}) => {
                     </View>
                 </View>
                 <View style = {{marginTop : 10, justifyContent : 'center', alignItems : 'center' }}>
-                    <Image source = {{uri : item.feed_summary_image}} 
+                    <Image source = {{uri : item.feed_summary_image + "?" + moment().format('YYYY-MM-DD')}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
+                    {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , 
+                    backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
                     <TouchableOpacity 
                     onPress = {()=>{
                         Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , category_name : item.category_name , product_name : item.product_name})
                         redirect(item.buy_url)
-                    }}
-                    style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
+                    }}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
                     </TouchableOpacity>
+                    </LinearGradient> : null }
                 </View>
                 <View style = {{marginTop : 10, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
                     <TouchableOpacity 
@@ -132,9 +137,14 @@ const FeedItemComponent = ({item,id}) => {
                     >
                         <AntDesign name = "dislike2" color = {item.dislike ? "red" : "#888"} size = {20} />
                     </TouchableOpacity>
-                </View >
-                <View style = {{marginTop : 10 , paddingHorizontal : 10 , marginBottom : 10 }}>
-                    <Text>{item.comment}</Text>
+                </View>
+                <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
+                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
+                        <Text>
+                            {item.title}
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
+                        </Text>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
         
@@ -199,7 +209,7 @@ const ByCategory = () => {
             let newarray1 = [...categoriesRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setCategoriesRequest(newarray1)
             }
         }
@@ -324,7 +334,7 @@ const ByCategory = () => {
                 onScroll = {handleScroll}
                 showsVerticalScrollIndicator = {false}
             />
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
             style = {{width: 60 , height : 60 , 
             backgroundColor : colorsArray[randomNo+1], 
@@ -332,7 +342,7 @@ const ByCategory = () => {
                 <View>
                     <AntDesign name = "plus" size = {40} color = "white" />
                 </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }

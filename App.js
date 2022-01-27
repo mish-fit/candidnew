@@ -11,20 +11,21 @@ import Crashes from 'appcenter-crashes';
 import Analytics from 'appcenter-analytics';
 import AppCenter from 'appcenter';
 import * as firebase from "firebase";
-
+import * as Linking from 'expo-linking';
 import { firebaseConfig, dataRetrieve, URL } from './Screens/Exports/Config';
 import { LoadingPage } from './Screens/Exports/Pages';
 import axios from 'axios'
+import PushController from './PushController'
 
-import codePush from 'react-native-code-push';
+// import codePush from 'react-native-code-push';
 
-import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
+// import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import * as Amplitude from 'expo-analytics-amplitude';
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
 }
 catch {
-    console.log("No Amplitude Tracking")
+  //  console.log("No Amplitude Tracking")
 }
 
 try {
@@ -34,10 +35,28 @@ try {
   // ignore app already initialized error in snack
 }
 
-const codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
+//const codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
+
+const prefix = Linking.createURL('/')
+
+const config = {
+  screens: {
+    HomeStack: {
+      screens: {
+        UserLink: ':user',
+        PostLink : 'post'
+      },
+    }
+  }
+}
 
 
 const App = () => {
+
+  const linking = {
+    prefixes: ['https://www.getcandid.app/', 'exp://192.168.109.113:19000/', 'https://*.getcandid.app', 'candid://*'], 
+    config
+  }
 
   const [randomNo , setRandomNo] = React.useState(Math.floor(Math.random()*3+1))
   const [userId,setUserId] = React.useState("")
@@ -46,6 +65,9 @@ const App = () => {
   const [isLoading,setLoading] = React.useState(true)
   const [loadingTimeWait,setLoadingTimeWait] = React.useState(false)
   const [userDetails,setUserDetails] = React.useState({})
+  const [error,setError] = React.useState(false)
+
+  const [buyLink,setBuyLink] = React.useState("")
 
   React.useEffect( () => {
     Crashes.setEnabled(true);
@@ -54,7 +76,7 @@ const App = () => {
       firebase.auth().onAuthStateChanged(user => {
         if (user != null) {
           AppCenter.setUserId(user.phoneNumber);
-         // console.log("firebase",user)
+        //  console.log("firebase",user)
           Amplitude.setUserIdAsync(user.phoneNumber)
           Amplitude.logEventWithPropertiesAsync('USER_VISIT', {"userPhoneNumber": user.phoneNumber})
           setLoggedIn(true)
@@ -68,6 +90,7 @@ const App = () => {
             })
             .catch(function(error) {
             //  console.log(error)
+            
               setLoadingTimeWait(true)
               setLoading(false)
             });
@@ -87,12 +110,12 @@ const App = () => {
     
 },[isLoading]);
 
-ReceiveSharingIntent.getReceivedFiles(files => {
-//  console.log("received intent", files)    
-},
-(error) =>{
-//  console.log(error);
-});
+// ReceiveSharingIntent.getReceivedFiles(files => {
+//   console.log("received intent", JSON.stringify(files))    
+// },
+// (error) =>{
+// //  console.log(error);
+// });
 
 
 
@@ -108,7 +131,7 @@ ReceiveSharingIntent.getReceivedFiles(files => {
       <MenuProvider>
       <RandomProvider value = {[randomNo, userId]}>
       <NativeBaseProvider>
-          <NavigationContainer>
+          <NavigationContainer linking={linking}>
               <Navigator />
           </NavigationContainer>
       </NativeBaseProvider>
@@ -119,11 +142,12 @@ ReceiveSharingIntent.getReceivedFiles(files => {
         <LoadingPage />
       </View>
     )}
+      <PushController />
     </View>
   );
 }
 
-export default codePush(codePushOptions)(App);
+export default App;
 
 const styles = StyleSheet.create({
   container: {

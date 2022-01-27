@@ -20,38 +20,41 @@ const AddComment = () => {
     const progress = React.useRef(new Animated.Value(0)).current
     const navigation = useNavigation()
     const route = useRoute()
-    const [body, setBody] = React.useState(route?.params?.body ? route?.params?.body : {})
-    const [rating, setRating] = React.useState(route?.params?.rating ? route?.params?.rating : {})
-    const [postImageShown, setPostImageShown] = React.useState(route?.params?.postImageShown ? route?.params?.postImageShown : {})
+
+    const [fullBody,setFullBody] = React.useState([])
     
     const [randomNo,userId] = React.useContext(RandomContext)
     const [comment,setComment] = React.useState("")
-    const [productExists,setProductExists] = React.useState(true)
-    const [contextExists,setContextExists] = React.useState(true)
-    const [productId,setProductId] = React.useState(0)
-    const [contextId,setContextId] = React.useState(0)
+
     const [postImage,setPostImage] = React.useState("")
+    const [submitted,setSubmitted] = React.useState(false)
     
  
+    const {body,contextId,productId,postImageShown,rating,contextExists,productExists} = route?.params
+
 
     React.useEffect(()=>{
+      //  console.log(route?.params)
         Amplitude.logEventAsync('ADD COMMENT')
-    
+     //   console.log("body in add comment screen", body)
+        setFullBody({...body, context_id : contextId, product_id : productId, context_name : contextExists.context_name , product_name : productExists.product_name})
     },[])
 
     const submit = () => {
+        setSubmitted(true)
+    //    console.log('submit full body', fullBody)
         const addProductImageBody = {
-            "product_id" : body.product_id,
-            "product_image" : body.feed_image
+            "product_id" : fullBody.product_id,
+            "product_image" : fullBody.feed_image
         }
 
         const addContextImageBody = {
-            "context_id" : body.context_id,
-            "context_image" : body.feed_image
+            "context_id" : fullBody.context_id,
+            "context_image" : fullBody.feed_image
         }
 
         const addPostBody = {
-            ...body, 
+            ...fullBody, 
             "comment": comment,
             "rating" : rating
           }
@@ -82,11 +85,13 @@ const AddComment = () => {
             data: addPostBody
         }, {timeout : 5000})
         .then(res => {
-                console.log(res)
-                ToastAndroid.show("Wohoo! It's Posted. Share it on your social pages and start earning coins.", ToastAndroid.SHORT)
+             //   console.log(res)
+                ToastAndroid.show("Wohoo!! It's posted. Share it on your social pages and start earning coins.", ToastAndroid.SHORT)
                 navigation.navigate("PostShare", {body : addPostBody})
             })
-        .catch((e) => console.log(e))
+        .catch((e) => {
+            ToastAndroid.show("Error posting your review. Please try again later!!", ToastAndroid.SHORT)
+        })
 
     
 
@@ -110,7 +115,7 @@ const AddComment = () => {
                         disabled
                         >
                         <Text style = {add.headerTitleText}>
-                            Review
+                            Critique
                         </Text>
                     </TouchableOpacity>
             </Animated.View>
@@ -127,18 +132,19 @@ const AddComment = () => {
                 </View>
                 <View  style = {add.buttonView}>
                     <TouchableOpacity 
+                    disabled = {submitted}
                     style = {add.button}
                     onPress = {submit}>
                         <Text style = {add.buttonText}>POST</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            {/* <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />
                 </TouchableOpacity>
-            </View>
+            </View> */}
         </View>
     )
 }

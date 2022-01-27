@@ -24,24 +24,21 @@ const AddContext = () => {
     const [body, setBody] = React.useState(route?.params?.body ? route?.params?.body : {} )
     const [categoryName, setCategoryName] = React.useState(route?.params?.category_name ? route?.params?.category_name : "")
     const [categoryId, setCategoryId] = React.useState(route?.params?.category_id ? route?.params?.category_id : "")
-
-
+    const [productName, setProductName] = React.useState(route?.params?.product_name ? route?.params?.product_name : "")
+    const [productId, setProductId] = React.useState(route?.params?.product_id ? route?.params?.product_id : "")
     const [randomNo,userId] = React.useContext(RandomContext)
- 
-
     const [comment,setComment] = React.useState("")
-
-
     const [inputFocus,setInputFocus] = React.useState(false)
     const [searchText,setSearchText] = React.useState("")
     const [searchTextProduct,setSearchTextProduct] = React.useState("")
     const [searchArray,setSearchArray] = React.useState([])
     const [searchLoading,setSearchLoading] = React.useState(false)
+    const [plusDisable,setPlusDisable] = React.useState(true)
 
     React.useEffect(()=>{
-        console.log("categoyr name ", categoryName)
+     //   console.log("Body in add context use effect", body , " product id and product name and category id and category name", productId, productName , categoryId , categoryName)
         Amplitude.logEventAsync('ADD CONTEXT')
-        setBody({...body, category_name : categoryName , category_id : categoryId})
+        setBody({...body, category_name : categoryName , category_id : categoryId , product_name : productName, product_id : productId})
         Animated.timing(progress, {
             toValue: 1,
             duration: 10000,
@@ -51,10 +48,9 @@ const AddContext = () => {
 
         axios.get(URL + "/search/context", {params:{context_text : "" , category_name : categoryName }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-            console.log("SearchArray",responseData)
+      //      console.log("SearchArray",responseData)
             setSearchLoading(false)
             setSearchArray(responseData)
-        //    console.log("Reached Here response")
         })
         .catch(function(error) {
             setSearchLoading(false)
@@ -66,12 +62,14 @@ const AddContext = () => {
     const onClickSearchItemChild = (name) => {
         Amplitude.logEventWithPropertiesAsync('ADDED NEW CONTEXT', {context_name : name })
         setSearchTextProduct(name)
-        console.log(name)
+      //  console.log(name)
         navigation.navigate("AddImage", {body : body , context_name : name })
     }
 
     const searchProduct = (text) => {
-        
+        if(text.length > 1) {
+            setPlusDisable(false)
+        }
         setSearchTextProduct(text)
         setSearchLoading(true)
         
@@ -131,6 +129,7 @@ const AddContext = () => {
                             onBlur = {()=>setInputFocus(false)}
                         />
                         <TouchableOpacity 
+                            disabled = {plusDisable}
                             style = {{padding : 2 , paddingLeft : 10 , paddingRight : 10,}}
                             onPress = {()=>onClickSearchItemChild(searchTextProduct)} >
                             <AntDesign name = "plus" size = {24} color = {theme} />
@@ -159,12 +158,12 @@ const AddContext = () => {
                 : null}
                 </ScrollView>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            {/* <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />
                 </TouchableOpacity>
-            </View>
+            </View> */}
         </View>
     )
 }

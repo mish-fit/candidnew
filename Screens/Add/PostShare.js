@@ -35,10 +35,11 @@ const PostShare = () => {
     }
 
     const share = async () => {
+        console.log(body)
         Amplitude.logEventWithPropertiesAsync('REFERRAL', {userId : body.user_name })
         try {
             const result = await Share.share({
-              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/' + body.user_name   
+              message: 'Shop from the amazing products I recommended on https://www.getcandid.app/user?user_name=' + body.user_name + " . Use my referral code : " + body.coupon 
             });
             if (result.action === Share.sharedAction) {
               if (result.activityType) {
@@ -54,7 +55,7 @@ const PostShare = () => {
           } catch (error) {
             console.log(error.message);
           }
-        }
+    }
 
 
 

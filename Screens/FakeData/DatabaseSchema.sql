@@ -104,3 +104,11 @@ CREATE TABLE gold.people_to_follow (
 
 create table if not exists user_connection_batch ( user_id bigint, connection_phone_number varchar(32) ,updated_at timestamp DEFAULT CURRENT_TIMESTAMP);
 
+
+
+
+
+
+update product_master_table
+set product_url = replace(replace(replace(concat("https://www.amazon.in/gp/search?ie=UTF8&tag=getcandidapp-21&linkCode=ur2&creative=24630&index=aps&keywords=",product_name)," ","+"),"(","+"),")","")
+

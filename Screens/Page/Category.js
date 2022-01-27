@@ -1,6 +1,6 @@
 import React from 'react'
 import { PermissionsAndroid,Animated, Dimensions,Switch, Image, ScrollView,StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput, Pressable, Linking } from 'react-native'
-import { colorsArray, theme, themeLightest } from '../Exports/Colors'
+import { backArrow, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation , useRoute} from '@react-navigation/native';
@@ -13,7 +13,7 @@ import {products} from "../FakeData/SearchProducts"
 import Contacts from 'react-native-contacts';
 import  Modal  from 'react-native-modal'
 import * as Permissions from 'expo-permissions'
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { categories } from '../FakeData/SearchByCategory';
 import { follower } from '../FakeData/Follower';
 import { selectContext } from '../FakeData/SelectContext';
@@ -24,6 +24,7 @@ import {Avatar} from 'react-native-paper'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
 import { add } from '../../Styles/Add';
+import LinearGradient from 'react-native-linear-gradient';
 
 const FeedItemComponent = ({item,id, userInfo}) => {
     const [randomNo, userId] = React.useContext(RandomContext)
@@ -144,7 +145,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{marginRight : 10}}>
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                    <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
@@ -185,30 +186,52 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         <Text style = {{fontSize : 12, fontStyle : 'italic'}}>{item.context_name}</Text>
                     </View>
                 </View>
-                <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
-                    <Image source = {{uri : item.feed_image}} 
+                { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
+                   <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
-                    {item.rating > 3 ? <TouchableOpacity 
-                    onPress = {()=>buyItem(item.buy_url)}
-                    style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
+                   {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , 
+                        backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
+                    <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> : null}
+                    </TouchableOpacity>
+                    </LinearGradient> : null }
                     <AirbnbRating
-                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
+                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
+                        defaultRating = {item.rating}
+                        readOnly = {true}
+                        size={30}
+                        showRating = {false}
+                        isDisabled = {true}
+                        count = {5}
+                        unSelectedColor = "rgba(200,200,200,0.9)"
+                        />
+                </View> :  
+                <View style = {{flexDirection : 'row' , }}>
+                    <AirbnbRating
+                        ratingContainerStyle = {{width : Dimensions.get('screen').width * 0.7, backgroundColor : 'transparent', flex : 1}}
                         defaultRating = {item.rating}
                         readOnly = {true}
                         size={15}
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
+                    {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , 
+                    borderRadius : 20}}>
+                    <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
+                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
+                    </TouchableOpacity>
+                    </LinearGradient> : null }
                 </View>
+                }
                 <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
                     <TouchableOpacity 
                     disabled={dislike}
@@ -222,9 +245,14 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     >
                         <AntDesign name = "dislike2" color = {dislike ? "red" : like ? "#EEE" :"#AAA"} size = {20} />
                     </TouchableOpacity>
-                </View >
+                </View>
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
-                    <Text>{item.comment}</Text>
+                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
+                        <Text>
+                            {item.title}
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
+                        </Text>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
         
@@ -268,7 +296,7 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
     return(
         <View style = {{marginLeft : 10 ,  flexDirection : 'row', marginRight : 10 ,  marginTop : 10 , marginBottom : 5, borderRadius : 20 , borderWidth : 1, borderColor: "#EEE" }}>
             <View style = {{ justifyContent : 'center', alignItems : 'center' , }}>
-                <Image source = {{uri : item.feed_summary_image}} 
+                <Image source = {{uri : item.feed_summary_image }} 
                     style = {{
                         width : Dimensions.get('screen').width * 0.46,
                         height: Dimensions.get('screen').width * 0.46,
@@ -284,18 +312,21 @@ const FeedItemSummaryComponent = ({item,id, contextClickCallback}) => {
                     <Text style = {{fontSize : 13, fontStyle : 'italic',flexShrink : 1,}}>{item.feed_recommendations} friends recommended this</Text>
                     <TouchableOpacity style = {{justifyContent  : 'flex-end',  alignItems : 'flex-end', alignItems : 'center', justifyContent : 'center'}} onPress = {()=>contextClick(item.product_id)}><Text style = {{fontSize : 10, fontStyle : 'italic',flexShrink : 1, borderBottomWidth : 1 , borderBottomColor : 'red',}}>Split by context</Text></TouchableOpacity>
                 </View>
+                {item.buy_url != "" ? 
+                <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{
+                    backgroundColor : 'white' , 
+                    alignItems : 'center' , 
+                    padding : 5 , height : 30,
+                    borderBottomRightRadius : 20}}>
                 <TouchableOpacity 
                 onPress = {()=>{
                     Amplitude.logEventWithPropertiesAsync("BUY URL FROM CATEGORY FEED SUMMARY", { product_name : item.product_name})
                     redirect(item.buy_url)}
                     }
-                style = {{
-                    backgroundColor : 'white' , 
-                    alignItems : 'center' , 
-                    padding : 5 , height : 30,
-                    borderBottomRightRadius : 20}}>
+                >
                     <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 16 , color : colorsArray[colorNo]}}>BUY</Text>
                 </TouchableOpacity>
+                </LinearGradient> : null }
             </View>    
         </View>
         
@@ -322,7 +353,7 @@ const Category = () => {
     const progress = React.useRef(new Animated.Value(0)).current
     const ref = React.useRef(null)
   
-    const [headerHeight,setHeaderHeight] = React.useState(70)
+    const [headerHeight,setHeaderHeight] = React.useState(50)
     const [randomNo, userId] = React.useContext(RandomContext)
 
     const navigation = useNavigation()
@@ -335,6 +366,7 @@ const Category = () => {
     const [pageNumber,setPageNumber] = React.useState(0)
     const [feedData,setFeedData] = React.useState([])
     const [feedSummary,setFeedSummary] = React.useState([])
+  
 
     const scrollY = React.useRef(new Animated.Value(0));
     const handleScroll = Animated.event(
@@ -376,7 +408,7 @@ const Category = () => {
             let newarray1 = [...categoriesRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setCategoriesRequest(newarray1)
             }
         }
@@ -384,6 +416,7 @@ const Category = () => {
     }
 
     React.useEffect(()=>{
+        console.log(categoryArray)
         Amplitude.logEventWithPropertiesAsync('CATEGORY PAGE',{category_id : JSON.stringify(categoryArray), user_id : userId.slice(1,13)})  
         Animated.timing(progress, {
             toValue: 1,
@@ -399,9 +432,9 @@ const Category = () => {
             console.log(categoryArray, userId)
             axios.get(URL + "/feedsummary/bycategory",{params:{category_id : JSON.stringify(categoryArray), user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-               // console.log(responseData)
+                console.log(responseData)
                 setFeedSummary(responseData)
-                setFollowing(responseData[0].isFollowing)
+               
             })
             .catch(function(error) {
                 console.log(error)
@@ -409,11 +442,11 @@ const Category = () => {
         } 
 
         axios.get(URL + "/feed/category",{params:{
-            category_id : categoryId, 
+            category_id : JSON.stringify(categoryArray), 
             page : pageNumber,
             user_id : userId.slice(1,13)}} , {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-              //  console.log(responseData)
+                console.log(responseData)
                 setFeedData(responseData)
             })
             .catch(function(error) {
@@ -471,41 +504,41 @@ const Category = () => {
         
     }
 
-    const HeaderComponent = () => {
-        return(<View style = {{flex : 1 }}>
-                <Pressable 
-                        onPress = {filterContextFunc}
-                        style = {{alignItems : 'flex-start', paddingLeft : 10, justifyContent :'center', borderWidth : 1, borderColor : "#EEE" , flex : 1 , borderRadius : 10 , marginLeft : 10 , marginRight : 10 , height  : 40  }}>
-                            <Text style = {{color : "#888", fontSize : 16, fontStyle : 'italic'}}>Filter by Context</Text>
-                </Pressable>
-        </View>)
-    }
+    // const HeaderComponent = () => {
+    //     return(<View style = {{flex : 1 }}>
+    //             <Pressable 
+    //                     onPress = {filterContextFunc}
+    //                     style = {{alignItems : 'flex-start', paddingLeft : 10, justifyContent :'center', borderWidth : 1, borderColor : "#EEE" , flex : 1 , borderRadius : 10 , marginLeft : 10 , marginRight : 10 , height  : 40  }}>
+    //                         <Text style = {{color : "#888", fontSize : 16, fontStyle : 'italic'}}>Filter by Context</Text>
+    //             </Pressable>
+    //     </View>)
+    // }
 
 
-    const [isFollowing,setFollowing] = React.useState(true)
-    const followCategory = () => {
-        setFollowing(!isFollowing)
-        const body = {
-            "user_name": userName,
-            "user_id": userId,
-            "category_id": categoryId,
-            "category_name": categoryName,
-            "isFollowing": !isFollowing
-        }
+    // const [isFollowing,setFollowing] = React.useState(true)
+    // const followCategory = () => {
+    //     setFollowing(!isFollowing)
+    //     const body = {
+    //         "user_name": userName,
+    //         "user_id": userId,
+    //         "category_id": categoryId,
+    //         "category_name": categoryName,
+    //         "isFollowing": !isFollowing
+    //     }
      //   console.log("POST BODY", body)
 
-        axios({
-            method: 'post',
-            url: URL + '/engagement/followcategory',
-            data: body
-          }, {timeout : 5000})
-        .then(res => {
+    //     axios({
+    //         method: 'post',
+    //         url: URL + '/engagement/followcategory',
+    //         data: body
+    //       }, {timeout : 5000})
+    //     .then(res => {
             
-        })
-        .catch((e) => console.log(e))
+    //     })
+    //     .catch((e) => console.log(e))
 
 
-    }
+    // }
 
     const [contexts,setContexts] = React.useState([])
     const [contextsChecked,setContextsChecked] = React.useState([])
@@ -528,7 +561,7 @@ const Category = () => {
             let newarray1 = [...contextsRequest]
             let index1 = newarray1.indexOf(name)
             if (index1 !== -1) {
-                newarray1.splice(index, 1);
+                newarray1.splice(index1, 1);
                 setContextsRequest(newarray1)
             }
         }
@@ -564,6 +597,26 @@ const Category = () => {
         }
     };
 
+    const EmptyComponent = () => {
+        return(
+            <View style = {{marginTop : 10 }}>
+                <View style = {{justifyContent : 'center'}}>
+                    <LottieView
+                    progress = {progress}
+                    style={{width : Dimensions.get('screen').width*0.4 , height : Dimensions.get('screen').width*0.4}}
+                    source={require('../../assets/animation/astronaut.json')}
+                    autoPlay
+                    />
+                </View>
+                <View style = {{justifyContent : 'center', alignItems :'center'}}>
+                    <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No Posts on this category yet</Text>
+                    <TouchableOpacity onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
+                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Reviewing</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
 
     return (
         <View style = {{ backgroundColor : 'white', flex : 1,}}>
@@ -575,27 +628,17 @@ const Category = () => {
                 flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
                     <TouchableOpacity 
                     onPress = {()=>navigation.navigate("Home")}
-                    style = {{width: 40 , height : 40 , marginLeft : 20,
-                    borderRadius : 60 , justifyContent : 'center', alignItems : 'center'  }}>
-                            <AntDesign name = "home" size = {30} color = {colorsArray[randomNo]}/>
+                    style = {{width: 20 , height : 40 , marginLeft : 20,
+                    borderRadius : 20 , justifyContent : 'center', alignItems : 'center'  }}>
+                            <AntDesign name = "arrowleft" size = {20} color = {backArrow}/>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style = {{marginLeft : 20, flex : 1 , justifyContent :'center', alignItems :'center' }}
+                        style = {{marginRight : 40, flex : 1 , justifyContent :'center', alignItems :'center' }}
                         disabled
                         >
                         <Text style = {add.headerTitleText}>{categoryName}</Text>
                     </TouchableOpacity>
-                    <Pressable 
-                    onPress = {followCategory}
-                    style = {{alignItems : 'flex-start', paddingHorizontal : 10, justifyContent :'center', borderWidth : 1, 
-                    borderColor : isFollowing ? "red" : "#EEE" , 
-                    borderRadius : 10 , marginLeft : 10 , marginRight : 10 , height  : 30 , 
-                    backgroundColor : isFollowing ? "white" : 'red' }}>
-                        <Text style = {{
-                            color : isFollowing ? "#888" : 'white', 
-                            fontSize : isFollowing ? 12 : 16, 
-                            fontStyle : 'italic' }}>{isFollowing ? "Following" : "Follow"}</Text>
-                    </Pressable>
+                    
             </Animated.View>
             <Modal 
                 isVisible={filterContextModalVisible}
@@ -659,14 +702,16 @@ const Category = () => {
                         }}>
                             <Text style = {{fontWeight : 'bold', flex : 1,}}>{item.user_name}</Text>
                             <Text style = {{flex : 1, }}>{item.context_name}</Text>
+                            {item.buy_url != "" ? 
+                            <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{borderRadius: 10 , backgroundColor : 'red' , paddingHorizontal : 10 , paddingVertical : 5,}}>
                             <TouchableOpacity 
                             onPress = {()=>{
                                 Amplitude.logEventWithPropertiesAsync("BUY URL FROM CONTEXT MODAL IN CATEGORY ", { context_name : item.context_name , user_name : item.user_name , product_name : item.product_name})
                                 redirect(item.buy_url)
-                            }}
-                            style = {{borderRadius: 10 , backgroundColor : 'red' , paddingHorizontal : 10 , paddingVertical : 5,}}>
+                            }}>
                                 <Text style = {{color : 'white'}}>BUY</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> 
+                            </LinearGradient> : null }
                     </View>
                 )                  
                 }) : null }
@@ -679,13 +724,14 @@ const Category = () => {
                 ref = {ref}
                 style = {{}}
                 contentContainerStyle = {{paddingTop : headerHeight}}
-                data = {!toggled ? feedSummary : feedData}
-                renderItem = {!toggled ? FeedItemSummary : FeedItem}
+                data = {feedData}
+                renderItem = {FeedItem}
                 onScroll = {handleScroll}
                 showsVerticalScrollIndicator = {false}
-                ListHeaderComponent = {HeaderComponent}
+               
+                ListEmptyComponent={EmptyComponent}
             />
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
             onPress = {()=>navigation.navigate("AddPost")}
             style = {{width: 50 , height : 50 , 
             backgroundColor : colorsArray[randomNo+1], 
@@ -693,8 +739,8 @@ const Category = () => {
                 <View>
                     <AntDesign name = "plus" size = {40} color = "white" />
                 </View>
-            </TouchableOpacity>
-            <View 
+            </TouchableOpacity> */}
+            {/* <View 
             style = {{width: width, height : 40,
             backgroundColor : themeLightest, 
             justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
@@ -714,7 +760,7 @@ const Category = () => {
                         <Text style = {{color : theme, fontSize : 18,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>All Reviews</Text>
                     </View>
                 </View>
-            </View>
+            </View> */}
         </View>
     )
 }

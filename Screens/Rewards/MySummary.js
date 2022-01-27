@@ -1,6 +1,6 @@
 import React from 'react'
 import {Animated, Easing, FlatList,  StyleSheet, Text, View , TouchableOpacity, Dimensions, Image} from 'react-native'
-import { alttheme, background, colorsArray, theme, themeLightest } from '../Exports/Colors'
+import { alttheme, backArrow, background, colorsArray, theme, themeLightest } from '../Exports/Colors'
 import { RewardsComponent } from '../Exports/Components'
 import { RandomContext } from '../Exports/Context'
 import {Button,Box,Heading,VStack,Center,NativeBaseProvider} from "native-base"
@@ -16,6 +16,7 @@ import { mySummaryStyle } from '../../Styles/MySummary'
 import MyEarns from './MyEarns'
 import MyRedeems from './MyRedeems'
 import * as Amplitude from 'expo-analytics-amplitude';
+import { Avatar } from 'react-native-paper'
 
 
 const Tab = createMaterialTopTabNavigator()
@@ -33,8 +34,6 @@ const Tabs = ({user_id}) => {
         </Tab.Navigator>
         )
         ;
-    
-  
 }
 
 
@@ -99,66 +98,43 @@ const MySummary = () => {
 
     },[])
     
-
-    const redeemPoints = (coins , cash) => {
-    //    console.log(coins ,"  ", cash )
-    }
-
-    const importantInstructions = () => {
-  //      console.log("Instructions Modal")
-    }
-
-    const howToUse = () => {
-//    console.log("How to use modal")
-    }
-
-
     return (
         <View style = {{flex :1 , backgroundColor : 'white'  }}>
-            <View style = {{height : 80 , flexDirection : 'row-reverse', alignItems : 'center', justifyContent : 'space-between'}}>
+            <View style = {{ backgroundColor : 'white', flex : 1 , height : 50 ,  position: 'absolute',  zIndex: 100, width: '100%',  left: 0,right: 0,
+                flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
+                <View style = {{marginLeft : 10, height : 30,alignItems :"center", justifyContent : 'center'}} >
+                    <TouchableOpacity style = {{alignItems :"center", justifyContent : 'center'}} onPress={()=>navigation.goBack()}>
+                        <AntDesign name = "arrowleft" size = {20} color = {backArrow}/>
+                    </TouchableOpacity>
+                </View>
                 <TouchableOpacity
-                    style = {{marginRight : 30}}
-                    onPress = {()=>navigation.navigate("MyDetails")}
+                    style = {{marginLeft : 10, flex : 1 }}
+                    onPress = {()=>{
+                        navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
+                        }
                     >
-                    <Text style = {{fontWeight : 'bold', fontSize : 18, color : "#555"}}>{userInfo.user_name}</Text>
+                    <Text style = {{fontWeight : 'bold', fontSize : 20, color : backArrow}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
                 </TouchableOpacity>
-                <View style = {{marginLeft : 20, flexDirection : 'row', alignItems : 'center'}}>
-                    <View style = {{justifyContent : 'center', marginLeft : 10}}>
-                        <LottieView
-                        progress = {progress}
-                        style={{width : 60 , height : 60}}
-                        source={require('../../assets/animation/coins-money.json')}
-                      //  autoPlay
-                        />
-                    </View>
-                    <Text style = {{marginLeft : 5 , fontSize : 20, fontWeight : 'bold' , color : theme}}>{userSummary && userSummary.coins_available ? userSummary.coins_available : "0" }</Text>
+                <View style = {{alignItems : 'center', justifyContent : 'flex-end',flexDirection : 'row-reverse' , marginRight : 10 }}>
+                    <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
                 </View>
             </View>
-            
-            <View style = {{height: 40, backgroundColor : themeLightest }}>
+            <View style = {{height: 40, backgroundColor : themeLightest , marginTop : 50,}}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("HowToEarn",{userSummary: userSummary, userInfo : userInfo, recentBurn : recentBurn})}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1 , borderBottomColor : '#888', borderBottomWidth : 1, borderStyle:'dashed'}}>
                     <Text style = {{color : alttheme, fontWeight : 'bold'}}>How to Earn ?</Text>
                 </TouchableOpacity>
             </View>
+           
             <NavigationContainer independent = {true}>
                 <Tabs user_id = {userId.slice(1,13)}/>
             </NavigationContainer>  
-            <View style = {{height: 40, backgroundColor : theme}}>
+            <View style = {{height: 40, backgroundColor : 'white'}}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Redeem",{userSummary: userSummary, userInfo : userInfo, recentBurn : recentBurn})}
-                style = {{justifyContent : 'center', alignItems : 'center', flex : 1 , borderBottomColor : '#888', borderBottomWidth : 1, borderStyle:'dashed'}}>
-                    <Text style = {{color : "#EEE"}}>REDEEM NOW</Text>
+                style = {{justifyContent : 'center', alignItems : 'center', flex : 1 , borderColor : '#EEE', borderWidth : 1, borderStyle:'dashed'}}>
+                    <Text style = {{color : theme, fontWeight : 'bold', fontSize : 18}}>REDEEM NOW</Text>
                 </TouchableOpacity>
             </View>
-            
-            <View style = {{position : 'absolute', left : 30 , bottom : 50 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
-                <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
-                style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
-                    <AntDesign name = "home" size = {30} color = 'white' />
-                </TouchableOpacity>
-            </View>
-            
-            
         </View>
     )
 }

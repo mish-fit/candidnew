@@ -13,7 +13,7 @@ import {homeFeed} from "../FakeData/HomeFeed"
 import Contacts from 'react-native-contacts';
 import {Avatar} from 'react-native-paper'
 import * as firebase from "firebase";
-import * as Notifications from 'expo-notifications'
+
 import * as Permissions from 'expo-permissions'
 import { FlatList } from 'react-native-gesture-handler';
 import axios from 'axios';
@@ -26,6 +26,7 @@ import * as Amplitude from 'expo-analytics-amplitude';
 import { home } from '../../Styles/Home';
 import  Modal  from 'react-native-modal'
 import { add } from '../../Styles/Add';
+import LinearGradient from 'react-native-linear-gradient';
 
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
@@ -53,7 +54,7 @@ const Post = () => {
     
 
     React.useEffect(() => {
-    
+        Amplitude.logEventAsync("Detailed Post Visit")
 
      //   console.log(userInfo)
 
@@ -178,7 +179,7 @@ const Post = () => {
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{marginRight : 10}}>
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                    <Image source = {{uri : item.user_image + "?" + new Date()}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
@@ -219,30 +220,52 @@ const Post = () => {
                         <Text style = {{fontSize : 12, fontStyle : 'italic'}}>{item.context_name}</Text>
                     </View>
                 </View>
-                <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
-                    <Image source = {{uri : item.feed_image}} 
+                { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
+                   <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
-                    {item.rating > 3 ? <TouchableOpacity 
-                    onPress = {()=>buyItem(item.buy_url)}
-                    style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
+                   {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , 
+                    backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
+                    <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
                         <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> : null}
+                    </TouchableOpacity>
+                    </LinearGradient> : null }
                     <AirbnbRating
-                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
+                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
+                        defaultRating = {item.rating}
+                        readOnly = {true}
+                        size={30}
+                        showRating = {false}
+                        isDisabled = {true}
+                        count = {5}
+                        unSelectedColor = "rgba(200,200,200,0.9)"
+                        />
+                </View> :  
+                <View style = {{flexDirection : 'row' , }}>
+                    <AirbnbRating
+                        ratingContainerStyle = {{width : Dimensions.get('screen').width * 0.7, backgroundColor : 'transparent', flex : 1}}
                         defaultRating = {item.rating}
                         readOnly = {true}
                         size={15}
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
+                    {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , 
+                    alignItems : 'center' , marginRight : 20 , borderRadius : 20}}>
+                    <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
+                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
+                    </TouchableOpacity>
+                    </LinearGradient> : null }
                 </View>
+                }
                 <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
                     <TouchableOpacity 
                     disabled={dislike}
@@ -256,7 +279,10 @@ const Post = () => {
                     >
                         <AntDesign name = "dislike2" color = {dislike ? "red" : like ? "#EEE" :"#AAA"} size = {20} />
                     </TouchableOpacity>
-                </View >
+                </View>
+                <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}> 
+                    <Text style = {{fontWeight : 'bold'}}>{item.title}</Text>
+                </View>
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
                     <Text>{item.comment}</Text>
                 </View>

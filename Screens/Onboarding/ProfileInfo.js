@@ -1,5 +1,5 @@
 import React , {useState,useEffect , useContext} from 'react'
-import { Animated, Easing, View,Text , Image ,ImageBackground, TouchableOpacity , TextInput , Dimensions , Button, ToastAndroid , ScrollView , PermissionsAndroid } from 'react-native'
+import { Animated, Easing, View,Text , Image ,ImageBackground, TouchableOpacity , TextInput , Dimensions , Button, ToastAndroid , ScrollView , PermissionsAndroid, Pressable } from 'react-native'
 
 import moment from 'moment';
 import * as ImagePicker from 'expo-image-picker';
@@ -18,72 +18,70 @@ import Constants from 'expo-constants';
 import { style } from '../../Styles/ProfileInfo';
 import { URL } from '../Exports/Config';
 import { RandomContext } from '../Exports/Context';
-import { theme } from '../Exports/Colors';
+import { alttheme, backArrow, theme } from '../Exports/Colors';
 import { s3URL, uploadImageOnS3 } from '../Exports/S3';
 import LottieView from 'lottie-react-native';
 
 import 'react-native-get-random-values'
 import { nanoid , customAlphabet} from 'nanoid'
 import * as Amplitude from 'expo-analytics-amplitude';
-
-
+import { TextInputMask } from 'react-native-masked-text';
+import { Snackbar } from 'react-native-paper';
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import RNBounceable from "@freakycoder/react-native-bounceable";
+import LinearGradient from 'react-native-linear-gradient';
 
 const ProfileInfo = () => {
-  const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6)
-
+  
   const navigation = useNavigation()
   const route = useRoute()
-  const progress = React.useRef(new Animated.Value(0)).current
-
-  const [selectedItem, setSelectedItem ] = useState(0);
-  const [date, setDate] = useState(new Date())
-  const [image, setImage] = React.useState(route.params?.image ? route.params?.image  : "");
-  const [gender, setGender] = useState(route.params?.gender ? route.params?.gender  : "")
-  const [instagram, setInstagram] = useState(route.params?.instagram ? route.params?.instagram  :"")
-  const [twitter, setTwitter] = useState(route.params?.twitter ? route.params?.twitter  :"")
-  
-  const [imageUrl,setImageUrl] = useState("")
-  const [profileImageChange,setProfileImageChange] = useState(false)
-  const [coverImageChange,setCoverImageChange] = useState(false)
-  const [age,setAge] = useState("")
   const [userName,setUserName] = React.useState(route.params?.username ? route.params?.username  : "")
-  const [userId] = React.useContext(RandomContext)
   const [phoneNumber,setPhoneNumber] = React.useState(route.params?.phoneNumber ? route.params?.phoneNumber : "")
-  const [refereeName,setRefereeName] = React.useState(route.params?.refereeName ? route.params?.refereeName : "")
-  const [refereeId,setRefereeId] = React.useState(route.params?.refereeId ? route.params?.refereeId : "")
-  const [coinsValue,setCoinsValue] = React.useState(route.params?.coinsValue ? route.params?.coinsValue : "")
   const [userInfo,setUserInfo] = React.useState([])
-  const [submitted,setSubmitted] = React.useState(false)
-
-  const [userDob,setUserDob] = useState(route.params?.dob ? route.params?.dob  :"")
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-
   const [expoToken,setExpoToken] = React.useState("")
   const [deviceToken,setDeviceToken] = React.useState("")
   const [refresh,setRefresh] = React.useState(false)
   const [dbContacts,setDbContacts] = React.useState([])
   const [dbPhoneNumbers,setDbPhoneNumbers] = React.useState([])
-  const [socialHandles,setSocialHandles] = React.useState({})
-
   const [userNameAccepted,setUserNameAccepted] = React.useState(false)
-  const [userNameRefreshBoolean,setUserNameRefreshBoolean] = React.useState(false)
+  const [checked,setChecked] = React.useState(false)
+  const [referralCode,setReferralCode] = React.useState("")
+  const [userNameSnackVisible,setUserNameSnackVisible] = React.useState(true)
+  const onDismissSnackBar = () => {
+    setUserNameSnackVisible(false)
+  }
 
- 
+  const [couponCodeAccepted,setCouponCodeAccepted] = React.useState(false)
+  const [refereeName,setRefereeName] = React.useState("")
+  const [refereeId,setRefereeId] = React.useState("")
+  const [coinsValue,setCoinsValue] = React.useState(500)
 
-  
-  const [variable,setVariable] = React.useState(route.params?.variable ?  route.params?.variable : "new user")
-  
-  const showDatePicker = () => {setDatePickerVisibility(true);};
-  const hideDatePicker = () => {setDatePickerVisibility(false);};
-  const handleConfirm = (date) => {
-      setUserDob(moment(date).format("YYYY-MM-DD"))
-      hideDatePicker();
-  };
+  const couponCodeChange = (text) => {
+    var couponValue = text
+    if(text.length == 6) {
+      setReferralCode(couponValue)
+      axios.get(URL + "/isexists/coupon", {params:{coupon : couponValue}} , {timeout:5000})
+      .then(res => res.data).then(function(responseData) {
+        if(responseData.length) {
+          setRefereeName(responseData[0].user_name)
+          setRefereeId(responseData[0].user_id)
+          setCoinsValue(responseData[0].coins_value)
+          setCouponCodeAccepted(true)
+        } else {
+          setCouponCodeAccepted(false)
+        }
+      })
+    .catch(function(error) {
+        //
+      });
+    } else if(text.length > 6) {
+      setCouponCodeAccepted(false)
+    } else {  
+      setReferralCode(couponValue)
+      setCouponCodeAccepted(false)
+    }
+  }  
 
-
-  const [contactsAlreadyExist,setContactsAlreadyExist] = React.useState(true)
-
-    
   const registerForExpoPushNotificationsAsync= async() => {
       let token;
       
@@ -101,7 +99,7 @@ const ProfileInfo = () => {
         }
         try {
           token = await Notifications.getExpoPushTokenAsync({
-            experienceId : '@kandurisv/taiq'
+            experienceId : '@kandurisv/candidapp'
           })
         }
         catch(e) {
@@ -149,10 +147,6 @@ const ProfileInfo = () => {
     return token;
   }
   
-
-  
-
-
     React.useEffect(() => {
       try {
         Amplitude.logEventAsync("NEW USER PROFILE INFO")
@@ -177,6 +171,8 @@ const ProfileInfo = () => {
       } catch(e) {
         console.log("Register Notification", e)
       }
+
+      console.log("Coming to profile info")
         
 
     
@@ -251,8 +247,6 @@ const ProfileInfo = () => {
         console.log("Get contacts Notification", e)
       }
       
-
-
     //  console.log("USER DETAILS USE EFFECT" , route.params.userDetails)
        const getUserInfo = () => {
         axios.get(URL + "/user/info", {params:{user_id : phoneNumber.slice(1,13) }} , {timeout:5000})
@@ -276,156 +270,26 @@ const ProfileInfo = () => {
     }, [refresh])
 
 
-    const userNameRefresh = () => {
-      setUserNameRefreshBoolean(!userNameRefreshBoolean)
-      if(userNameRefreshBoolean) {
-        Animated.timing(progress, {
-            toValue: 0,
-            duration: 1000,
-            easing: Easing.linear,
-            useNativeDriver : true
-          },).start();
+    const next = () => {
+      navigation.navigate("ProfileImage",{phoneNumber : phoneNumber, userName : userName, expoToken : expoToken , deviceToken : deviceToken , refereeId : couponCodeAccepted ? refereeId : "" , refereeName : couponCodeAccepted ? refereeName : "" , coinsValue : coinsValue})
     }
-    else {
-        Animated.timing(progress, {
-            toValue: 1,
-            duration: 1000,
-            easing: Easing.linear,
-            useNativeDriver : true
-          },).start();
-    }
-    ToastAndroid.show("Username should contain minimum 5 characters", ToastAndroid.SHORT)
+
+
+    const userNameChange = (e) => {
       
-    }
-
-    const onSubmitOnboarding = () =>{
-        Amplitude.logEventAsync("NEW USER PROFILE SUBMITTED")
-        setSubmitted(true)
-        if(profileImageChange) {
-          uploadImageOnS3(phoneNumber.slice(1,13) + "/profile",image) 
-        }
-
-        const userbody = {
-          "user_id": phoneNumber.slice(1,13),
-          "user_name": userName,
-          "user_profile_image": profileImageChange ? s3URL + phoneNumber.slice(1,13) + "/profile" : "",
-          "user_phone_number": phoneNumber,
-          "user_gender": gender,
-          "user_email": "",
-          "user_dob": userDob,
-          "expo_token": expoToken,
-          "device_token": deviceToken,
-          "instagram_user_name": instagram,
-          "country_name": "India",
-          "state_name": "",
-          "city_name": "",
-          "pin_code": 0 ,
-          "twitter_user_name" : "",
-          "social_handles" : socialHandles,
-          "coupon" : nanoid()
-        }
-      console.log("USER BODY",userbody)
-      
-     const userPoints = {
-      "user_id": phoneNumber.slice(1,13),
-      "user_name": userName,
-      "reward_type": "completed Onboarding",
-      "coins_value": coinsValue,
-      "reward_type_id": 1,
-      "engaged_post_id" : "", 
-      "engaged_user_id" : "",  
-      "engaged_user_name" : "", 
-      "engaged_product_name" : "" 
-    }
-    
-    const refereePoints = {
-      "user_id": refereeId,
-      "user_name": refereeName,
-      "reward_type": "Signed up using your referral code",
-      "coins_value": coinsValue,
-      "reward_type_id": 2,
-      "engaged_post_id" : "", 
-      "engaged_user_id" : "",  
-      "engaged_product_name" : "" ,
-      "engaged_user_name" : userName
-    }
-
-      console.log("USER POINTS",userPoints)
-      console.log("REFEREE POINTS",refereePoints)
-
-      axios({
-      method: 'post',
-      url: URL + '/user/new',
-      data: userbody
-      })
-      .then(res => {
-        axios({
-          method: 'post',
-          url: URL + '/rewards/earn',
-          data: userPoints
-          }).then(res=>{
-            console.log(res)
-          }).catch((e)=>{
-            console.log(e)
-        })
-        if(refereeId && refereeId != "" ) 
-        {
-            axios({
-              method: 'post',
-              url: URL + '/rewards/earn',
-              data: refereePoints
-              }).then(res=>{
-                console.log(res)
-              }).catch((e)=>{
-                console.log(e)
-            })
-        }
-          
-
-
-          ToastAndroid.show("Hi " + userbody.user_name, ToastAndroid.LONG)
-                  setTimeout(function(){
-                  navigation.navigate("Home", {source : "Onboarding", body : userbody})
-                  }, 300);        
-          }).catch((e) => {
-              ToastAndroid.show("Error updating details. Please try later", ToastAndroid.SHORT)
-              setSubmitted(false)
-          })
-
-    }
-
-
-
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.All,
-          allowsEditing: true,
-          aspect: [1, 1],
-          quality: 1,
-        });
-    
-      
-        if (!result.cancelled) {
-       //   console.log(result.uri)
-          setImage(result.uri);
-          setProfileImageChange(true)
-       //   console.log("I am reaching here")
-          
-        }
-      };   
-      
-      
-    const pickProfilePhoto = () => {
-    //  console.log("image picker")
-      pickImage()
-    }
-
-    const userNameChange = (text) => {
-      setUserName(text)
-      axios.get(URL + "/isexists/username", {params:{user_name : text}} , {timeout:5000})
+      const str = e.nativeEvent.text
+      const ascii = str.charAt(str.length - 1).charCodeAt()
+      if((ascii > 47 && ascii < 58) || (ascii > 96 && ascii < 123) || str.length == 0) 
+      {
+        setUserName(e.nativeEvent.text)
+      } else {
+        setUserNameSnackVisible(true)
+      }
+       
+      axios.get(URL + "/isexists/username", {params:{user_name : str}} , {timeout:5000})
       .then(res => res.data).then(function(responseData) {
-          console.log("username" , userName , "Check", responseData)
-          if(responseData.length == 0 && text.length > 4) {
+    //      console.log("username" , userName , "Check", responseData)
+          if(responseData.length == 0 && str.length > 4) {
             setUserNameAccepted(true)
           } else {
             setUserNameAccepted(false)
@@ -442,142 +306,103 @@ const ProfileInfo = () => {
         <ScrollView 
           contentContainerStyle = {style.mainViewContentContainer}
           style = {style.mainViewContainer} >
-          {/* <View style = {header.headerView}>
-            <ModernHeader 
-              title="My Info"
-              titleStyle = {header.headerText}
-              backgroundColor= {background}
-              leftDisable
-              rightDisable
-            />
-          </View> */}
-
-          <View style = {{}}>
-            <View style = {style.editUserDetailsDisplayContainer}>
-              <TouchableOpacity style = {style.editUserDetailsDisplayImageButton} onPress = {pickProfilePhoto}>
-                <ImageBackground source = {image && image != "None"? {uri : image } : {uri : 'https://ui-avatars.com/api/?rounded=true&name&size=512'}} 
-                        style = {style.editUserDetailsDisplayImage} >
-                </ImageBackground>
-                <View style = {{position: 'absolute' , backgroundColor : 'white' , padding : 3, borderRadius : 20 , bottom : 0 , right : 0 , margin : 15 , zIndex : 150}}>
-                  <Entypo name = "edit" size = {10} color = 'black' />
+          <View style = {{ 
+            backgroundColor : 'white', flex : 1 ,
+            height : 50 , 
+            position: 'absolute',  zIndex: 100, width: '100%',  left: 0,right: 0,
+            flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
+                <TouchableOpacity
+                    style = {{marginLeft : 60, marginRight:20, flex : 1 , justifyContent :'center', alignItems :'center' }}
+                    disabled
+                    >
+                    <Text style = {{fontSize : 20, fontWeight : 'bold'}}>Enter username</Text>
+                </TouchableOpacity>
+                <View style = {{marginLeft : 10,marginRight : 20, alignItems :'center', justifyContent :'center'}}>
+                  {userNameAccepted ?
+                  <AntDesign name = "checkcircle" color = "green" size = {20} /> :
+                  <AntDesign name = "closecircle" color = "#ccc" size = {20} /> 
+                  }
                 </View>
-              </TouchableOpacity>
-            </View>
-            
-            {!image ? 
-            <View style = {{justifyContent : 'center' , alignItems : 'center'}}><Text>Pick a profile image</Text></View>
-            : null
-            }
-            
-
+          </View>
+          <View style = {{marginTop : 30}}>
             <View style = {style.editUserDetailsInputContainer}>
-              <Text style = {style.editUserProfileHeader}>Profile Info</Text>
               <View style = {style.editUserDetailsElementContainer}>
-                <View style = {{flexDirection : 'row'}}>
-                  <Text style = {style.editUserDetailsElementText}>UserName *</Text>
+                <View style = {{flexDirection  : 'row' , backgroundColor : 'rgba(200,200,225,.1', borderRadius : 10, padding : 10 , borderColor : "#EEE" , borderWidth : 2}}>
+                  <TextInput 
+                    placeholder = {userName ? userName : "username"}
+                    style = {{flex : 1,fontSize : 20}}
+                    onChange = {userNameChange}
+                    value = {userName}
+                    autoCapitalize="none"
+                    secureTextEntry={true}
+                    keyboardType={"visible-password"}
+                  />
+                </View>
+              </View>
+              <View style = {{flexDirection : 'row', marginVertical : 20}}>
+                <BouncyCheckbox iconStyle={{
+                  borderRadius: 0,
+                  borderColor : alttheme, 
+                }}
+                disableText = {true}
+                fillColor = {alttheme}
+                onPress={(isChecked) => {setChecked(isChecked)}} />
+                <View style = {{marginLeft : 10, justifyContent :'center', alignContent : 'center', flex : 1}}>
+                {checked ? 
+                <View style = {{justifyContent : 'space-between', flexDirection :'row', flex : 1}}>
+                  <TextInput 
+                    style = {{width : 150 , borderBottomWidth  : 1 , borderBottomColor : "#AAA", textAlign : 'center' , fontSize : 18}}
+                    maxLength={6}
+                    autoCapitalize="none"
+                    secureTextEntry={true}
+                    keyboardType={"visible-password"}
+                    placeholder='Referral Code here'
+                    value = {referralCode}
+                    onChangeText={(text)=>{
+                      setReferralCode(text)
+                      couponCodeChange(text) 
+                    }}
+                  />
                   <View style = {{marginLeft : 10,alignItems :'center', justifyContent :'center'}}>
-                    {userNameAccepted ?
+                    {couponCodeAccepted ?
                     <AntDesign name = "checkcircle" color = "green" size = {20} /> :
-                    <AntDesign name = "closecircle" color = "#888" size = {20} /> 
+                    null 
                     }
                   </View>
                 </View>
-                <View style = {{flexDirection  : 'row'}}>
-                  
-                  <TextInput 
-                          placeholder = {userName ? userName : "username"}
-                          style = {[style.editUserDetailsElementTextInput,{flex : 1,}]}
-                          onChangeText = {(text)=>userNameChange(text)}
-                          value = {userName}
-                  />
-                  
-                  <TouchableOpacity
-                  style = {{justifyContent : 'center', alignItems : 'center'}}
-                  onPress = {userNameRefresh}
-                  >
-                    <LottieView
-                      progress = {progress}
-                      style={{width : 20 , height : 20, marginRight : 10}}
-                      source={require('../../assets/animation/refresh.json')}
-                      />
+                : 
+                <Text style = {{color : '#555', fontWeight : 'bold'}}>Do you have referral code ?</Text>}
+              </View>
+            </View> 
+            <View style = {{ marginTop : 30, width : Dimensions.get('screen').width*0.9,alignItems:'flex-end'}}>
+              <LinearGradient 
+              colors = {checked ? couponCodeAccepted && userNameAccepted ?  ["#ed4b60","#E7455A","#D7354A"] : ['rgba(200,200,200,0.5)','rgba(225,225,225,0.5)','rgba(250,250,250,0.5)'] : !userNameAccepted ? ['rgba(200,200,200,0.5)','rgba(225,225,225,0.5)','rgba(250,250,250,0.5)'] : ["#ed4b60","#E7455A","#D7354A"]}
+              style = {{
+                  width : 100, height : 40 , borderRadius : 10, flex : 1, justifyContent : 'center' , alignItems : 'center'}}>
+                  <TouchableOpacity 
+                    onPress = {next}
+                    style = {{width : 100, height : 40 , borderRadius : 10, flex : 1, justifyContent : 'center' , alignItems : 'center'}}
+                    disabled = {checked ? !couponCodeAccepted && !userNameAccepted : !userNameAccepted}
+                    >
+                    <Text style = {{color : checked ? couponCodeAccepted && userNameAccepted ?  'white' : '#888' : !userNameAccepted ? '#888' : 'white'}}>Next</Text>
                   </TouchableOpacity>
-                </View>
-              </View>
-              <View style = {style.editUserDetailsElementContainer}>
-                <Text style = {style.editUserDetailsElementText}>Instagram(@)</Text>
-                <TextInput 
-                        style = {style.editUserDetailsElementTextInput}
-                        onChangeText = {(text)=>{
-                          setInstagram(text)
-                          setSocialHandles({...socialHandles,instagram : instagram})}
-                        }
-                        value = {instagram}
-                />
-              </View>
-              <View style = {style.editUserDetailsElementContainer}>
-                <Text style = {style.editUserDetailsElementText}>Twitter(@)</Text>
-                <TextInput 
-                        style = {style.editUserDetailsElementTextInput}
-                        onChangeText = {(text)=>{
-                          setTwitter(text)
-                          setSocialHandles({...socialHandles,twitter : twitter})}
-                        }
-                        value = {twitter}
-                />
-              </View>
-
-              <View style = {style.editUserDetailsElementContainer}>
-                <Text style = {style.editUserDetailsElementText}>Birthday</Text>
-                <View style = {{flexDirection : 'row'}}>
-                  <Text style = {[style.editUserDetailsElementTextInput,{flex : 1}]}> 
-                      { userDob && userDob != "0000-00-00" ? userDob.replace('"','').substring(0,10) : ""} 
-                  </Text>
-                  <TouchableOpacity style = {style.datepicker} onPress={showDatePicker}>
-                      <EvilIcons name = "calendar" size = {24} color = {theme}/>
-                  </TouchableOpacity>  
-                  <DateTimePickerModal
-                      isVisible={isDatePickerVisible}
-                      mode="date"
-                      onConfirm={handleConfirm}
-                      onCancel={hideDatePicker}
-                  />
-                </View>
-              </View>
-              <View style = {style.editUserDetailsElementContainer}>
-                <Text style = {style.editUserDetailsElementText}>Gender</Text>
-                <View style = {{flexDirection : 'row' ,  justifyContent : 'flex-end', alignItems : 'flex-end' }}>
-                  <Text style = {{ borderBottomWidth : 1 ,borderBottomColor : "#CCC",flex : 1 , paddingBottom : 5,}}> 
-                      { gender && gender != "NA" ? gender : ""} 
-                  </Text>
-                  <Picker
-                    selectedValue={gender}
-                    style = {{width : 50, }}
-                    onValueChange={(value) => setGender(value)}
-                    dropdownIconColor = {theme}
-                    itemStyle = {{fontSize : 12, color : theme}}
-                  >
-                    
-                    <Picker.Item label="Female" value="Female" />
-                    <Picker.Item label="Male" value="Male" />
-                    <Picker.Item label="Others" value="Others" />
-                    <Picker.Item label="Prefer not to say" value="Prefer Not to say" />
-                  </Picker>
-                </View> 
-              </View>
-              <View style = {{ marginTop : 30, width : Dimensions.get('screen').width*0.9,
-                 alignItems:'flex-end'}}>
-                <TouchableOpacity 
-                        onPress = {onSubmitOnboarding}
-                        disabled = {!userNameAccepted}
-                        style = {{
-                          backgroundColor : !userNameAccepted ? "#DDD" :theme , width : 100, height : 40 , borderRadius : 10, 
-                        flex : 1, justifyContent : 'center' , alignItems : 'center'}}>
-                    <Text style = {{color : !userNameAccepted ? '#888' : 'white'}}>Submit</Text>
-                </TouchableOpacity>
+                </LinearGradient> 
               </View>                  
             </View>
           </View>
-          </ScrollView>
+          <Snackbar
+            visible={userNameSnackVisible}
+            onDismiss={onDismissSnackBar}
+            duration={2000}
+            action={{
+            label: 'OK',
+            onPress: () => {
+                // Do something
+            },
+            }}>
+            Min 5 chars. Only numbers and lower case characters allowed
+          </Snackbar>
+        </ScrollView>
     )
 }
 

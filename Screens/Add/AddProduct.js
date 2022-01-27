@@ -1,4 +1,4 @@
-import { NavigationContainer , useNavigation } from '@react-navigation/native'
+import { NavigationContainer , useNavigation, useRoute } from '@react-navigation/native'
 import React from 'react'
 import { StyleSheet, Animated, Text, View,Image, TextInput, TouchableOpacity, Easing, Pressable , ScrollView} from 'react-native'
 import {AntDesign , FontAwesome5} from 'react-native-vector-icons'
@@ -15,10 +15,12 @@ import * as Amplitude from 'expo-analytics-amplitude';
 const AddProduct = () => {
 
     const [source,setSource] = React.useState(true)
-    const [buyURL, setBuyURL] = React.useState("")
+    const [buyURL, setBuyURL] = React.useState("https://www.amazon.in")
 
     const progress = React.useRef(new Animated.Value(0)).current
     const navigation = useNavigation()
+    const route = useRoute()
+    const [buy_url,set_buy_url] = React.useState(route?.params?.buy_url ? route?.params?.buy_url : "")
     const [randomNo,userId] = React.useContext(RandomContext)
     const [myRewardsCoins,setMyRewardsCoins] = React.useState(7000)
 
@@ -32,6 +34,7 @@ const AddProduct = () => {
     const [searchTextProduct,setSearchTextProduct] = React.useState("")
     const [searchArray,setSearchArray] = React.useState([])
     const [searchLoading,setSearchLoading] = React.useState(false)
+    const [plusDisable,setPlusDisable] = React.useState(true)
 
     const [body,setBody] = React.useState({
         "user_name": "",
@@ -43,13 +46,18 @@ const AddProduct = () => {
         "context_name": "",
         "product_id": 0,
         "product_name": "",
-        "access_control": "Public",
+        "title": "Public",
         "feed_image": "",
-        "buy_url": "",
-        "comment": ""
+        "buy_url": "https://www.amazon.in",
+        "comment": "",
+        "coupon" : ""
     })
 
     React.useEffect(()=>{
+        if (buy_url) {
+            setBody({...body, buy_url : buy_url})
+        }
+      //  console.log("body in add product use effect", body)
         Amplitude.logEventAsync('ADD PRODUCT')
         Animated.timing(progress, {
             toValue: 1,
@@ -60,12 +68,12 @@ const AddProduct = () => {
 
         axios.get(URL + "/user/info", {params:{user_id : userId.slice(1,13) }} , {timeout : 3000})
         .then(res => res.data).then(function(responseData) {
-        //    console.log("SearchArray",responseData)
-            setBody({...body, user_name : responseData[0].user_name})
+         
+            setBody({...body, user_name : responseData[0].user_name , coupon : responseData[0].coupon , user_image : responseData[0].user_profile_image})
         })
         .catch(function(error) {
             setSearchLoading(false)
-        //    console.log("Reached Here error")
+            console.log(error)
         });
 
         axios.get(URL + "/search/product", {params:{product_text : "" }} , {timeout : 3000})
@@ -82,6 +90,7 @@ const AddProduct = () => {
     },[])
 
     const onClickSearchItemChild = (product_name, product_id) => {
+    //    console.log("body in add product select search", body)
         Amplitude.logEventWithPropertiesAsync('ADDED NEW PRODUCT', {product_name : product_name })
         setSearchTextProduct(product_name)
     //    console.log(product_name)
@@ -89,7 +98,9 @@ const AddProduct = () => {
     }
 
     const searchProduct = (text) => {
-        
+        if(text.length > 1) {
+            setPlusDisable(false)
+        }
         setSearchTextProduct(text)
         setSearchLoading(true)
         
@@ -129,7 +140,7 @@ const AddProduct = () => {
                 <View style={add.element}>
                     <Text style = {add.heading}>Buy URL</Text>
                     <TextInput 
-                    placeholder = "Share Amazon/Flipkart/Myntra/Nykaa or D2C Brand Product Link"
+                    placeholder = "Share website link of the product. For supporting websites, visit How To Earn section "
                     value = {body.buy_url}
                     onChangeText = {(text)=>setBody({...body, buy_url : text})}
                     multiline
@@ -147,6 +158,7 @@ const AddProduct = () => {
                         />
                         <TouchableOpacity 
                             style = {{padding : 2 , paddingLeft : 10 , paddingRight : 10,}}
+                            disabled = {plusDisable}
                             onPress = {()=>onClickSearchItemChild(searchTextProduct,0)} >
                             <AntDesign name = "plus" size = {24} color = {theme} />
                         </TouchableOpacity>
@@ -174,12 +186,12 @@ const AddProduct = () => {
                 : null}
                 </ScrollView>
             </View>
-            <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
+            {/* <View style = {{position : 'absolute', left : 30 , bottom : 30 , width : 50 , height : 50 , borderRadius : 60 , backgroundColor : colorsArray[randomNo] }}>
                 <TouchableOpacity onPress = {()=>navigation.navigate("Home")}
                 style = {{justifyContent : 'center', alignItems : 'center', flex : 1}}>
                     <AntDesign name = "home" size = {30} color = 'white' />
                 </TouchableOpacity>
-            </View>
+            </View> */}
         </View>
     )
 }

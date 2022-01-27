@@ -8,7 +8,7 @@ import {MaterialIcons, AntDesign , MaterialCommunityIcons} from "react-native-ve
 import axios from 'axios'
 import { URL } from './Exports/Config';
 import { RandomContext } from './Exports/Context';
-import { background, borderColor, theme } from './Exports/Colors';
+import { alttheme, background, borderColor, theme, themeLight, themeLightest } from './Exports/Colors';
 
 
 
@@ -29,9 +29,9 @@ export default function DrawerContent(props) {
         const fetchUser = async () => {
             axios.get(URL + "/user/info" , {params : {user_id : userId.slice(1,13)}}, {timeout : 5000})
             .then(res => res.data).then(function(responseData) {
-                console.log("user id ", userId)
-                console.log("Name" , userName)
-                console.log("Response" , responseData)
+             //   console.log("user id ", userId)
+            //    console.log("Name" , userName)
+           //     console.log("Response" , responseData)
                 setUserName(responseData[0].user_name)
                 setUserImage(responseData[0].user_profile_image)
                 
@@ -85,7 +85,7 @@ export default function DrawerContent(props) {
                             icon={({color, size}) => (
                                 <AntDesign 
                                 name="user" 
-                                color={color}
+                                color={theme}
                                 size={size}
                                 />
                             )}
@@ -96,7 +96,7 @@ export default function DrawerContent(props) {
                             icon={({color, size}) => (
                                 <AntDesign 
                                 name="edit" 
-                                color={color}
+                                color={alttheme}
                                 size={size}
                                 />
                             )}
@@ -107,12 +107,12 @@ export default function DrawerContent(props) {
                             icon={({color, size}) => (
                                 <AntDesign 
                                 name="profile" 
-                                color={color}
+                                color={themeLightest}
                                 size={size}
                                 />
                             )}
                             label="Help"
-                            onPress={() => Linking.openURL('https://www.getcandid.app')}
+                            onPress={() => Linking.openURL('https://www.getcandid.app/help')}
                         />
                     </Drawer.Section>
                    
@@ -126,21 +126,21 @@ export default function DrawerContent(props) {
                                 <Image source = {require("../assets/instagram.png")} style = {{width : 22, height : 22}} />
                             )}
                             label="Instagram"
-                            onPress={() => Linking.openURL('https://www.getcandid.app')}
+                            onPress={() => Linking.openURL('https://www.instagram.com/getcandidapp/')}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <AntDesign name = 'facebook-square' size = {22} color = {'#4267B2'} />
                             )}
                             label="Facebook"
-                            onPress={() => Linking.openURL('https://www.getcandid.app')}
+                            onPress={() => Linking.openURL('https://www.facebook.com/getcandidapp')}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <AntDesign name = 'twitter' size = {22} color = {'#1DA1F2'} />
                             )}
                             label="Twitter"
-                            onPress={() => Linking.openURL('https://www.getcandid.app')}
+                            onPress={() => Linking.openURL('https://twitter.com/getcandidapp')}
                         />
                     </Drawer.Section>
                 </View>
@@ -154,6 +154,7 @@ export default function DrawerContent(props) {
                     label="Sign Out"
                     onPress={() => {props.navigation.navigate('SignOut')}}
                 />
+                <Text style = {{color : themeLightest , textAlign : 'center' , fontSize : 12, marginTop : 5}}>Candid App Version 1.0.0 </Text>
             </Drawer.Section>
         </View>
     );

@@ -3,4 +3,5 @@
   <color name="iconBackground">#D7354A</color>
   <color name="colorPrimary">#023c69</color>
   <color name="colorPrimaryDark">#D7354A</color>
+  <color name="white">#FFF</color>
 </resources>

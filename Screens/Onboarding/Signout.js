@@ -21,11 +21,13 @@ const Signout = () => {
   const navigation = useNavigation()
   const route = useRoute()
 
-  const signoutToHome = () => {
+  const signoutToHome = async () => {
         Amplitude.logEventAsync('SIGN OUT')
+        console.log("Reached Singout ")
+       
         firebase.auth().signOut().then(() => {
             navigation.navigate("Auth")
-            ToastAndroid.show("Signed Out succesfully !!", ToastAndroid.SHORT)
+            ToastAndroid.show("Logged Out succesfully. Please restart the app!!", ToastAndroid.SHORT)
         }).catch((error) => {
             console.log(error)
         })

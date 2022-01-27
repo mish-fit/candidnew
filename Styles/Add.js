@@ -3,10 +3,10 @@ import { colorsArray, theme, themeLight, themeLightest } from '../Screens/Export
 
 
 export const add = StyleSheet.create({
-    dropDownList : {marginBottom : 20,},
-    dropDownItem : {marginTop : 10 , padding : 5, flexDirection : 'row' , borderWidth : 1, borderRadius : 10 , borderColor : '#EEE' },
+    dropDownList : {marginBottom : 20, flex : 1},
+    dropDownItem : {margin : 5, marginVertical : 2, padding : 5, flexDirection : 'row' , borderWidth : 1, borderRadius : 10 , borderColor : '#EEE' },
     dropDownView : { justifyContent : 'center', marginLeft : 10,flex : 1, },
-    dropDownItemImage : {width : 30, height : 30 , borderRadius : 30 , marginLeft : 5 },
+    dropDownItemImage : {width : 30, height : 30 , borderRadius : 5 , marginLeft : 5 },
     dropDownItemAvatar : {marginLeft : 5},
     dropDownText : {color : 'black'},
     heading : {

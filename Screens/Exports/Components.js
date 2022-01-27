@@ -1,6 +1,6 @@
 import { NavigationContainer, useNavigation } from '@react-navigation/native'
 import React from 'react'
-import {Animated, View, Text,TouchableOpacity, Easing, Dimensions} from 'react-native'
+import {Animated, View, Text,TouchableOpacity, Easing, Dimensions, StyleSheet} from 'react-native'
 import { colorsArray } from './Colors'
 import { RandomContext } from './Context'
 import LottieView from 'lottie-react-native';
@@ -93,4 +93,28 @@ export const EmptyComponent = () => {
         </View>
     )
 }
+
+
+
+export const ErrorComponent = () => {
+
+    return (
+        <View style = {{justifyContent : 'center'}}>
+            <Text>Uh Oh!</Text>
+            <Text>Something's not right</Text>
+            <Text>We will investigate it and fix this error. Please try the following in the meantime:</Text>
+            <View style = {styles.errorView}>
+                <Text style = {styles.errorTopic}>We will investigate it and fix this error. Please try the following in the meantime:</Text>
+                <Text style = {styles.errorText}>We will investigate it and fix this error. Please try the following in the meantime:</Text>
+            </View>
+        </View>
+    )
+}
+
+const styles = StyleSheet.create({
+    errorView : {},
+    errorTopic : {},
+    errorText : {},
+})
+
 

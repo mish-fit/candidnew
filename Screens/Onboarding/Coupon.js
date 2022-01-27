@@ -28,7 +28,7 @@ const Coupon = () => {
     const [coinsValue,setCoinsValue] = React.useState("")
 
     React.useEffect(()=>{
-
+     
     },[])
 
     const next = () => {
@@ -47,7 +47,7 @@ const Coupon = () => {
       
       try {
         Amplitude.logEventWithPropertiesAsync('COUPON SKIPPED')
-        navigation.navigate("ProfileInfo",{phoneNumber : phoneNumber , coupon : "" , refereeName : "" , refereeId : "" , coinsValue : ""  })
+        navigation.navigate("ProfileInfo",{phoneNumber : phoneNumber , coupon : "" , refereeName : "" , refereeId : "" , coinsValue : 500 })
       }
       catch(e) {
         console.log(e)
@@ -80,13 +80,13 @@ const Coupon = () => {
     const couponCodeChange = (text) => {
       var couponValue = text
      // var couponValue = text.toLowerCase().replace(/[^a-zA-Z0-9]/g, "") 
-      console.log(" text ",text , " length " , text.length, " coupon " , coupon , "coupon Value ", couponValue)
+    //  console.log(" text ",text , " length " , text.length, " coupon " , coupon , "coupon Value ", couponValue)
       if(text.length == 6) {
-        console.log("text ",text , " length " , text.length, " coupon " , coupon)
+    //    console.log("text ",text , " length " , text.length, " coupon " , coupon)
         setCoupon(couponValue)
         axios.get(URL + "/isexists/coupon", {params:{coupon : couponValue}} , {timeout:5000})
         .then(res => res.data).then(function(responseData) {
-          console.log("coupon" , text , "Check", responseData)
+     //     console.log("coupon" , text , "Check", responseData)
           if(responseData.length) {
             setUsername(responseData[0].user_name)
             setRefereeId(responseData[0].user_id)
@@ -112,7 +112,7 @@ const Coupon = () => {
         <View style = {{flex : 1, backgroundColor : 'white' , padding : 20}}>
             <View style = {style.editUserDetailsElementContainer}>
                 <View style = {{flexDirection : 'row'}}>
-                  <Text style = {{fontWeight : 'bold', fontSize : 25 , color : theme }}>Coupon Code</Text>
+                  <Text style = {{fontWeight : 'bold', fontSize : 25 , color : theme }}>Referral Code</Text>
                   <View style = {{marginLeft : 10,alignItems :'center', justifyContent :'center'}}>
                     {couponCodeAccepted ?
                     <AntDesign name = "checkcircle" color = "green" size = {30} /> :
@@ -161,7 +161,7 @@ const Coupon = () => {
               </Pressable>
             </View>
             <View style = {{marginTop : 20 , padding : -10, paddingTop : 20 , borderTopColor : themeLightest , borderTopWidth : 1,}}>
-              <Text style = {{color : !couponCodeAccepted ? '#888' : themeLight }}>By entering valid coupon code , you and your referrer both will get 500 free coins equivalent to Rs. 50</Text>
+              <Text style = {{color : !couponCodeAccepted ? '#888' : themeLight }}>By entering valid referral code , you and your referrer both will get 500 free coins </Text>
               {couponCodeAccepted ?
                 <Text style = {{color : theme , marginTop : 20}}>Congrats! {coinsValue} coins will be credited in your and {username}'s account in a day</Text>
               : null

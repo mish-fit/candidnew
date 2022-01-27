@@ -1,6 +1,6 @@
 import React from 'react'
-import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView } from 'react-native'
-import { colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
+import { PermissionsAndroid,Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,TextInput , Switch, ScrollView, ToastAndroid } from 'react-native'
+import { alttheme, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
 import { RandomContext } from '../Exports/Context'
 import {AntDesign} from 'react-native-vector-icons';
 import { NavigationContainer, useNavigation, useRoute , useIsFocused} from '@react-navigation/native';
@@ -24,6 +24,9 @@ import { Rating, AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
 import { home } from '../../Styles/Home';
 import  Modal  from 'react-native-modal'
+import { LoadingPage } from '../Exports/Pages';
+import Clipboard from '@react-native-clipboard/clipboard';
+import LinearGradient from 'react-native-linear-gradient';
 
 try {
     Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
@@ -130,7 +133,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             "user_name": userInfo.user_name,
             "activity_like": like,
             "activity_dislike": dislike,
-            "activity_buy": buys+1
+            "activity_buy": 1
         }
 
         axios({
@@ -139,7 +142,7 @@ const FeedItemComponent = ({item,id, userInfo}) => {
             data: body
           }, {timeout : 5000})
         .then(res => {
-        //    console.log(res)
+           console.log(res)
         })
         .catch((e) => console.log(e))
 
@@ -147,11 +150,11 @@ const FeedItemComponent = ({item,id, userInfo}) => {
 
 
     return(
-        <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 10 , marginBottom : 5,  }}>
+        <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 5 , marginBottom : 5,  }}>
             <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
                 <View style = {{marginRight : 10}}>
                 {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image}} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
+                    <Image source = {{uri : item.user_image }} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
                     <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
                     source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ item.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
                     size={40}/> }  
@@ -165,20 +168,13 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         )}}>
                             <Text style = {{fontSize : 15 , fontWeight : 'bold' , color : "#555"}}>{item.user_name}</Text>
                         </TouchableOpacity> 
-                        { item.isFollowing ? null :
-                        tempFollow ?
-                        <View>
-                            <Text style = {{color : '#AAA', marginLeft : 10 }}>Following</Text>
-                        </View> :
-                        <TouchableOpacity onPress = {followUser}>
-                            <Text style = {{color : 'skyblue', marginLeft : 10 }}>Follow</Text>
-                        </TouchableOpacity>
-                        }
                     </View>
                
-                    <View style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flex : 1, }}>
-                        <Text style = {{fontSize : 12 , color : "#555" , }}>{item.product_name}</Text>
-                    </View>
+                    <TouchableOpacity 
+                    onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}
+                    style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flex : 1, }}>
+                        <Text style = {{fontSize : 12 , color : "#555" , }}>{item.product_name.length > 100 ? item.product_name.substring(0,60) + "..." : item.product_name }</Text>
+                    </TouchableOpacity>
                 </View> 
             </View>
                 <View style = {{marginHorizontal : 20 , marginVertical : 5,flexDirection : 'row' , justifyContent : 'space-between'}}>
@@ -192,30 +188,55 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                         <Text style = {{fontSize : 12, fontStyle : 'italic'}}>{item.context_name}</Text>
                     </View>
                 </View>
+                { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? 
                 <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
-                    <Image source = {{uri : item.feed_image}} 
+                   <Image source = {{uri : item.feed_image}} 
                         style = {{
                             width : Dimensions.get('screen').width * 0.92,
                             height: Dimensions.get('screen').width * 0.92,
                             borderRadius : 40, 
                         }} 
                     />
-                    {item.rating > 3 ? <TouchableOpacity 
-                    onPress = {()=>buyItem(item.buy_url)}
-                    style = {{position : 'absolute', bottom : 10 , left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , padding : 5 , borderRadius : 20}}>
-                        <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                    </TouchableOpacity> : null}
+                   {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{position : 'absolute', bottom : 10 , 
+                        left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , 
+                        alignItems : 'center' , padding : 5 , borderRadius : 20 }}>
+                        <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
+                            <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
+                        </TouchableOpacity> 
+                    </LinearGradient> : null }
                     <AirbnbRating
-                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.65, backgroundColor : 'transparent'}}
+                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
+                        defaultRating = {item.rating}
+                        readOnly = {true}
+                        size={30}
+                        showRating = {false}
+                        isDisabled = {true}
+                        count = {5}
+                        unSelectedColor = "rgba(200,200,200,0.9)"
+                        />
+                </View> :  
+                <View style = {{flexDirection : 'row' , }}>
+                    <AirbnbRating
+                        ratingContainerStyle = {{width : Dimensions.get('screen').width * 0.7, backgroundColor : 'transparent', flex : 1}}
                         defaultRating = {item.rating}
                         readOnly = {true}
                         size={15}
                         showRating = {false}
                         isDisabled = {true}
                         count = {5}
-                        unSelectedColor = "transparent"
+                        unSelectedColor = "rgba(200,200,200,0.9)"
                         />
+                    {item.buy_url != "" ? 
+                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , 
+                    borderRadius : 20}} >
+                        <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
+                            <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, }}>BUY</Text>
+                        </TouchableOpacity> 
+                    </LinearGradient> : null }
                 </View>
+                }
+               
                 <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
                     <TouchableOpacity 
                     disabled={dislike}
@@ -229,12 +250,12 @@ const FeedItemComponent = ({item,id, userInfo}) => {
                     >
                         <AntDesign name = "dislike2" color = {dislike ? "red" : like ? "#EEE" :"#AAA"} size = {20} />
                     </TouchableOpacity>
-                </View >
+                </View>
                 <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
                     <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item : item , id : id , userInfo : userInfo})}>
                         <Text>
-                            {item.comment.length > 280 ? item.comment.substring(0,150) : item.comment}
-                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 280 ? " ... Read More" : ""}</Text>
+                            {item.title}
+                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
                         </Text>
                     </TouchableWithoutFeedback>
                 </View>
@@ -376,7 +397,7 @@ const Feed = () => {
     const progress = React.useRef(new Animated.Value(0)).current
     const ref = React.useRef(null)
   
-    const [headerHeight,setHeaderHeight] = React.useState(70)
+    const [headerHeight,setHeaderHeight] = React.useState(50)
     const [randomNo, userId] = React.useContext(RandomContext)
     
     const navigation = useNavigation()
@@ -392,9 +413,9 @@ const Feed = () => {
     const [searchText,setSearchText] = React.useState("")
 
     const [feedData,setFeedData] = React.useState([])
-    const [userInfo,setUserInfo] = React.useState(route?.params?.body ? route?.params?.body : {})
+    const [userInfo,setUserInfo] = React.useState([])
     const [source,setSource] = React.useState(route?.params?.source ? route?.params?.source : "")
-    const [userSummary,setUserSummary] = React.useState({})
+    const [userSummary,setUserSummary] = React.useState(route?.params?.userSummary ? route?.params?.userSummary : {})
     const [refresh,setRefresh] = React.useState(false)
     const [categoryCarousel, setCategoryCarousel] = React.useState(["Laptop", "Mobile", "TV", "Phone", "Books", "Series", "Swimsuit"])
 
@@ -404,6 +425,8 @@ const Feed = () => {
     const [toggled, setToggled] = React.useState(false);
 
     const [modalVisible,setModalVisible] = React.useState(false)
+    const [loading,setLoading] = React.useState(false)
+    const [error,setError] = React.useState(false)
 
     const [pageNumber,setPageNumber] = React.useState(0)
     const scrollY = React.useRef(new Animated.Value(0));
@@ -411,17 +434,18 @@ const Feed = () => {
         [{nativeEvent: {contentOffset: {y: scrollY.current}}}],
         {useNativeDriver: true},
       );
-      const scrollYClamped = Animated.diffClamp(scrollY.current, 0, headerHeight)
-      const translateY = scrollYClamped.interpolate({
+    const scrollYClamped = Animated.diffClamp(scrollY.current, 0, headerHeight)
+    const translateY = scrollYClamped.interpolate({
         inputRange: [0, headerHeight],
         outputRange: [0, -(headerHeight) ],
         });
-       const translateYNumber = React.useRef();
+    const translateYNumber = React.useRef();
        translateY.addListener(({value}) => {
          translateYNumber.current = value;
-       });
+    });
 
     React.useEffect(()=>{
+        setLoading(true)
         console.log("source" , source)
         if(source == "Onboarding") {
             setSource("")
@@ -458,13 +482,26 @@ const Feed = () => {
         //  console.log(URL)
             firebase.auth().onAuthStateChanged(user => {
                 if (user != null) {
+
+                    axios.get(URL + "/user/info",{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
+                        .then(res => res.data).then(function(responseData) {
+                        //  console.log("OUTPUT", responseData)
+                            setUserInfo(responseData[0])
+                        })
+                        .catch(function(error) {
+                        //  console.log(error)
+                        });   
             
                     axios.get(URL + "/feed/home",{params:{user_id : user.phoneNumber.slice(1,13), page : pageNumber}} , {timeout : 5000})
                     .then(res => res.data).then(function(responseData) {
-                    //      console.log(responseData)
+                            console.log("feed",responseData)
+                            setLoading(false)
                             setFeedData(responseData)
                     })
                     .catch(function(error) {
+                        console.log("ERROR",error)
+                        setError(true)
+                        setLoading(false)
                     });
             
                    
@@ -508,6 +545,7 @@ const Feed = () => {
                     navigation.navigate("Auth")
                 }})}
             else {
+                setLoading(false)
                 setFeedData(homeFeed)
             }
 
@@ -522,19 +560,38 @@ const Feed = () => {
 
     
 
-
+    const EmptyComponent = () => {
+        return(
+            <View style = {{marginTop : 10 }}>
+                <View style = {{justifyContent : 'center'}}>
+                    <LottieView
+                    progress = {progress}
+                    style={{width : Dimensions.get('screen').width*0.4 , height : Dimensions.get('screen').width*0.4}}
+                    source={require('../../assets/animation/astronaut.json')}
+                    autoPlay
+                    />
+                </View>
+                <View style = {{justifyContent : 'center', alignItems :'center'}}>
+                    <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No new reviews to be shown</Text>
+                    <TouchableOpacity onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
+                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Reviewing</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
     
 
 
-    const HeaderComponent = () => {
-       // return null
-        return(
-            categoryCarousel.length ? 
-                <View style = {{marginTop : headerHeight, height : 50}}>
-                     <UpdatedCarousel DATA = {categoryCarousel} onClickItem = {(id,name)=>onClickCategory(id,name)} />
-                 </View> : null    
-        )
-    }
+    // const HeaderComponent = () => {
+    //    // return null
+    //     return(
+    //         categoryCarousel.length ? 
+    //             <View style = {{marginTop : headerHeight, height : 50}}>
+    //                  <UpdatedCarousel DATA = {categoryCarousel} onClickItem = {(id,name)=>onClickCategory(id,name)} />
+    //              </View> : null    
+    //     )
+    // }
 
     const onClickCategory = (id,name) => {
         Amplitude.logEventWithPropertiesAsync("CLICKED ON CATEGORY",{categoryId : id, categoryName : name , userName : userInfo.user_name })
@@ -544,6 +601,34 @@ const Feed = () => {
 
     const onContextModalClose = () => {
         setModalVisible(false)
+    }
+
+    const HeaderComponent = () => {
+        return (<View 
+            style = {{width: width-20, height : 40, borderRadius : 2,
+            backgroundColor : themeLightest, marginleft : 5, flex : 1, marginHorizontal : 10,
+            justifyContent : 'space-around', alignItems : 'center', }}>
+                <View style = {{flexDirection : 'row'}}>
+                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
+                        <Text style = {{color : theme, fontSize : 15,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>Home</Text>
+                    </View>
+                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
+                        <Switch
+                            trackColor={{ true: theme , false: "white" }}
+                            thumbColor={'white'}
+                            onValueChange={()=>{
+                                Amplitude.logEventAsync("HOME FEED TOGGLE")
+                                navigation.navigate("Home")
+                                }
+                            }
+                            value={true}
+                        />
+                    </View>
+                    <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
+                        <Text style = {{color : theme, fontSize : 15,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Feed</Text>
+                    </View>
+                </View>
+            </View>)
     }
 
     return (
@@ -581,25 +666,26 @@ const Feed = () => {
                 height : headerHeight , 
                 position: 'absolute',  zIndex: 100, width: '100%',  left: 0,right: 0,
                 flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
-              
+                    <TouchableOpacity style = {{marginLeft : 10, height : 30}} onPress={()=>navigation.openDrawer()}>
+                        {userInfo.user_profile_image && userInfo.user_profile_image != "" ? 
+                        <Image source = {{uri : userInfo.user_profile_image }} 
+                            style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 30, height : 30 , width : 30}} />
+                        : <Avatar.Image style = {{ }}
+                        source={{uri: 'https://ui-avatars.com/api/?rounded=true&name='+ userInfo.user_name + '&size=64&background=D7354A&color=fff&bold=true'}} 
+                        size={30}/> }
+                    </TouchableOpacity>
                     <TouchableOpacity
-                        style = {{marginLeft : 20, flex : 1 }}
+                        style = {{marginLeft : 10, flex : 1 }}
                         onPress = {()=>{
+                            Clipboard.setString(userInfo.coupon)
+                            ToastAndroid.show("Your referral code : " + userInfo.coupon + " is copied", ToastAndroid.SHORT)
                             Amplitude.logEventAsync("Clicked on My Details on Home")
                             navigation.navigate("MyDetails", {userInfo : userInfo , userSummary : userSummary})}
                             }
                         >
-                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : "black"}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
+                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : alttheme}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
                     </TouchableOpacity>
-                    <View style = {{alignItems : 'center', flexDirection : 'row-reverse' , marginRight : 20 }}>
-                        {/* <TouchableOpacity 
-                                style = {{padding : 2 , paddingLeft : 5 , paddingRight : 5, marginRight : 20}}
-                                onPress = {()=>{
-                                    Amplitude.logEventAsync("Clicked on Search on Home")
-                                    navigation.navigate("SearchByCategory")} 
-                                    }>
-                            <AntDesign name = "search1" size = {24} color = 'red' /> 
-                        </TouchableOpacity>  */}
+                    <View style = {{alignItems : 'center', justifyContent : 'flex-end',flexDirection : 'row-reverse' , marginRight : 10 }}>
                         <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
                     </View>
             </Animated.View>
@@ -610,51 +696,31 @@ const Feed = () => {
                 </View> : null    
             } */}
         
+            {error ? <View><Text>Error loading the feed. Please try later!</Text></View> : loading ? <LoadingPage /> :
             <Animated.FlatList
             keyExtractor = {(item,index)=>index.toString()}
             ref = {ref}
-            style = {{marginBottom : 40}}
-            contentContainerStyle = {{}}
+            style = {{marginBottom : 0 , }}
+            contentContainerStyle = {{paddingTop : 50, paddingBottom : 110}}
             data = {toggled ? feedData.filter((item,index)=>item.rating >3) : feedData}
             renderItem = {FeedItem}
             onScroll = {handleScroll}
             showsVerticalScrollIndicator = {false}
-            ListHeaderComponent = {HeaderComponent}
-            ListHeaderComponentStyle = {{margin : 0 }}
+           // ListHeaderComponent={HeaderComponent}
+            ListEmptyComponent={EmptyComponent}
             />
-            <TouchableOpacity 
-            onPress = {()=>navigation.navigate("AddPost" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
-            style = {{width: 50 , height : 50 , 
-            backgroundColor : colorsArray[randomNo+1], 
-            borderRadius : 60 , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , right : 20  }}>
-                <View>
-                    <AntDesign name = "plus" size = {40} color = "white" />
-                </View>
-            </TouchableOpacity>
-            <View 
-            style = {{width: width, height : 40,
-            backgroundColor : themeLightest, 
-            justifyContent : 'space-around', alignItems : 'center', position : 'absolute' , bottom : 0 , left : 0  }}>
-                <View style = {{flexDirection : 'row'}}>
-                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 15,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>All Reviews</Text>
+            }
+            <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
+            backgroundColor : theme
+            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , left : Dimensions.get('screen').width*.1   }} >
+                <TouchableOpacity 
+                onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
+                >
+                    <View>
+                        <Text style = {{color : 'white', fontWeight : 'bold'}}>POST REVIEW AND EARN COINS</Text>
                     </View>
-                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Switch
-                            trackColor={{ true: theme , false: "white" }}
-                            thumbColor={!toggled ? theme : 'white'}
-                            onValueChange={()=>{
-                                Amplitude.logEventAsync("HOME FEED TOGGLE")
-                                setToggled(!toggled)}
-                                }
-                            value={toggled}
-                        />
-                    </View>
-                    <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 15,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Positive Reviews</Text>
-                    </View>
-                </View>
-            </View>
+                </TouchableOpacity>
+            </LinearGradient>
         </View>
     )
 }

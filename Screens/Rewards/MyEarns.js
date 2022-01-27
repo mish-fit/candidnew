@@ -24,7 +24,7 @@ const EarnItemComponent = ({item , id}) => {
         return(
             <View style = {mySummaryStyle.activityComponent}>
                 <View style = {mySummaryStyle.activity}>
-                    <Text style = {mySummaryStyle.activityText}>You earned <Text style = {[mySummaryStyle.coinsValue,{color : colorsArray[(randomNo+id)%(colorsArray.length-1)]}]}>{coins_value}</Text> <FontAwesome5 name = "coins" color = "#D9A760"/> for {reward_type}</Text>
+                    <Text style = {mySummaryStyle.activityText}>You earned <Text style = {[mySummaryStyle.coinsValue,{color : theme}]}>{coins_value}</Text> <FontAwesome5 name = "coins" color = "#D9A760"/> for {reward_type}</Text>
                 </View>
                 <View style = {mySummaryStyle.date}>
                     <Text style = {mySummaryStyle.dateText}>{moment(created_at,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>
@@ -37,7 +37,7 @@ const EarnItemComponent = ({item , id}) => {
         return(
             <View style = {mySummaryStyle.activityComponent}>
                 <View style = {mySummaryStyle.activity}>
-                    <Text style = {mySummaryStyle.activityText}><Text style = {mySummaryStyle.username}>{engaged_user_name}</Text> {reward_type}. You earned <Text style = {[mySummaryStyle.coinsValue,{color : colorsArray[(randomNo+id)%(colorsArray.length-1)]}]}>{coins_value}</Text> <FontAwesome5 name = "coins" color = "#D9A760"/> </Text>
+                    <Text style = {mySummaryStyle.activityText}><Text style = {mySummaryStyle.username}>{engaged_user_name}</Text> {reward_type}. You earned <Text style = {[mySummaryStyle.coinsValue,{color : theme}]}>{coins_value}</Text> <FontAwesome5 name = "coins" color = "#D9A760"/> </Text>
                 </View>
                 <View style = {mySummaryStyle.date}>
                     <Text style = {mySummaryStyle.dateText}>{moment(created_at,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>
@@ -50,7 +50,20 @@ const EarnItemComponent = ({item , id}) => {
         return(
             <View style = {mySummaryStyle.activityComponent}>
                 <View style = {mySummaryStyle.activity}>
-                    <Text style = {mySummaryStyle.activityText}><Text style = {mySummaryStyle.username}>{engaged_user_name}</Text> {reward_type} on {engaged_product_name}. You earned <Text style = {[mySummaryStyle.coinsValue,{color : colorsArray[(randomNo+id)%(colorsArray.length-1)]}]}>{coins_value}</Text> <FontAwesome5 name = "coins" color = "#D9A760"/> </Text>
+                    <Text style = {mySummaryStyle.activityText}><Text style = {mySummaryStyle.username}>{engaged_user_name}</Text> {reward_type} on {engaged_product_name}. You earned <Text style = {[mySummaryStyle.coinsValue,{color : theme}]}>{coins_value}</Text> <FontAwesome5 name = "coins" color = "#D9A760"/> </Text>
+                </View>
+                <View style = {mySummaryStyle.date}>
+                    <Text style = {mySummaryStyle.dateText}>{moment(created_at,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>
+                </View>
+            </View>
+        )
+    }
+
+    const PostReview = ({reward_type , coins_value, engaged_user_name, engaged_product_name, created_at}) => {
+        return(
+            <View style = {mySummaryStyle.activityComponent}>
+                <View style = {mySummaryStyle.activity}>
+                    <Text style = {mySummaryStyle.activityText}><Text style = {mySummaryStyle.username}>{engaged_user_name}</Text> {reward_type} on {engaged_product_name}. You earned <Text style = {[mySummaryStyle.coinsValue,{color : theme}]}>{coins_value}</Text> <FontAwesome5 name = "coins" color = "#D9A760"/> </Text>
                 </View>
                 <View style = {mySummaryStyle.date}>
                     <Text style = {mySummaryStyle.dateText}>{moment(created_at,"YYYY-MM-DD hh:mm:ss").add(5,'hours').add(30, 'minutes').fromNow()}</Text>
@@ -123,7 +136,7 @@ const MyEarns = ({user_id}) => {
     const emptyComponent = () => {
         return(
             <View style = {{padding : 20 }}>
-                <Text> You haven't earned any coins yet. Click on "How to Earn" to learn exciting ways to get rewards</Text>
+                <Text>You haven't earned any coins yet. Click on "How to Earn" to learn exciting ways to get rewards</Text>
             </View>
         )
     }
