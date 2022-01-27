@@ -39,7 +39,7 @@ function PostLink() {
   const [tempFollow, setTempFollow] = React.useState(false);
   // const [like,setLike] = React.useState(item.activity_like)
   // const [dislike,setDislike] = React.useState(item.activity_dislike)
-  // const [buys,setBuys] = React.useState(item.activity_buy)
+  const [buys, setBuys] = React.useState(0);
   const [result, setResult] = React.useState();
 
   const [userInfo, setUserInfo] = React.useState([]);
@@ -81,62 +81,6 @@ function PostLink() {
       }
     });
   }, []);
-
-  const followUser = () => {
-    setTempFollow(true);
-  };
-
-  const likePost = () => {
-    setLike(!like);
-    const body = {
-      user_id: userId,
-      feed_id: item.feed_id,
-      feed_user_id: item.user_id,
-      user_name: userInfo.user_name,
-      activity_like: !like,
-      activity_dislike: dislike,
-      activity_buy: buys,
-    };
-
-    axios(
-      {
-        method: 'post',
-        url: `${URL}/engagement/engagepost`,
-        data: body,
-      },
-      { timeout: 5000 }
-    )
-      .then((res) => {
-        //    console.log(res)
-      })
-      .catch((e) => console.log(e));
-  };
-
-  const dislikePost = () => {
-    setDislike(!dislike);
-    const body = {
-      user_id: userId,
-      feed_id: item.feed_id,
-      feed_user_id: item.user_id,
-      user_name: userInfo.user_name,
-      activity_like: like,
-      activity_dislike: !dislike,
-      activity_buy: buys,
-    };
-
-    axios(
-      {
-        method: 'post',
-        url: `${URL}/engagement/engagepost`,
-        data: body,
-      },
-      { timeout: 5000 }
-    )
-      .then((res) => {
-        //    console.log(res)
-      })
-      .catch((e) => console.log(e));
-  };
 
   const redirect = async (buyURL) => {
     try {

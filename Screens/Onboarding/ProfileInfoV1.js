@@ -10,6 +10,7 @@ import {
   ToastAndroid,
   ScrollView,
   PermissionsAndroid,
+  Platform,
 } from 'react-native';
 
 import moment from 'moment';

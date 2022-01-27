@@ -1,351 +1,476 @@
-import React from 'react'
-import {Animated, Dimensions, Linking, Image, StyleSheet, Text, TouchableOpacity, View ,Easing,  Switch, ScrollView, ToastAndroid } from 'react-native'
-import {AntDesign} from 'react-native-vector-icons';
-import { useNavigation, useRoute , useIsFocused } from '@react-navigation/native';
+import React from 'react';
+import {
+  Animated,
+  Dimensions,
+  Linking,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Easing,
+  Switch,
+  ScrollView,
+  ToastAndroid,
+  Platform,
+} from 'react-native';
+import { AntDesign } from 'react-native-vector-icons';
+import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import Constants from 'expo-constants'
-import {Avatar} from 'react-native-paper'
-import * as firebase from "firebase";
-import * as Notifications from 'expo-notifications'
+import Constants from 'expo-constants';
+import { Avatar } from 'react-native-paper';
+import * as firebase from 'firebase';
+import * as Notifications from 'expo-notifications';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import axios from 'axios';
 import { AirbnbRating } from 'react-native-ratings';
 import * as Amplitude from 'expo-analytics-amplitude';
-import  Modal  from 'react-native-modal'
+import Modal from 'react-native-modal';
 import Clipboard from '@react-native-clipboard/clipboard';
 import LinearGradient from 'react-native-linear-gradient';
 import { LoadingPage } from '../Exports/Pages';
 import { home } from '../../Styles/Home';
-import {homeFeed} from "../FakeData/HomeFeed"
-import {dataRetrieve, URL} from '../Exports/Config'
+import { homeFeed } from '../FakeData/HomeFeed';
+import { dataRetrieve, URL } from '../Exports/Config';
 import { GiftComponent, RewardsComponent } from '../Exports/Components';
 import { width } from '../Exports/Constants';
-import { RandomContext } from '../Exports/Context'
-import { alttheme, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors'
+import { RandomContext } from '../Exports/Context';
+import { alttheme, colorsArray, theme, themeLight, themeLightest } from '../Exports/Colors';
 
 try {
-    Amplitude.initializeAsync("eb87439a02205454e7add78f67ab45b2");
+  Amplitude.initializeAsync('eb87439a02205454e7add78f67ab45b2');
+} catch {
+  console.log('No Amplitude Tracking');
 }
-catch {
-    console.log("No Amplitude Tracking")
-}
 
-function FeedItemComponent({item,id, userInfo}) {
-    const [randomNo, userId] = React.useContext(RandomContext)
-    const [colorNo,setColorNo] = React.useState(0) 
-    const [tempFollow,setTempFollow] = React.useState(false)
-    const [like,setLike] = React.useState(item.activity_like)
-    const [dislike,setDislike] = React.useState(item.activity_dislike)
-    const [buys,setBuys] = React.useState(item.activity_buy)
-    const [result,setResult] = React.useState()
+function FeedItemComponent({ item, id, userInfo }) {
+  const [randomNo, userId] = React.useContext(RandomContext);
+  const [colorNo, setColorNo] = React.useState(0);
+  const [tempFollow, setTempFollow] = React.useState(false);
+  const [like, setLike] = React.useState(item.activity_like);
+  const [dislike, setDislike] = React.useState(item.activity_dislike);
+  const [buys, setBuys] = React.useState(item.activity_buy);
+  const [result, setResult] = React.useState();
 
-    const navigation = useNavigation()
-    
+  const navigation = useNavigation();
 
-    React.useEffect(() => {
-        setColorNo((randomNo+id)%(colorsArray.length-1))
+  React.useEffect(() => {
+    setColorNo((randomNo + id) % (colorsArray.length - 1));
 
-     //   console.log(userInfo)
+    //   console.log(userInfo)
+  }, []);
 
+  const followUser = () => {
+    setTempFollow(true);
+  };
 
-    },[])
-
-    const followUser = () => {
-        setTempFollow(true)
-    }
-
-    const likePost = () => {
-        setLike(!like)
-        const body = {
-            "user_id": userId,
-            "feed_id": item.feed_id,
-            "feed_user_id" : item.user_id,
-            "user_name": userInfo.user_name,
-            "activity_like": !like,
-            "activity_dislike": dislike,
-            "activity_buy": buys
-        }
-
-        axios({
-            method: 'post',
-            url: `${URL  }/engagement/engagepost`,
-            data: body
-          }, {timeout : 5000})
-        .then(res => {
-        //    console.log(res)
-        })
-        .catch((e) => console.log(e))
-
-
-    }
-
-    const dislikePost = () => {
-        setDislike(!dislike)
-        const body = {
-            "user_id": userId,
-            "feed_id": item.feed_id,
-            "feed_user_id" : item.user_id,
-            "user_name": userInfo.user_name,
-            "activity_like": like,
-            "activity_dislike": !dislike,
-            "activity_buy": buys
-        }
-
-        axios({
-            method: 'post',
-            url: `${URL  }/engagement/engagepost`,
-            data: body
-          }, {timeout : 5000})
-        .then(res => {
-        //    console.log(res)
-        })
-        .catch((e) => console.log(e))
-
-
-    }
-
-    const redirect = async (buyURL) => {
-        try {   
-            Linking.openURL(buyURL)
-        } catch (error) {
-            Amplitude.logEventWithPropertiesAsync("BUY URL ERROR", { "buy_url": buyURL})
-            alert("Browser not reachable")
-
-        }
+  const likePost = () => {
+    setLike(!like);
+    const body = {
+      user_id: userId,
+      feed_id: item.feed_id,
+      feed_user_id: item.user_id,
+      user_name: userInfo.user_name,
+      activity_like: !like,
+      activity_dislike: dislike,
+      activity_buy: buys,
     };
 
-    const buyItem = (buyURL) => {
-        Amplitude.logEventWithPropertiesAsync("BUY URL", { "user_id": userId,"feed_id": item.feed_id,"feed_user_id" : item.user_id,"user_name": userInfo.user_name})
-     //   console.log(buyURL)
-        redirect(buyURL)
-        setBuys(buys+1)
+    axios(
+      {
+        method: 'post',
+        url: `${URL}/engagement/engagepost`,
+        data: body,
+      },
+      { timeout: 5000 }
+    )
+      .then((res) => {
+        //    console.log(res)
+      })
+      .catch((e) => console.log(e));
+  };
 
-        
-        const body = {
-            "user_id": userId,
-            "feed_id": item.feed_id,
-            "feed_user_id" : item.user_id,
-            "user_name": userInfo.user_name,
-            "activity_like": like,
-            "activity_dislike": dislike,
-            "activity_buy": 1
-        }
+  const dislikePost = () => {
+    setDislike(!dislike);
+    const body = {
+      user_id: userId,
+      feed_id: item.feed_id,
+      feed_user_id: item.user_id,
+      user_name: userInfo.user_name,
+      activity_like: like,
+      activity_dislike: !dislike,
+      activity_buy: buys,
+    };
 
-        axios({
-            method: 'post',
-            url: `${URL  }/engagement/engagepost`,
-            data: body
-          }, {timeout : 5000})
-        .then(res => {
-           console.log(res)
-        })
-        .catch((e) => console.log(e))
+    axios(
+      {
+        method: 'post',
+        url: `${URL}/engagement/engagepost`,
+        data: body,
+      },
+      { timeout: 5000 }
+    )
+      .then((res) => {
+        //    console.log(res)
+      })
+      .catch((e) => console.log(e));
+  };
 
+  const redirect = async (buyURL) => {
+    try {
+      Linking.openURL(buyURL);
+    } catch (error) {
+      Amplitude.logEventWithPropertiesAsync('BUY URL ERROR', { buy_url: buyURL });
+      alert('Browser not reachable');
     }
+  };
 
+  const buyItem = (buyURL) => {
+    Amplitude.logEventWithPropertiesAsync('BUY URL', {
+      user_id: userId,
+      feed_id: item.feed_id,
+      feed_user_id: item.user_id,
+      user_name: userInfo.user_name,
+    });
+    //   console.log(buyURL)
+    redirect(buyURL);
+    setBuys(buys + 1);
 
-    return(
-        <View style = {{marginLeft : 10 , marginRight : 10 , borderWidth : 1 , borderColor : '#EEE', borderRadius : 10, marginTop : 5 , marginBottom : 5,  }}>
-            <View style = {{marginTop : 5 ,marginLeft : 10 , flexDirection : 'row', justifyContent : 'flex-start'}}>
-                <View style = {{marginRight : 10}}>
-                {item.user_image && item.user_image != "None" && item.user_image != "" ?
-                    <Image source = {{uri : item.user_image }} style = {{width : 40, height : 40 , borderRadius : 40 , marginTop : 5 , marginLeft : 5  }}/> :
-                    <Avatar.Image style = {{marginTop : 5 , marginLeft : 5 , }}
-                    source={{uri: `https://ui-avatars.com/api/?rounded=true&name=${ item.user_name  }&size=64&background=D7354A&color=fff&bold=true`}} 
-                    size={40}/> }  
-                </View>  
-                <View style = {{flex : 1,}}>
-                    <View style = {{flexDirection : 'row', marginLeft : 5}}>
-                        <TouchableOpacity onPress = {()=> {
-                         //   console.log(" user info ",userInfo, " item " , item)
-                            navigation.navigate("UserPage", {homeUserName : userInfo.user_name, userName : item.user_name , userId : item.user_id , isFollowing : item.isFollowing}
-                        
-                        )}}>
-                            <Text style = {{fontSize : 15 , fontWeight : 'bold' , color : "#555"}}>{item.user_name}</Text>
-                        </TouchableOpacity> 
-                    </View>
-               
-                    <TouchableOpacity 
-                    onPress = {()=>navigation.navigate("Post", {item , id , userInfo})}
-                    style = {{marginTop : 5 ,marginLeft : 5 , flexDirection : 'row', flex : 1, }}>
-                        <Text style = {{fontSize : 12 , color : "#555" , }}>{item.product_name.length > 100 ? `${item.product_name.substring(0,60)  }...` : item.product_name }</Text>
-                    </TouchableOpacity>
-                </View> 
-            </View>
-                <View style = {{marginHorizontal : 20 , marginVertical : 5,flexDirection : 'row' , justifyContent : 'space-between'}}>
-                    <TouchableOpacity 
-                    onPress = {()=>navigation.navigate("CategoryPage", {categoryId : item.category_id, categoryName : item.category_name , userInfo, userName : userInfo.user_name})}
-                    style = {{ paddingHorizontal: 5, paddingVertical : 2, backgroundColor :  "#888" , borderRadius : 10, }}>
-                        <Text style = {{color : 'white',fontSize : 12, fontStyle : 'italic'}}>{item.category_name}</Text>
-                    </TouchableOpacity>
-                    <View style = {{borderWidth : 1 , paddingHorizontal: 5, paddingVertical : 2, 
-                        borderColor :  "#CCC" , borderRadius : 20, }}>
-                        <Text style = {{fontSize : 12, fontStyle : 'italic'}}>{item.context_name}</Text>
-                    </View>
-                </View>
-                { item.feed_image && item.feed_image != "None" && item.feed_image != "" ? 
-                <View style = {{marginTop : 5, justifyContent : 'center', alignItems : 'center' }}>
-                   <Image source = {{uri : item.feed_image}} 
-                        style = {{
-                            width : Dimensions.get('screen').width * 0.92,
-                            height: Dimensions.get('screen').width * 0.92,
-                            borderRadius : 40, 
-                        }} 
-                    />
-                   {item.buy_url != "" ? 
-                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{position : 'absolute', bottom : 10 , 
-                        left : Dimensions.get('screen').width * 0.15, width : Dimensions.get('screen').width * 0.62 , 
-                        alignItems : 'center' , padding : 5 , borderRadius : 20 }}>
-                        <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
-                            <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18}}>BUY</Text>
-                        </TouchableOpacity> 
-                    </LinearGradient> : null }
-                    <AirbnbRating
-                        ratingContainerStyle = {{position : 'absolute', top : 10 , left : Dimensions.get('screen').width * 0.25, backgroundColor : 'transparent'}}
-                        defaultRating = {item.rating}
-                        readOnly
-                        size={30}
-                        showRating = {false}
-                        isDisabled
-                        count = {5}
-                        unSelectedColor = "rgba(200,200,200,0.9)"
-                        />
-                </View> :  
-                <View style = {{flexDirection : 'row' , }}>
-                    <AirbnbRating
-                        ratingContainerStyle = {{width : Dimensions.get('screen').width * 0.7, backgroundColor : 'transparent', flex : 1}}
-                        defaultRating = {item.rating}
-                        readOnly
-                        size={15}
-                        showRating = {false}
-                        isDisabled
-                        count = {5}
-                        unSelectedColor = "rgba(200,200,200,0.9)"
-                        />
-                    {item.buy_url != "" ? 
-                    <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{width : Dimensions.get('screen').width * 0.3 , backgroundColor : colorsArray[colorNo] , alignItems : 'center' , marginRight : 20 , 
-                    borderRadius : 20}} >
-                        <TouchableOpacity onPress = {()=>buyItem(item.buy_url)}>
-                            <Text style = {{fontWeight : 'bold' , color : 'white', fontSize : 18, }}>BUY</Text>
-                        </TouchableOpacity> 
-                    </LinearGradient> : null }
-                </View>
-                }
-               
-                <View style = {{marginTop : 5, flexDirection : 'row',justifyContent : 'space-between' , paddingHorizontal : Dimensions.get('screen').width * 0.05 , borderRadius : 5}}>
-                    <TouchableOpacity 
-                    disabled={dislike}
-                    onPress = {likePost}
-                    >
-                        <AntDesign name = "like2" color = {like ? "green" : dislike ? "#EEE" : "#AAA"} size = {20} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    disabled={like}
-                    onPress = {dislikePost}
-                    >
-                        <AntDesign name = "dislike2" color = {dislike ? "red" : like ? "#EEE" :"#AAA"} size = {20} />
-                    </TouchableOpacity>
-                </View>
-                <View style = {{marginTop : 5 , paddingHorizontal : 10 , marginBottom : 10 }}>
-                    <TouchableWithoutFeedback onPress = {()=>navigation.navigate("Post", {item , id , userInfo})}>
-                        <Text>
-                            {item.title}
-                            <Text style = {{color : "#2980b9"}}>{item.comment.length > 20 ? " .. Read More" : ""}</Text>
-                        </Text>
-                    </TouchableWithoutFeedback>
-                </View>
-            </View>
-        
-        )
+    const body = {
+      user_id: userId,
+      feed_id: item.feed_id,
+      feed_user_id: item.user_id,
+      user_name: userInfo.user_name,
+      activity_like: like,
+      activity_dislike: dislike,
+      activity_buy: 1,
+    };
+
+    axios(
+      {
+        method: 'post',
+        url: `${URL}/engagement/engagepost`,
+        data: body,
+      },
+      { timeout: 5000 }
+    )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => console.log(e));
+  };
+
+  return (
+    <View
+      style={{
+        marginLeft: 10,
+        marginRight: 10,
+        borderWidth: 1,
+        borderColor: '#EEE',
+        borderRadius: 10,
+        marginTop: 5,
+        marginBottom: 5,
+      }}
+    >
+      <View
+        style={{ marginTop: 5, marginLeft: 10, flexDirection: 'row', justifyContent: 'flex-start' }}
+      >
+        <View style={{ marginRight: 10 }}>
+          {item.user_image && item.user_image != 'None' && item.user_image != '' ? (
+            <Image
+              source={{ uri: item.user_image }}
+              style={{ width: 40, height: 40, borderRadius: 40, marginTop: 5, marginLeft: 5 }}
+            />
+          ) : (
+            <Avatar.Image
+              style={{ marginTop: 5, marginLeft: 5 }}
+              source={{
+                uri: `https://ui-avatars.com/api/?rounded=true&name=${item.user_name}&size=64&background=D7354A&color=fff&bold=true`,
+              }}
+              size={40}
+            />
+          )}
+        </View>
+        <View style={{ flex: 1 }}>
+          <View style={{ flexDirection: 'row', marginLeft: 5 }}>
+            <TouchableOpacity
+              onPress={() => {
+                //   console.log(" user info ",userInfo, " item " , item)
+                navigation.navigate('UserPage', {
+                  homeUserName: userInfo.user_name,
+                  userName: item.user_name,
+                  userId: item.user_id,
+                  isFollowing: item.isFollowing,
+                });
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#555' }}>
+                {item.user_name}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Post', { item, id, userInfo })}
+            style={{ marginTop: 5, marginLeft: 5, flexDirection: 'row', flex: 1 }}
+          >
+            <Text style={{ fontSize: 12, color: '#555' }}>
+              {item.product_name.length > 100
+                ? `${item.product_name.substring(0, 60)}...`
+                : item.product_name}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View
+        style={{
+          marginHorizontal: 20,
+          marginVertical: 5,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}
+      >
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('CategoryPage', {
+              categoryId: item.category_id,
+              categoryName: item.category_name,
+              userInfo,
+              userName: userInfo.user_name,
+            })
+          }
+          style={{
+            paddingHorizontal: 5,
+            paddingVertical: 2,
+            backgroundColor: '#888',
+            borderRadius: 10,
+          }}
+        >
+          <Text style={{ color: 'white', fontSize: 12, fontStyle: 'italic' }}>
+            {item.category_name}
+          </Text>
+        </TouchableOpacity>
+        <View
+          style={{
+            borderWidth: 1,
+            paddingHorizontal: 5,
+            paddingVertical: 2,
+            borderColor: '#CCC',
+            borderRadius: 20,
+          }}
+        >
+          <Text style={{ fontSize: 12, fontStyle: 'italic' }}>{item.context_name}</Text>
+        </View>
+      </View>
+      {item.feed_image && item.feed_image != 'None' && item.feed_image != '' ? (
+        <View style={{ marginTop: 5, justifyContent: 'center', alignItems: 'center' }}>
+          <Image
+            source={{ uri: item.feed_image }}
+            style={{
+              width: Dimensions.get('screen').width * 0.92,
+              height: Dimensions.get('screen').width * 0.92,
+              borderRadius: 40,
+            }}
+          />
+          {item.buy_url != '' ? (
+            <LinearGradient
+              colors={['#ed4b60', '#E7455A', '#D7354A']}
+              style={{
+                position: 'absolute',
+                bottom: 10,
+                left: Dimensions.get('screen').width * 0.15,
+                width: Dimensions.get('screen').width * 0.62,
+                alignItems: 'center',
+                padding: 5,
+                borderRadius: 20,
+              }}
+            >
+              <TouchableOpacity onPress={() => buyItem(item.buy_url)}>
+                <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 18 }}>BUY</Text>
+              </TouchableOpacity>
+            </LinearGradient>
+          ) : null}
+          <AirbnbRating
+            ratingContainerStyle={{
+              position: 'absolute',
+              top: 10,
+              left: Dimensions.get('screen').width * 0.25,
+              backgroundColor: 'transparent',
+            }}
+            defaultRating={item.rating}
+            readOnly
+            size={30}
+            showRating={false}
+            isDisabled
+            count={5}
+            unSelectedColor="rgba(200,200,200,0.9)"
+          />
+        </View>
+      ) : (
+        <View style={{ flexDirection: 'row' }}>
+          <AirbnbRating
+            ratingContainerStyle={{
+              width: Dimensions.get('screen').width * 0.7,
+              backgroundColor: 'transparent',
+              flex: 1,
+            }}
+            defaultRating={item.rating}
+            readOnly
+            size={15}
+            showRating={false}
+            isDisabled
+            count={5}
+            unSelectedColor="rgba(200,200,200,0.9)"
+          />
+          {item.buy_url != '' ? (
+            <LinearGradient
+              colors={['#ed4b60', '#E7455A', '#D7354A']}
+              style={{
+                width: Dimensions.get('screen').width * 0.3,
+                backgroundColor: colorsArray[colorNo],
+                alignItems: 'center',
+                marginRight: 20,
+                borderRadius: 20,
+              }}
+            >
+              <TouchableOpacity onPress={() => buyItem(item.buy_url)}>
+                <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 18 }}>BUY</Text>
+              </TouchableOpacity>
+            </LinearGradient>
+          ) : null}
+        </View>
+      )}
+
+      <View
+        style={{
+          marginTop: 5,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingHorizontal: Dimensions.get('screen').width * 0.05,
+          borderRadius: 5,
+        }}
+      >
+        <TouchableOpacity disabled={dislike} onPress={likePost}>
+          <AntDesign name="like2" color={like ? 'green' : dislike ? '#EEE' : '#AAA'} size={20} />
+        </TouchableOpacity>
+        <TouchableOpacity disabled={like} onPress={dislikePost}>
+          <AntDesign name="dislike2" color={dislike ? 'red' : like ? '#EEE' : '#AAA'} size={20} />
+        </TouchableOpacity>
+      </View>
+      <View style={{ marginTop: 5, paddingHorizontal: 10, marginBottom: 10 }}>
+        <TouchableWithoutFeedback
+          onPress={() => navigation.navigate('Post', { item, id, userInfo })}
+        >
+          <Text>
+            {item.title}
+            <Text style={{ color: '#2980b9' }}>
+              {item.comment.length > 20 ? ' .. Read More' : ''}
+            </Text>
+          </Text>
+        </TouchableWithoutFeedback>
+      </View>
+    </View>
+  );
 }
 
-function UpdatedCarousel({DATA , onClickItem }) {
-    const [randomNo] = React.useContext(RandomContext)
-    const [data,setData] = React.useState([...DATA])
-    const scrollX = React.useRef(new Animated.Value(0)).current
-    const ITEM_SIZE = Dimensions.get('screen').width*0.25
-    const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
-    
-    const renderItem = ({item , index}) => {
-        const itemClick = (item) => {
-            onClickItem(item.category_id, item.category_name)
-        }
-       
-        const inputRange = [
-            ITEM_SIZE*(index-1),
-            ITEM_SIZE*(index)
-        ]
-        const opacityInputRange = [
-            -1,
-            0,
-            ITEM_SIZE*index,
-        ]
-        const scale = scrollX.interpolate({
-            inputRange,
-            outputRange : [1,1]
-        })
-        const opacity = scrollX.interpolate({
-            inputRange : opacityInputRange,
-            outputRange : [1,0.9,0]
-        })
-  
-        return(
-            item.category_name ? 
-            <Animated.View style={[{borderRadius : 20 , justifyContent : 'center', alignItems : 'center',padding : 5 , paddingHorizontal : 10, marginHorizontal : 5 , marginVertical : 5 ,borderWidth : 1,borderColor : "#888"}  , {transform : [{scale}]}]}>
-                <TouchableOpacity style = {[{borderWidth : 0}]} onPress = {() => {itemClick(item)}}>
-                    <Text style={[{margin:1 ,fontSize : 15 , color : "#444"}]}>{item.category_name.length > 20 ? `${item.category_name.substring(0,20)  }...` : item.category_name}</Text>
-                </TouchableOpacity>
-            </Animated.View> : null
-        )
-    }
-  
+function UpdatedCarousel({ DATA, onClickItem }) {
+  const [randomNo] = React.useContext(RandomContext);
+  const [data, setData] = React.useState([...DATA]);
+  const scrollX = React.useRef(new Animated.Value(0)).current;
+  const ITEM_SIZE = Dimensions.get('screen').width * 0.25;
+  const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
-    return (  
-            <Animated.FlatList
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={(item,index) => index.toString()}
-            horizontal
-            style = {{width : Dimensions.get('screen').width}}
-            contentContainerStyle = {{}}
-            onScroll = {Animated.event(
-                [{nativeEvent :  {contentOffset : {x : scrollX}}}],
-                {useNativeDriver : true}
-            )}
-            snapToInterval = {ITEM_SIZE+5}
-            showsHorizontalScrollIndicator = {false}
-            />
-    )
+  const renderItem = ({ item, index }) => {
+    const itemClick = (item) => {
+      onClickItem(item.category_id, item.category_name);
+    };
+
+    const inputRange = [ITEM_SIZE * (index - 1), ITEM_SIZE * index];
+    const opacityInputRange = [-1, 0, ITEM_SIZE * index];
+    const scale = scrollX.interpolate({
+      inputRange,
+      outputRange: [1, 1],
+    });
+    const opacity = scrollX.interpolate({
+      inputRange: opacityInputRange,
+      outputRange: [1, 0.9, 0],
+    });
+
+    return item.category_name ? (
+      <Animated.View
+        style={[
+          {
+            borderRadius: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 5,
+            paddingHorizontal: 10,
+            marginHorizontal: 5,
+            marginVertical: 5,
+            borderWidth: 1,
+            borderColor: '#888',
+          },
+          { transform: [{ scale }] },
+        ]}
+      >
+        <TouchableOpacity
+          style={[{ borderWidth: 0 }]}
+          onPress={() => {
+            itemClick(item);
+          }}
+        >
+          <Text style={[{ margin: 1, fontSize: 15, color: '#444' }]}>
+            {item.category_name.length > 20
+              ? `${item.category_name.substring(0, 20)}...`
+              : item.category_name}
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
+    ) : null;
+  };
+
+  return (
+    <Animated.FlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => index.toString()}
+      horizontal
+      style={{ width: Dimensions.get('screen').width }}
+      contentContainerStyle={{}}
+      onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+        useNativeDriver: true,
+      })}
+      snapToInterval={ITEM_SIZE + 5}
+      showsHorizontalScrollIndicator={false}
+    />
+  );
+}
+
+const registerForExpoPushNotificationsAsync = async () => {
+  let token;
+
+  if (Constants.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      ToastAndroid.show('Failed to get push token for push notification!', ToastAndroid.SHORT);
+      return;
+    }
+    try {
+      token = await Notifications.getExpoPushTokenAsync({
+        experienceId: '@kandurisv/candidapp',
+      });
+    } catch (e) {
+      //   console.log("expo error",e)
+    }
+  } else {
+    alert('Must use physical device for Push Notifications');
   }
-  
-
-const registerForExpoPushNotificationsAsync= async() => {
-    let token;
-    
-    if (Constants.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== 'granted') {
-        ToastAndroid.show('Failed to get push token for push notification!',ToastAndroid.SHORT);
-        return;
-      }
-      try {
-        token = await Notifications.getExpoPushTokenAsync({
-          experienceId : '@kandurisv/candidapp'
-        })
-      }
-      catch(e) {
-     //   console.log("expo error",e)
-      }
-       } 
-    else {
-      alert('Must use physical device for Push Notifications');
-    }
 
   if (Platform.OS === 'android') {
     Notifications.setNotificationChannelAsync('default', {
@@ -355,16 +480,16 @@ const registerForExpoPushNotificationsAsync= async() => {
       lightColor: '#FF231F7C',
     });
   }
-  
-  return token.data;
-}
 
-const registerForDevicePushNotificationsAsync = async() => {
+  return token.data;
+};
+
+const registerForDevicePushNotificationsAsync = async () => {
   let token;
- 
+
   if (Constants.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
-   
+
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();
@@ -376,345 +501,492 @@ const registerForDevicePushNotificationsAsync = async() => {
     }
 
     token = (await Notifications.getDevicePushTokenAsync()).data;
-    
   } else {
     alert('Must use physical device for Push Notifications');
   }
-//  console.log(" device token", token)
+  //  console.log(" device token", token)
   return token;
-}
-
+};
 
 function Feed() {
+  const progress = React.useRef(new Animated.Value(0)).current;
+  const ref = React.useRef(null);
 
-    const progress = React.useRef(new Animated.Value(0)).current
-    const ref = React.useRef(null)
-  
-    const [headerHeight,setHeaderHeight] = React.useState(50)
-    const [randomNo, userId] = React.useContext(RandomContext)
-    
-    const navigation = useNavigation()
-    const route = useRoute()
-    const isFocused = useIsFocused()
+  const [headerHeight, setHeaderHeight] = React.useState(50);
+  const [randomNo, userId] = React.useContext(RandomContext);
 
-    const [user_id,setUser_id] = React.useState(route.params?.user_id)
-    const [userDetailsAvailable,setUserDetailsAvailable] = React.useState(false)
+  const navigation = useNavigation();
+  const route = useRoute();
+  const isFocused = useIsFocused();
 
-    const [dbContacts,setDbContacts] = React.useState([])
-    const [dbPhoneNumbers,setDbPhoneNumbers] = React.useState([])
-    const [showTextInput,setShowTextInput] = React.useState(false)
-    const [searchText,setSearchText] = React.useState("")
+  const [user_id, setUser_id] = React.useState(route.params?.user_id);
+  const [userDetailsAvailable, setUserDetailsAvailable] = React.useState(false);
 
-    const [feedData,setFeedData] = React.useState([])
-    const [userInfo,setUserInfo] = React.useState([])
-    const [source,setSource] = React.useState(route?.params?.source ? route?.params?.source : "")
-    const [userSummary,setUserSummary] = React.useState(route?.params?.userSummary ? route?.params?.userSummary : {})
-    const [refresh,setRefresh] = React.useState(false)
-    const [categoryCarousel, setCategoryCarousel] = React.useState(["Laptop", "Mobile", "TV", "Phone", "Books", "Series", "Swimsuit"])
+  const [dbContacts, setDbContacts] = React.useState([]);
+  const [dbPhoneNumbers, setDbPhoneNumbers] = React.useState([]);
+  const [showTextInput, setShowTextInput] = React.useState(false);
+  const [searchText, setSearchText] = React.useState('');
 
-    const [deviceToken , setDeviceToken] = React.useState("")
-    const [expoToken , setExpoToken] = React.useState("")
+  const [feedData, setFeedData] = React.useState([]);
+  const [userInfo, setUserInfo] = React.useState([]);
+  const [source, setSource] = React.useState(route?.params?.source ? route?.params?.source : '');
+  const [userSummary, setUserSummary] = React.useState(
+    route?.params?.userSummary ? route?.params?.userSummary : {}
+  );
+  const [refresh, setRefresh] = React.useState(false);
+  const [categoryCarousel, setCategoryCarousel] = React.useState([
+    'Laptop',
+    'Mobile',
+    'TV',
+    'Phone',
+    'Books',
+    'Series',
+    'Swimsuit',
+  ]);
 
-    const [toggled, setToggled] = React.useState(false);
+  const [deviceToken, setDeviceToken] = React.useState('');
+  const [expoToken, setExpoToken] = React.useState('');
 
-    const [modalVisible,setModalVisible] = React.useState(false)
-    const [loading,setLoading] = React.useState(false)
-    const [error,setError] = React.useState(false)
+  const [toggled, setToggled] = React.useState(false);
 
-    const [pageNumber,setPageNumber] = React.useState(0)
-    const scrollY = React.useRef(new Animated.Value(0));
-    const handleScroll = Animated.event(
-        [{nativeEvent: {contentOffset: {y: scrollY.current}}}],
-        {useNativeDriver: true},
-      );
-    const scrollYClamped = Animated.diffClamp(scrollY.current, 0, headerHeight)
-    const translateY = scrollYClamped.interpolate({
-        inputRange: [0, headerHeight],
-        outputRange: [0, -(headerHeight) ],
-        });
-    const translateYNumber = React.useRef();
-       translateY.addListener(({value}) => {
-         translateYNumber.current = value;
-    });
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(false);
 
-    React.useEffect(()=>{
-        setLoading(true)
-        console.log("source" , source)
-        if(source == "Onboarding") {
-            setSource("")
-            setModalVisible(true)
-        } else {
-            setSource("")
-        }
-        
-        Animated.timing(progress, {
-            toValue: 1,
-            duration: 2000,
-            easing: Easing.linear,
-            useNativeDriver : true
-              },).start()
+  const [pageNumber, setPageNumber] = React.useState(0);
+  const scrollY = React.useRef(new Animated.Value(0));
+  const handleScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { y: scrollY.current } } }],
+    { useNativeDriver: true }
+  );
+  const scrollYClamped = Animated.diffClamp(scrollY.current, 0, headerHeight);
+  const translateY = scrollYClamped.interpolate({
+    inputRange: [0, headerHeight],
+    outputRange: [0, -headerHeight],
+  });
+  const translateYNumber = React.useRef();
+  translateY.addListener(({ value }) => {
+    translateYNumber.current = value;
+  });
 
+  React.useEffect(() => {
+    setLoading(true);
+    console.log('source', source);
+    if (source == 'Onboarding') {
+      setSource('');
+      setModalVisible(true);
+    } else {
+      setSource('');
+    }
+
+    Animated.timing(progress, {
+      toValue: 1,
+      duration: 2000,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start();
 
     //    console.log(Constants.systemFonts);
-        const registerNotification = async () => {
-            registerForExpoPushNotificationsAsync().then(token => {
-         //   console.log("expo token", token)
-            setExpoToken(token)
-           
+    const registerNotification = async () => {
+      registerForExpoPushNotificationsAsync().then((token) => {
+        //   console.log("expo token", token)
+        setExpoToken(token);
+      });
+      registerForDevicePushNotificationsAsync().then((token) => {
+        //   console.log("device token", token)
+        setDeviceToken(token);
+      });
+    };
+    registerNotification();
+
+    //  console.log(dataRetrieve)
+    if (dataRetrieve) {
+      //  console.log(URL)
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user != null) {
+          axios
+            .get(
+              `${URL}/user/info`,
+              { params: { user_id: userId.slice(1, 13) } },
+              { timeout: 5000 }
+            )
+            .then((res) => res.data)
+            .then((responseData) => {
+              //  console.log("OUTPUT", responseData)
+              setUserInfo(responseData[0]);
+            })
+            .catch((error) => {
+              //  console.log(error)
             });
-            registerForDevicePushNotificationsAsync().then(token => {
-         //   console.log("device token", token)
-            setDeviceToken(token)
-            
+
+          axios
+            .get(
+              `${URL}/feed/home`,
+              { params: { user_id: user.phoneNumber.slice(1, 13), page: pageNumber } },
+              { timeout: 5000 }
+            )
+            .then((res) => res.data)
+            .then((responseData) => {
+              console.log('feed', responseData);
+              setLoading(false);
+              setFeedData(responseData);
+            })
+            .catch((error) => {
+              console.log('ERROR', error);
+              setError(true);
+              setLoading(false);
             });
+
+          //     if(userInfo) {
+          //         axios.get(URL + "/user/info",{params:{user_id : user.phoneNumber.slice(1,13)}} , {timeout : 5000})
+          //         .then(res => res.data).then(async function(responseData) {
+          // //       console.log("a",responseData)
+          //             setUserInfo(responseData[0])
+          //             if(responseData.length && responseData[0].user_name) {
+          //                 setUserDetailsAvailable(true)
+          //             }
+          //             else {
+          //                 setRefresh(!refresh)
+          //                 navigation.navigate("ProfileInfo",{phoneNumber : user.phoneNumber})
+          //             }
+          //         }).catch(function(error) {
+
+          //         });
+          //     }
+
+          axios
+            .get(
+              `${URL}/user/summary`,
+              { params: { user_id: user.phoneNumber.slice(1, 13) } },
+              { timeout: 5000 }
+            )
+            .then((res) => res.data)
+            .then((responseData) => {
+              //  console.log(responseData)
+              setUserSummary(responseData[0]);
+            })
+            .catch((error) => {});
+
+          axios
+            .get(`${URL}/all/categories`, { params: { limit: 50 } }, { timeout: 5000 })
+            .then((res) => res.data)
+            .then((responseData) => {
+              //  console.log("Categories",responseData)
+              setCategoryCarousel(responseData);
+            })
+            .catch((error) => {});
+        } else {
+          navigation.navigate('Auth');
         }
-        registerNotification()
-
-        //  console.log(dataRetrieve)
-        if(dataRetrieve) {
-        //  console.log(URL)
-            firebase.auth().onAuthStateChanged(user => {
-                if (user != null) {
-
-                    axios.get(`${URL  }/user/info`,{params:{user_id : userId.slice(1,13)}} , {timeout : 5000})
-                        .then(res => res.data).then((responseData) => {
-                        //  console.log("OUTPUT", responseData)
-                            setUserInfo(responseData[0])
-                        })
-                        .catch((error) => {
-                        //  console.log(error)
-                        });   
-            
-                    axios.get(`${URL  }/feed/home`,{params:{user_id : user.phoneNumber.slice(1,13), page : pageNumber}} , {timeout : 5000})
-                    .then(res => res.data).then((responseData) => {
-                            console.log("feed",responseData)
-                            setLoading(false)
-                            setFeedData(responseData)
-                    })
-                    .catch((error) => {
-                        console.log("ERROR",error)
-                        setError(true)
-                        setLoading(false)
-                    });
-                   
-            
-                //     if(userInfo) {
-                //         axios.get(URL + "/user/info",{params:{user_id : user.phoneNumber.slice(1,13)}} , {timeout : 5000})
-                //         .then(res => res.data).then(async function(responseData) {
-                // //       console.log("a",responseData)
-                //             setUserInfo(responseData[0])
-                //             if(responseData.length && responseData[0].user_name) {
-                //                 setUserDetailsAvailable(true)
-                //             }
-                //             else {
-                //                 setRefresh(!refresh)
-                //                 navigation.navigate("ProfileInfo",{phoneNumber : user.phoneNumber})
-                //             }
-                //         }).catch(function(error) {
-              
-                //         });
-                //     }
-                        
-                    axios.get(`${URL  }/user/summary`,{params:{user_id : user.phoneNumber.slice(1,13)}} , {timeout : 5000})
-                    .then(res => res.data).then((responseData) => {
-                    //  console.log(responseData)
-                        setUserSummary(responseData[0])
-                    })
-                    .catch((error) => {
-                    
-                    });
-            
-                    axios.get(`${URL  }/all/categories`,{params:{limit : 50}} , {timeout : 5000})
-                    .then(res => res.data).then((responseData) => {
-                    //  console.log("Categories",responseData)
-                        setCategoryCarousel(responseData)
-                    })
-                    .catch((error) => {
-                    
-                    });
-                }
-                else {
-                    navigation.navigate("Auth")
-                }})}
-            else {
-                setLoading(false)
-                setFeedData(homeFeed)
-            }
-
-      
-    },[isFocused])
-
-    function FeedItem({item,index}) {
-  return <View key = {index.toString()}>
-            <FeedItemComponent item = {item} id = {index} userInfo = {userInfo}/>
-        </View>
-}
-    
-
-    function EmptyComponent() {
-        return(
-            <View style = {{marginTop : 10 }}>
-                <View style = {{justifyContent : 'center'}}>
-                    <LottieView
-                    progress = {progress}
-                    style={{width : Dimensions.get('screen').width*0.4 , height : Dimensions.get('screen').width*0.4}}
-                    source={require('../../assets/animation/astronaut.json')}
-                    autoPlay
-                    />
-                </View>
-                <View style = {{justifyContent : 'center', alignItems :'center'}}>
-                    <Text style = {{fontWeight : 'bold' , fontSize : 25}}>Uh Oh! No new reviews to be shown</Text>
-                    <TouchableOpacity onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}>
-                        <Text style = {{marginTop : 10 , color : themeLight}}>Start Reviewing</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        )
+      });
+    } else {
+      setLoading(false);
+      setFeedData(homeFeed);
     }
+  }, [isFocused]);
 
-
-    // const HeaderComponent = () => {
-    //    // return null
-    //     return(
-    //         categoryCarousel.length ? 
-    //             <View style = {{marginTop : headerHeight, height : 50}}>
-    //                  <UpdatedCarousel DATA = {categoryCarousel} onClickItem = {(id,name)=>onClickCategory(id,name)} />
-    //              </View> : null    
-    //     )
-    // }
-
-    const onClickCategory = (id,name) => {
-        Amplitude.logEventWithPropertiesAsync("CLICKED ON CATEGORY",{categoryId : id, categoryName : name , userName : userInfo.user_name })
-        navigation.navigate("CategoryPage",{categoryId : id, categoryName : name , userName : userInfo.user_name })
-      //  console.log(id, name)
-    }
-
-    const onContextModalClose = () => {
-        setModalVisible(false)
-    }
-
-    function HeaderComponent() {
-        return (<View 
-            style = {{width: width-20, height : 40, borderRadius : 2,
-            backgroundColor : themeLightest, marginleft : 5, flex : 1, marginHorizontal : 10,
-            justifyContent : 'space-around', alignItems : 'center', }}>
-                <View style = {{flexDirection : 'row'}}>
-                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 15,marginRight : 5 , fontWeight : !toggled ? 'bold' :'normal'}}>Home</Text>
-                    </View>
-                    <View style = {{  justifyContent : 'center', alignItems : 'center'}}>
-                        <Switch
-                            trackColor={{ true: theme , false: "white" }}
-                            thumbColor="white"
-                            onValueChange={()=>{
-                                Amplitude.logEventAsync("HOME FEED TOGGLE")
-                                navigation.navigate("Home")
-                                }
-                            }
-                            value
-                        />
-                    </View>
-                    <View style = {{ justifyContent : 'center', alignItems : 'center'}}>
-                        <Text style = {{color : theme, fontSize : 15,marginLeft : 5, fontWeight : !toggled ? 'normal' :'bold'}}>Feed</Text>
-                    </View>
-                </View>
-            </View>)
-    }
-
+  function FeedItem({ item, index }) {
     return (
-        <View style = {{ backgroundColor : 'white', flex : 1,}}>
-            <Modal 
-                isVisible={modalVisible}
-                deviceWidth={Dimensions.get('screen').width}
-                deviceHeight={Dimensions.get('screen').height}
-                onBackdropPress={onContextModalClose}
-                onSwipeComplete={onContextModalClose}
-                swipeDirection="left"
-                style = {{marginHorizontal : 20 , marginVertical : 120 , borderRadius : 20}}
-                >
-                <ScrollView style = {{backgroundColor : 'white' , borderRadius : 30 , padding : 20}}>
-                    <Text style = {{fontWeight : 'bold', textAlign :'center', color : theme, fontSize : 30}}>Congratulations</Text>
-                    <Text style = {{textAlign : 'center' , fontSize : 20}}>You just earned 500 coins</Text>
-                    <View style = {{justifyContent :'center', alignItems : 'center'}}>
-                        <GiftComponent />
-                    </View>
-                    <Text style = {{fontWeight : 'bold', textAlign :'center' , fontSize : 20,marginTop : 40}}>Welcome to Candid Community</Text>
-                    <View style = {{justifyContent : 'center', alignItems : 'center'}}>
-                        <TouchableOpacity style = {home.modalButton} onPress = {()=>navigation.navigate("MyRewards")}>
-                            <Text style = {home.modalButtonText}>Go To Rewards Section</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style = {home.modalButton} onPress = {()=>navigation.navigate("HowToEarn")}>
-                            <Text style = {home.modalButtonText}>Read Community Guidelines</Text>
-                        </TouchableOpacity>
-                    </View>
-                    
-                </ScrollView>
-            </Modal>
-            <Animated.View 
-            style = {{ transform: [{translateY}],
-                backgroundColor : 'white', flex : 1 ,
-                height : headerHeight , 
-                position: 'absolute',  zIndex: 100, width: '100%',  left: 0,right: 0,
-                flexDirection : 'row',  justifyContent : 'space-between', alignItems : 'center'}}>
-                    <TouchableOpacity style = {{marginLeft : 10, height : 30}} onPress={()=>navigation.openDrawer()}>
-                        {userInfo.user_profile_image && userInfo.user_profile_image != "" ? 
-                        <Image source = {{uri : userInfo.user_profile_image }} 
-                            style = {{opacity : 1 , backgroundColor : 'red',  flex: 1,justifyContent: "center",borderRadius : 30, height : 30 , width : 30}} />
-                        : <Avatar.Image style = {{ }}
-                        source={{uri: `https://ui-avatars.com/api/?rounded=true&name=${ userInfo.user_name  }&size=64&background=D7354A&color=fff&bold=true`}} 
-                        size={30}/> }
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style = {{marginLeft : 10, flex : 1 }}
-                        onPress = {()=>{
-                            Clipboard.setString(userInfo.coupon)
-                            ToastAndroid.show(`Your referral code : ${  userInfo.coupon  } is copied`, ToastAndroid.SHORT)
-                            Amplitude.logEventAsync("Clicked on My Details on Home")
-                            navigation.navigate("MyDetails", {userInfo , userSummary})}
-                            }
-                        >
-                        <Text style = {{fontWeight : 'bold', fontSize : 20, color : alttheme}}>{userInfo && userInfo.user_name ? userInfo.user_name.length > 15 ? userInfo.user_name : userInfo.user_name.slice(0,15) : ""}</Text>
-                    </TouchableOpacity>
-                    <View style = {{alignItems : 'center', justifyContent : 'flex-end',flexDirection : 'row-reverse' , marginRight : 10 }}>
-                        <RewardsComponent rewards = {userSummary && userSummary.coins_available ? userSummary.coins_available : 0} source = "Feed" userInfo = {userInfo}  userSummary = {userSummary} />
-                    </View>
-            </Animated.View>
+      <View key={index.toString()}>
+        <FeedItemComponent item={item} id={index} userInfo={userInfo} />
+      </View>
+    );
+  }
 
-            {/* {categoryCarousel.length ? 
+  function EmptyComponent() {
+    return (
+      <View style={{ marginTop: 10 }}>
+        <View style={{ justifyContent: 'center' }}>
+          <LottieView
+            progress={progress}
+            style={{
+              width: Dimensions.get('screen').width * 0.4,
+              height: Dimensions.get('screen').width * 0.4,
+            }}
+            source={require('../../assets/animation/astronaut.json')}
+            autoPlay
+          />
+        </View>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontWeight: 'bold', fontSize: 25 }}>
+            Uh Oh! No new reviews to be shown
+          </Text>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('AddCategory', {
+                user_id: userId.slice(1, 13),
+                user_name: userInfo.user_name,
+                user_image: userInfo.user_image,
+              })
+            }
+          >
+            <Text style={{ marginTop: 10, color: themeLight }}>Start Reviewing</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  // const HeaderComponent = () => {
+  //    // return null
+  //     return(
+  //         categoryCarousel.length ?
+  //             <View style = {{marginTop : headerHeight, height : 50}}>
+  //                  <UpdatedCarousel DATA = {categoryCarousel} onClickItem = {(id,name)=>onClickCategory(id,name)} />
+  //              </View> : null
+  //     )
+  // }
+
+  const onClickCategory = (id, name) => {
+    Amplitude.logEventWithPropertiesAsync('CLICKED ON CATEGORY', {
+      categoryId: id,
+      categoryName: name,
+      userName: userInfo.user_name,
+    });
+    navigation.navigate('CategoryPage', {
+      categoryId: id,
+      categoryName: name,
+      userName: userInfo.user_name,
+    });
+    //  console.log(id, name)
+  };
+
+  const onContextModalClose = () => {
+    setModalVisible(false);
+  };
+
+  function HeaderComponent() {
+    return (
+      <View
+        style={{
+          width: width - 20,
+          height: 40,
+          borderRadius: 2,
+          backgroundColor: themeLightest,
+          marginleft: 5,
+          flex: 1,
+          marginHorizontal: 10,
+          justifyContent: 'space-around',
+          alignItems: 'center',
+        }}
+      >
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <Text
+              style={{
+                color: theme,
+                fontSize: 15,
+                marginRight: 5,
+                fontWeight: !toggled ? 'bold' : 'normal',
+              }}
+            >
+              Home
+            </Text>
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <Switch
+              trackColor={{ true: theme, false: 'white' }}
+              thumbColor="white"
+              onValueChange={() => {
+                Amplitude.logEventAsync('HOME FEED TOGGLE');
+                navigation.navigate('Home');
+              }}
+              value
+            />
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <Text
+              style={{
+                color: theme,
+                fontSize: 15,
+                marginLeft: 5,
+                fontWeight: !toggled ? 'normal' : 'bold',
+              }}
+            >
+              Feed
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ backgroundColor: 'white', flex: 1 }}>
+      <Modal
+        isVisible={modalVisible}
+        deviceWidth={Dimensions.get('screen').width}
+        deviceHeight={Dimensions.get('screen').height}
+        onBackdropPress={onContextModalClose}
+        onSwipeComplete={onContextModalClose}
+        swipeDirection="left"
+        style={{ marginHorizontal: 20, marginVertical: 120, borderRadius: 20 }}
+      >
+        <ScrollView style={{ backgroundColor: 'white', borderRadius: 30, padding: 20 }}>
+          <Text style={{ fontWeight: 'bold', textAlign: 'center', color: theme, fontSize: 30 }}>
+            Congratulations
+          </Text>
+          <Text style={{ textAlign: 'center', fontSize: 20 }}>You just earned 500 coins</Text>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <GiftComponent />
+          </View>
+          <Text style={{ fontWeight: 'bold', textAlign: 'center', fontSize: 20, marginTop: 40 }}>
+            Welcome to Candid Community
+          </Text>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity
+              style={home.modalButton}
+              onPress={() => navigation.navigate('MyRewards')}
+            >
+              <Text style={home.modalButtonText}>Go To Rewards Section</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={home.modalButton}
+              onPress={() => navigation.navigate('HowToEarn')}
+            >
+              <Text style={home.modalButtonText}>Read Community Guidelines</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </Modal>
+      <Animated.View
+        style={{
+          transform: [{ translateY }],
+          backgroundColor: 'white',
+          flex: 1,
+          height: headerHeight,
+          position: 'absolute',
+          zIndex: 100,
+          width: '100%',
+          left: 0,
+          right: 0,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <TouchableOpacity
+          style={{ marginLeft: 10, height: 30 }}
+          onPress={() => navigation.openDrawer()}
+        >
+          {userInfo.user_profile_image && userInfo.user_profile_image != '' ? (
+            <Image
+              source={{ uri: userInfo.user_profile_image }}
+              style={{
+                opacity: 1,
+                backgroundColor: 'red',
+                flex: 1,
+                justifyContent: 'center',
+                borderRadius: 30,
+                height: 30,
+                width: 30,
+              }}
+            />
+          ) : (
+            <Avatar.Image
+              style={{}}
+              source={{
+                uri: `https://ui-avatars.com/api/?rounded=true&name=${userInfo.user_name}&size=64&background=D7354A&color=fff&bold=true`,
+              }}
+              size={30}
+            />
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{ marginLeft: 10, flex: 1 }}
+          onPress={() => {
+            Clipboard.setString(userInfo.coupon);
+            ToastAndroid.show(
+              `Your referral code : ${userInfo.coupon} is copied`,
+              ToastAndroid.SHORT
+            );
+            Amplitude.logEventAsync('Clicked on My Details on Home');
+            navigation.navigate('MyDetails', { userInfo, userSummary });
+          }}
+        >
+          <Text style={{ fontWeight: 'bold', fontSize: 20, color: alttheme }}>
+            {userInfo && userInfo.user_name
+              ? userInfo.user_name.length > 15
+                ? userInfo.user_name
+                : userInfo.user_name.slice(0, 15)
+              : ''}
+          </Text>
+        </TouchableOpacity>
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            flexDirection: 'row-reverse',
+            marginRight: 10,
+          }}
+        >
+          <RewardsComponent
+            rewards={userSummary && userSummary.coins_available ? userSummary.coins_available : 0}
+            source="Feed"
+            userInfo={userInfo}
+            userSummary={userSummary}
+          />
+        </View>
+      </Animated.View>
+
+      {/* {categoryCarousel.length ? 
                <View style = {{marginTop : headerHeight, height : 50}}>
                     <UpdatedCarousel DATA = {categoryCarousel} onClickItem = {onClickCategory} />
                 </View> : null    
             } */}
-        
-            {error ? <View><Text>Error loading the feed. Please try later!</Text></View> : loading ? <LoadingPage /> :
-            <Animated.FlatList
-            keyExtractor = {(item,index)=>index.toString()}
-            ref = {ref}
-            style = {{marginBottom : 0 , }}
-            contentContainerStyle = {{paddingTop : 50, paddingBottom : 110}}
-            data = {toggled ? feedData.filter((item,index)=>item.rating >3) : feedData}
-            renderItem = {FeedItem}
-            onScroll = {handleScroll}
-            showsVerticalScrollIndicator = {false}
-           // ListHeaderComponent={HeaderComponent}
-            ListEmptyComponent={EmptyComponent}
-            />
-            }
-            <LinearGradient colors={["#ed4b60","#E7455A","#D7354A"]} style = {{width: Dimensions.get('screen').width*.8 , height : 50 , borderRadius : 40,
-            backgroundColor : theme
-            , justifyContent : 'center', alignItems : 'center', position : 'absolute' , bottom : 60 , left : Dimensions.get('screen').width*.1   }} >
-                <TouchableOpacity 
-                onPress = {()=>navigation.navigate("AddCategory" , {user_id : userId.slice(1,13), user_name : userInfo.user_name, user_image : userInfo.user_image})}
-                >
-                    <View>
-                        <Text style = {{color : 'white', fontWeight : 'bold'}}>POST REVIEW AND EARN COINS</Text>
-                    </View>
-                </TouchableOpacity>
-            </LinearGradient>
+
+      {error ? (
+        <View>
+          <Text>Error loading the feed. Please try later!</Text>
         </View>
-    )
+      ) : loading ? (
+        <LoadingPage />
+      ) : (
+        <Animated.FlatList
+          keyExtractor={(item, index) => index.toString()}
+          ref={ref}
+          style={{ marginBottom: 0 }}
+          contentContainerStyle={{ paddingTop: 50, paddingBottom: 110 }}
+          data={toggled ? feedData.filter((item, index) => item.rating > 3) : feedData}
+          renderItem={FeedItem}
+          onScroll={handleScroll}
+          showsVerticalScrollIndicator={false}
+          // ListHeaderComponent={HeaderComponent}
+          ListEmptyComponent={EmptyComponent}
+        />
+      )}
+      <LinearGradient
+        colors={['#ed4b60', '#E7455A', '#D7354A']}
+        style={{
+          width: Dimensions.get('screen').width * 0.8,
+          height: 50,
+          borderRadius: 40,
+          backgroundColor: theme,
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'absolute',
+          bottom: 60,
+          left: Dimensions.get('screen').width * 0.1,
+        }}
+      >
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('AddCategory', {
+              user_id: userId.slice(1, 13),
+              user_name: userInfo.user_name,
+              user_image: userInfo.user_image,
+            })
+          }
+        >
+          <View>
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>POST REVIEW AND EARN COINS</Text>
+          </View>
+        </TouchableOpacity>
+      </LinearGradient>
+    </View>
+  );
 }
 
-export default Feed
+export default Feed;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

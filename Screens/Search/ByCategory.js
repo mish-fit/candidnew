@@ -31,6 +31,8 @@ import { colorsArray, theme } from '../Exports/Colors';
 // import { categories } from '../FakeData/SearchByCategory';
 
 function FeedItemComponent({ item, id }) {
+  const navigation = useNavigation();
+
   const [randomNo] = React.useContext(RandomContext);
   const [colorNo, setColorNo] = React.useState(0);
   const [tempFollow, setTempFollow] = React.useState(false);
@@ -99,7 +101,7 @@ function FeedItemComponent({ item, id }) {
               onPress={() => {
                 //   console.log(" user info ",userInfo, " item " , item)
                 navigation.navigate('UserPage', {
-                  homeUserName: userInfo.user_name,
+                  homeUserName: item.user_name,
                   userName: item.user_name,
                   userId: item.user_id,
                   isFollowing: item.isFollowing,
@@ -214,9 +216,7 @@ function FeedItemComponent({ item, id }) {
         </TouchableOpacity>
       </View>
       <View style={{ marginTop: 5, paddingHorizontal: 10, marginBottom: 10 }}>
-        <TouchableWithoutFeedback
-          onPress={() => navigation.navigate('Post', { item, id, userInfo })}
-        >
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('Post', { item, id })}>
           <Text>
             {item.title}
             <Text style={{ color: '#2980b9' }}>
