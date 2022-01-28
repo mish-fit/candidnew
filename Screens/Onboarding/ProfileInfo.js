@@ -190,20 +190,23 @@ function ProfileInfo() {
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           Contacts.getAll()
             .then((contacts) => {
-              const a = [];
               setDbPhoneNumbers([]);
               setDbContacts([]);
-              contacts.map((item, index) => {
+              const numbers = contacts.reduce((result, item) => {
                 // console.log("Phone",item.phoneNumbers)
                 if (item.phoneNumbers.length) {
-                  item.phoneNumbers.map((item1, index1) => {
-                    a.push(item1.number.replace(/\s+/g, ''));
-                    // setDbPhoneNumbers(dbPhoneNumbers => [...dbPhoneNumbers,item1.number.replace(/\s+/g, '')] );
-                  });
+                  result.concat(
+                    item.phoneNumbers.map(
+                      (item1, index1) => item1.number.replace(/\s+/g, '')
+                      // setDbPhoneNumbers(dbPhoneNumbers => [...dbPhoneNumbers,item1.number.replace(/\s+/g, '')] );
+                    )
+                  );
                 }
                 // console.log("Reached Here", dbPhoneNumbers.length)
+                return result;
               });
-              setDbPhoneNumbers(a);
+
+              setDbPhoneNumbers(numbers);
             })
             .then(() => {
               console.log('Reached Here', dbPhoneNumbers.length);

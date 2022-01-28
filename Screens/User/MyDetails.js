@@ -797,7 +797,6 @@ function MyDetails() {
           <View>
             <Text
               style={{
-                fontSize: 18,
                 borderTopWidth: 3,
                 borderTopColor: '#EEE',
                 fontWeight: 'bold',
@@ -820,7 +819,6 @@ function MyDetails() {
         <View>
           <Text
             style={{
-              fontSize: 18,
               borderTopWidth: 3,
               borderTopColor: '#EEE',
               fontWeight: 'bold',
@@ -1065,7 +1063,6 @@ const home = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: Dimensions.get('window').width,
-    alignItems: 'center',
   },
   userDetailsGenderRadioButtonContainerStyle: {
     borderWidth: 1,
@@ -1168,7 +1165,6 @@ const home = StyleSheet.create({
     marginLeft: 10,
     marginTop: 5,
     marginBottom: 10,
-    backgroundColor: '#666',
     // position : 'relative',
     opacity: 1,
     height: 125,

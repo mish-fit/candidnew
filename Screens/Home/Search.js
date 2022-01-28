@@ -114,7 +114,6 @@ function Search() {
             justifyContent: 'space-between',
             flex: 1,
             alignItems: 'center',
-            alignItems: 'center',
           }}
         >
           <TextInput

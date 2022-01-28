@@ -21,6 +21,11 @@ import Contacts from 'react-native-contacts';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { customAlphabet } from 'nanoid';
+import * as Amplitude from 'expo-analytics-amplitude';
+import { Snackbar } from 'react-native-paper';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import LinearGradient from 'react-native-linear-gradient';
 
 import { AntDesign } from 'react-native-vector-icons';
 import * as Notifications from 'expo-notifications';
@@ -32,11 +37,6 @@ import { alttheme, theme } from '../Exports/Colors';
 import { s3URL, uploadImageOnS3 } from '../Exports/S3';
 
 import 'react-native-get-random-values';
-import { customAlphabet } from 'nanoid';
-import * as Amplitude from 'expo-analytics-amplitude';
-import { Snackbar } from 'react-native-paper';
-import BouncyCheckbox from 'react-native-bouncy-checkbox';
-import LinearGradient from 'react-native-linear-gradient';
 
 function ProfileInfoV1() {
   const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 6);
@@ -251,20 +251,22 @@ function ProfileInfoV1() {
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           Contacts.getAll()
             .then((contacts) => {
-              const a = [];
               setDbPhoneNumbers([]);
               setDbContacts([]);
-              contacts.map((item, index) => {
+              const numbers = contacts.reduce((result, item) => {
                 // console.log("Phone",item.phoneNumbers)
                 if (item.phoneNumbers.length) {
-                  item.phoneNumbers.map((item1, index1) => {
-                    a.push(item1.number.replace(/\s+/g, ''));
-                    // setDbPhoneNumbers(dbPhoneNumbers => [...dbPhoneNumbers,item1.number.replace(/\s+/g, '')] );
-                  });
+                  result.concat(
+                    item.phoneNumbers.map(
+                      (item1) => item1.number.replace(/\s+/g, '')
+                      // setDbPhoneNumbers(dbPhoneNumbers => [...dbPhoneNumbers,item1.number.replace(/\s+/g, '')] );
+                    )
+                  );
                 }
                 // console.log("Reached Here", dbPhoneNumbers.length)
-              });
-              setDbPhoneNumbers(a);
+                return result;
+              }, []);
+              setDbPhoneNumbers(numbers);
             })
             .then(() => {
               console.log('Reached Here', dbPhoneNumbers.length);

@@ -207,8 +207,6 @@ export const style = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#999',
     shadowColor: '#aaa',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   updateReviewText: {
     fontWeight: 'bold',

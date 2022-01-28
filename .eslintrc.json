@@ -20,31 +20,27 @@
   },
   "plugins": ["react", "react-native", "unused-imports"],
   "rules": {
-    "no-shadow": "off",
+    // wont-use-rules
     "consistent-return": "off",
-    "array-callback-return": "off",
-    "no-alert": "off",
-    "no-underscore-dangle": "off",
     "camelcase": "off",
-    "import/no-extraneous-dependencies": "off",
-    "import/order": "off",
-    "react-hooks/exhaustive-deps": "off",
-    "react/jsx-no-bind": "off",
-    "react/jsx-no-undef": "off",
-    "react/jsx-no-duplicate-props": "off",
-    "react/jsx-props-no-spreading": "off",
-    "react/no-array-index-key": "off",
-    "react/destructuring-assignment": "off",
+    "no-underscore-dangle": "off",
+    "no-shadow": "off",
+    "no-alert": "off",
     "no-console": "off",
-    "no-dupe-keys": "off",
-    "func-names": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-no-bind": "off",
+    "react/destructuring-assignment": "off",
     "global-require": "off",
-    "no-use-before-define": ["error", { "functions": false, "classes": false, "variables": false }],
     "import/prefer-default-export": "off",
     "react/prop-types": "off",
+
+    // need code fixes to enable these rules
+    "react-hooks/exhaustive-deps": "off",
     "react/no-unescaped-entities": "off",
     "react/no-unstable-nested-components": "off",
 
+    // preferences
+    "no-use-before-define": ["error", { "functions": false, "classes": false, "variables": false }],
     "no-unused-vars": "off", // or "@typescript-eslint/no-unused-vars": "off",
     "unused-imports/no-unused-imports": "error",
     // "unused-imports/no-unused-vars": [
