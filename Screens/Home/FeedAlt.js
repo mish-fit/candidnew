@@ -713,7 +713,7 @@ function FeedAlt() {
               setLoading(false);
               //    console.log("People to follow",responseData)
               setPeopleYouCanFollow(responseData);
-              responseData.map(() => {
+              responseData.forEach(() => {
                 console.log('a', a);
                 console.log('following', isFollowing);
                 a.push(false);
@@ -1137,7 +1137,7 @@ function FeedAlt() {
                     onPress={() => heroBannerClick(item.clickable_link)}
                   >
                     <Image
-                      key={index}
+                      key={item.image}
                       source={{ uri: item.image }}
                       style={{
                         width: Dimensions.get('screen').width - 10,
@@ -1152,7 +1152,6 @@ function FeedAlt() {
 
           <Text
             style={{
-              fontSize: 18,
               borderTopWidth: 3,
               borderTopColor: '#EEE',
               fontWeight: 'bold',
@@ -1197,7 +1196,6 @@ function FeedAlt() {
           </TouchableOpacity>
           <Text
             style={{
-              fontSize: 18,
               borderTopWidth: 3,
               borderTopColor: '#EEE',
               fontWeight: 'bold',
@@ -1220,7 +1218,6 @@ function FeedAlt() {
           ) : null}
           <Text
             style={{
-              fontSize: 18,
               borderTopWidth: 3,
               borderTopColor: '#EEE',
               fontWeight: 'bold',
@@ -1243,7 +1240,6 @@ function FeedAlt() {
 
         <Text
           style={{
-            fontSize: 18,
             borderTopWidth: 3,
             borderTopColor: '#EEE',
             fontWeight: 'bold',

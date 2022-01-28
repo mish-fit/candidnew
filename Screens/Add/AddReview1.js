@@ -624,7 +624,6 @@ function AddReview1() {
             >
               <View style={{}}>
                 <TextInput
-                  style={{ fontSize: 16 }}
                   placeholder="Search / Add Product by clicking '+'"
                   onChangeText={(text) => {
                     setSearchTextProduct(text);

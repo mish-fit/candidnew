@@ -132,7 +132,7 @@ function TabBar({ state, descriptors, navigation }) {
               onPress={onPress}
               onLongPress={onLongPress}
               style={{ flex: 1 }}
-              key={index}
+              key={route.key}
             >
               <BottomMenu
                 iconName={label.toString()}

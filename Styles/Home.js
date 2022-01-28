@@ -5,7 +5,9 @@ const { width } = Dimensions.get('screen');
 const { height } = Dimensions.get('screen');
 
 export const home = StyleSheet.create({
-  modalText: {},
+  modalText: {
+    color: borderColor,
+  },
   howToEarn: {
     color: '#555',
   },
@@ -46,8 +48,5 @@ export const home = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Roboto',
     fontWeight: 'bold',
-  },
-  modalText: {
-    color: borderColor,
   },
 });

@@ -55,7 +55,7 @@ function ProfileImage() {
       user_id: route.params?.phoneNumber.slice(1, 13),
       user_name: userName,
       user_profile_image: profileImageChange
-        ? `${s3URL + route.params?.phoneNumber.slice(1, 13)}/profile`
+        ? `${s3URL + (route.params?.phoneNumber || '').slice(1, 13)}/profile`
         : '',
       user_phone_number: route.params?.phoneNumber,
       user_gender: '',

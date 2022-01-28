@@ -245,7 +245,6 @@ function Redemptions() {
                     borderWidth: 1,
                     padding: 5,
                     borderColor: '#AAA',
-                    justifyContent: 'center',
                   }}
                 >
                   <Text

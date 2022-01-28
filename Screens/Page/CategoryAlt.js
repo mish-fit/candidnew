@@ -476,8 +476,6 @@ function FeedItemSummaryComponent({ item, id, contextClickCallback }) {
           </Text>
           <TouchableOpacity
             style={{
-              justifyContent: 'flex-end',
-              alignItems: 'flex-end',
               alignItems: 'center',
               justifyContent: 'center',
             }}
@@ -515,9 +513,7 @@ function FeedItemSummaryComponent({ item, id, contextClickCallback }) {
                 redirect(item.buy_url);
               }}
             >
-              <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16, color: theme }}>
-                BUY
-              </Text>
+              <Text style={{ fontWeight: 'bold', fontSize: 16, color: theme }}>BUY</Text>
             </TouchableOpacity>
           </LinearGradient>
         ) : null}
@@ -533,7 +529,7 @@ function CategoryAlt() {
   const [randomNo, userId] = React.useContext(RandomContext);
   const navigation = useNavigation();
   const route = useRoute();
-  const { categoryCarousel, master_category_name, userInfo, userSummary } = route?.params;
+  const { categoryCarousel, master_category_name, userInfo, userSummary } = route?.params || {};
   const [userName, setUserName] = React.useState('');
   const [categoryArray, setCategoryArray] = React.useState([]);
   const [contextsChecked, setContextsChecked] = React.useState([]);
@@ -643,7 +639,6 @@ function CategoryAlt() {
               ),
               user_id: userId.slice(1, 13),
               page: pageNumber,
-              user_id: userId.slice(1, 13),
             },
           },
           { timeout: 5000 }

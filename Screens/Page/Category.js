@@ -468,8 +468,6 @@ function FeedItemSummaryComponent({ item, id, contextClickCallback }) {
           </Text>
           <TouchableOpacity
             style={{
-              justifyContent: 'flex-end',
-              alignItems: 'flex-end',
               alignItems: 'center',
               justifyContent: 'center',
             }}
@@ -510,7 +508,6 @@ function FeedItemSummaryComponent({ item, id, contextClickCallback }) {
               <Text
                 style={{
                   fontWeight: 'bold',
-                  color: 'white',
                   fontSize: 16,
                   color: colorsArray[colorNo],
                 }}

@@ -484,7 +484,6 @@ function FeedItemSummaryComponent({ item, id }) {
               <Text
                 style={{
                   fontWeight: 'bold',
-                  color: 'white',
                   fontSize: 16,
                   color: colorsArray[colorNo],
                 }}

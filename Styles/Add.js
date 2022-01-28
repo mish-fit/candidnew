@@ -67,7 +67,6 @@ export const add = StyleSheet.create({
   },
   elementFixedLightest: {
     marginTop: 5,
-    borderRadius: 20,
     padding: 5,
     paddingLeft: 5,
     backgroundColor: '#AAA',
