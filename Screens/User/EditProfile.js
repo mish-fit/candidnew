@@ -137,11 +137,8 @@ function EditProfile() {
     const userbody = {
       user_id: userId.slice(1, 13),
       user_name: userName,
-      user_profile_image: profileImageChange
-        ? `${s3URL + userId.slice(1, 13)}/profile`
-        : userImage !== ''
-        ? `${s3URL + userId.slice(1, 13)}/profile`
-        : '',
+      user_profile_image:
+        profileImageChange || userImage ? `${s3URL + userId.slice(1, 13)}/profile` : '',
       user_gender: gender,
       user_dob: userDob,
       instagram_user_name: instagram,
@@ -420,26 +417,34 @@ function EditProfile() {
                   </Picker>
                 </View>  */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
-              {genderValues.map((item, index) => (
-                <Pressable
-                  onPress={() => setGender(item)}
-                  style={{
-                    width: Dimensions.get('screen').width * 0.4,
-                    borderRadius: 4,
-                    height: 30,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor:
-                      gender === 'Male' && item === 'Male'
-                        ? '#d42a40'
-                        : gender === 'Female' && item === 'Female'
-                        ? '#dd6b8e'
-                        : '#EEE',
-                  }}
-                >
-                  <Text style={{ color: gender === item ? 'white' : 'black' }}>{item}</Text>
-                </Pressable>
-              ))}
+              {genderValues.map((item, index) => {
+                const backgroundColor = (() => {
+                  switch (true) {
+                    case gender === 'Male' && item === 'Male':
+                      return '#d42a40';
+                    case gender === 'Female' && item === 'Female':
+                      return '#dd6b8e';
+                    default:
+                      return '#EEE';
+                  }
+                })();
+
+                return (
+                  <Pressable
+                    onPress={() => setGender(item)}
+                    style={{
+                      width: Dimensions.get('screen').width * 0.4,
+                      borderRadius: 4,
+                      height: 30,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor,
+                    }}
+                  >
+                    <Text style={{ color: gender === item ? 'white' : 'black' }}>{item}</Text>
+                  </Pressable>
+                );
+              })}
             </View>
           </View>
           {/* <View style = {{marginTop : 20, flex : 1, justifyContent : 'center', alignItems : 'center'}}>

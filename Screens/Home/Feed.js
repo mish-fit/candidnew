@@ -351,10 +351,36 @@ function FeedItemComponent({ item, id, userInfo }) {
         }}
       >
         <TouchableOpacity disabled={dislike} onPress={likePost}>
-          <AntDesign name="like2" color={like ? 'green' : dislike ? '#EEE' : '#AAA'} size={20} />
+          <AntDesign
+            name="like2"
+            color={(() => {
+              switch (true) {
+                case like:
+                  return 'green';
+                case dislike:
+                  return '#EEE';
+                default:
+                  return '#AAA';
+              }
+            })()}
+            size={20}
+          />
         </TouchableOpacity>
         <TouchableOpacity disabled={like} onPress={dislikePost}>
-          <AntDesign name="dislike2" color={dislike ? 'red' : like ? '#EEE' : '#AAA'} size={20} />
+          <AntDesign
+            name="dislike2"
+            color={(() => {
+              switch (true) {
+                case dislike:
+                  return 'red';
+                case like:
+                  return '#EEE';
+                default:
+                  return '#AAA';
+              }
+            })()}
+            size={20}
+          />
         </TouchableOpacity>
       </View>
       <View style={{ marginTop: 5, paddingHorizontal: 10, marginBottom: 10 }}>
@@ -905,11 +931,13 @@ function Feed() {
           }}
         >
           <Text style={{ fontWeight: 'bold', fontSize: 20, color: alttheme }}>
-            {userInfo && userInfo.user_name
-              ? userInfo.user_name.length > 15
-                ? userInfo.user_name
-                : userInfo.user_name.slice(0, 15)
-              : ''}
+            {(() => {
+              if (userInfo?.user_name) return '';
+
+              return userInfo.user_name.length > 15
+                ? userInfo.user_name.slice(0, 15)
+                : userInfo.user_name;
+            })()}
           </Text>
         </TouchableOpacity>
         <View
@@ -935,26 +963,32 @@ function Feed() {
                 </View> : null    
             } */}
 
-      {error ? (
-        <View>
-          <Text>Error loading the feed. Please try later!</Text>
-        </View>
-      ) : loading ? (
-        <LoadingPage />
-      ) : (
-        <Animated.FlatList
-          keyExtractor={(item, index) => index.toString()}
-          ref={ref}
-          style={{ marginBottom: 0 }}
-          contentContainerStyle={{ paddingTop: 50, paddingBottom: 110 }}
-          data={toggled ? feedData.filter((item, index) => item.rating > 3) : feedData}
-          renderItem={FeedItem}
-          onScroll={handleScroll}
-          showsVerticalScrollIndicator={false}
-          // ListHeaderComponent={HeaderComponent}
-          ListEmptyComponent={EmptyComponent}
-        />
-      )}
+      {(() => {
+        if (error) {
+          return (
+            <View>
+              <Text>Error loading the feed. Please try later!</Text>
+            </View>
+          );
+        }
+
+        if (loading) return <LoadingPage />;
+
+        return (
+          <Animated.FlatList
+            keyExtractor={(item, index) => index.toString()}
+            ref={ref}
+            style={{ marginBottom: 0 }}
+            contentContainerStyle={{ paddingTop: 50, paddingBottom: 110 }}
+            data={toggled ? feedData.filter((item, index) => item.rating > 3) : feedData}
+            renderItem={FeedItem}
+            onScroll={handleScroll}
+            showsVerticalScrollIndicator={false}
+            // ListHeaderComponent={HeaderComponent}
+            ListEmptyComponent={EmptyComponent}
+          />
+        );
+      })()}
       <LinearGradient
         colors={['#ed4b60', '#E7455A', '#D7354A']}
         style={{

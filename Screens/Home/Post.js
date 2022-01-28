@@ -213,15 +213,19 @@ function Post() {
                   {item.user_name}
                 </Text>
               </TouchableOpacity>
-              {item.isFollowing ? null : tempFollow ? (
-                <View>
-                  <Text style={{ color: '#AAA', marginLeft: 10 }}>Following</Text>
-                </View>
-              ) : (
-                <TouchableOpacity onPress={followUser}>
-                  <Text style={{ color: 'skyblue', marginLeft: 10 }}>Follow</Text>
-                </TouchableOpacity>
-              )}
+              {(() => {
+                if (item.isFollowing) return null;
+
+                return tempFollow ? (
+                  <View>
+                    <Text style={{ color: '#AAA', marginLeft: 10 }}>Following</Text>
+                  </View>
+                ) : (
+                  <TouchableOpacity onPress={followUser}>
+                    <Text style={{ color: 'skyblue', marginLeft: 10 }}>Follow</Text>
+                  </TouchableOpacity>
+                );
+              })()}
             </View>
 
             <View style={{ marginTop: 5, marginLeft: 5, flexDirection: 'row', flex: 1 }}>
@@ -358,10 +362,36 @@ function Post() {
           }}
         >
           <TouchableOpacity disabled={dislike} onPress={likePost}>
-            <AntDesign name="like2" color={like ? 'green' : dislike ? '#EEE' : '#AAA'} size={20} />
+            <AntDesign
+              name="like2"
+              color={(() => {
+                switch (true) {
+                  case like:
+                    return 'green';
+                  case dislike:
+                    return '#EEE';
+                  default:
+                    return '#AAA';
+                }
+              })()}
+              size={20}
+            />
           </TouchableOpacity>
           <TouchableOpacity disabled={like} onPress={dislikePost}>
-            <AntDesign name="dislike2" color={dislike ? 'red' : like ? '#EEE' : '#AAA'} size={20} />
+            <AntDesign
+              name="dislike2"
+              color={(() => {
+                switch (true) {
+                  case dislike:
+                    return 'red';
+                  case like:
+                    return '#EEE';
+                  default:
+                    return '#AAA';
+                }
+              })()}
+              size={20}
+            />
           </TouchableOpacity>
         </View>
         <View style={{ marginTop: 5, paddingHorizontal: 10, marginBottom: 10 }}>

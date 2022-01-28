@@ -249,13 +249,16 @@ export default function Login() {
                 }
               }}
               linkStyle={{ color: '#2980b9', fontSize: 12 }}
-              linkText={(url) =>
-                url === 'https://www.getcandid.app/termsandconditions'
-                  ? 'Terms and Conditions'
-                  : url === 'https://www.getcandid.app/privacypolicy'
-                  ? 'Privacy Policy'
-                  : url
-              }
+              linkText={(url) => {
+                switch (url) {
+                  case 'https://www.getcandid.app/termsandconditions':
+                    return 'Terms and Conditions';
+                  case 'https://www.getcandid.app/privacypolicy':
+                    return 'Privacy Policy';
+                  default:
+                    return url;
+                }
+              }}
             >
               <Text style={{ fontSize: 12, textAlign: 'center' }}>
                 By continuing, you agree to our https://www.getcandid.app/termsandconditions and

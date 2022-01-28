@@ -535,72 +535,76 @@ function AddReview() {
           </ScrollView>
         ) : null}
 
-        {productSelected && !categorySelected ? (
-          <View
-            style={{
-              paddingVertical: 10,
-              marginHorizontal: 5,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: '#888',
-              paddingHorizontal: 5,
-              marginTop: 5,
-            }}
-          >
-            <TextInput
-              style={{ fontSize: 14 }}
-              placeholder="Search / Add Category by clicking '+'"
-              onChangeText={(text) => searchCategory(text)}
-              value={searchTextCategory}
-              onFocus={() => setInputFocus(true)}
-              onBlur={() => setInputFocus(false)}
-            />
-            <TouchableOpacity
+        {(() => {
+          if (!productSelected) return null;
+
+          return !categorySelected ? (
+            <View
               style={{
-                padding: 2,
-                marginRight: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
+                paddingVertical: 10,
+                marginHorizontal: 5,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: '#888',
+                paddingHorizontal: 5,
+                marginTop: 5,
               }}
-              disabled={plusDisable}
-              onPress={() => onClickSearchItemChildCategory(searchTextCategory, 0)}
             >
-              <AntDesign name="plus" size={24} color={theme} />
-            </TouchableOpacity>
-          </View>
-        ) : productSelected && categorySelected ? (
-          <View
-            style={{
-              marginHorizontal: 5,
-              marginTop: 5,
-              paddingVertical: 5,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingHorizontal: 5,
-              borderRadius: 5,
-              borderWidth: 1,
-              borderColor: '#EEE',
-              backgroundColor: 'rgba(200,200,200,0.2)',
-            }}
-          >
-            <Text style={{ color: theme, fontSize: 16, fontWeight: 'bold' }}>
-              {searchTextCategory}
-            </Text>
-            <TouchableOpacity
+              <TextInput
+                style={{ fontSize: 14 }}
+                placeholder="Search / Add Category by clicking '+'"
+                onChangeText={(text) => searchCategory(text)}
+                value={searchTextCategory}
+                onFocus={() => setInputFocus(true)}
+                onBlur={() => setInputFocus(false)}
+              />
+              <TouchableOpacity
+                style={{
+                  padding: 2,
+                  marginRight: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                disabled={plusDisable}
+                onPress={() => onClickSearchItemChildCategory(searchTextCategory, 0)}
+              >
+                <AntDesign name="plus" size={24} color={theme} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View
               style={{
-                padding: 2,
-                marginRight: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
+                marginHorizontal: 5,
+                marginTop: 5,
+                paddingVertical: 5,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                paddingHorizontal: 5,
+                borderRadius: 5,
+                borderWidth: 1,
+                borderColor: '#EEE',
+                backgroundColor: 'rgba(200,200,200,0.2)',
               }}
-              onPress={() => setCategorySelected(false)}
             >
-              <AntDesign name="edit" size={15} color={theme} />
-            </TouchableOpacity>
-          </View>
-        ) : null}
+              <Text style={{ color: theme, fontSize: 16, fontWeight: 'bold' }}>
+                {searchTextCategory}
+              </Text>
+              <TouchableOpacity
+                style={{
+                  padding: 2,
+                  marginRight: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                onPress={() => setCategorySelected(false)}
+              >
+                <AntDesign name="edit" size={15} color={theme} />
+              </TouchableOpacity>
+            </View>
+          );
+        })()}
         {searchCategoryArray.length && productSelected && !categorySelected ? (
           <ScrollView style={add.dropDownList} contentContainerStyle={{ paddingBottom: 60 }}>
             <Text style={{ fontWeight: 'bold', marginTop: 5, marginLeft: 5 }}>Top Categories</Text>
