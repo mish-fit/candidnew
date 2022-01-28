@@ -32,7 +32,7 @@ function AddComment() {
   const [submitted, setSubmitted] = React.useState(false);
 
   const { body, contextId, productId, postImageShown, rating, contextExists, productExists } =
-    route?.params;
+    route?.params || {};
 
   React.useEffect(() => {
     //  console.log(route?.params)

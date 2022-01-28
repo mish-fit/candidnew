@@ -27,7 +27,7 @@ function Search() {
   const progress = React.useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
   const route = useRoute();
-  const { userInfo } = route?.params;
+  const { userInfo } = route?.params || {};
   const [randomNo, userId] = React.useContext(RandomContext);
   const [myRewardsCoins, setMyRewardsCoins] = React.useState(7000);
 

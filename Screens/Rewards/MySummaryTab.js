@@ -28,8 +28,8 @@ function Tabs({ user_id }) {
         tabBarIndicatorStyle: { backgroundColor: theme },
       }}
     >
-      <Tab.Screen name="Coins Earned" children={() => <MyEarns user_id={user_id} />} />
-      <Tab.Screen name="Coins Redeemed" children={() => <MyRedeems user_id={user_id} />} />
+      <Tab.Screen name="Coins Earned">{() => <MyEarns user_id={user_id} />}</Tab.Screen>
+      <Tab.Screen name="Coins Redeemed">{() => <MyRedeems user_id={user_id} />}</Tab.Screen>
     </Tab.Navigator>
   );
 }

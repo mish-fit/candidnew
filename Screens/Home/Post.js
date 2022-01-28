@@ -33,7 +33,7 @@ function Post() {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const { item, id, userInfo } = route?.params;
+  const { item, id, userInfo } = route?.params || {};
 
   const [randomNo, userId] = React.useContext(RandomContext);
   const [colorNo, setColorNo] = React.useState(0);

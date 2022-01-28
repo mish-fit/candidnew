@@ -394,7 +394,7 @@ function Product() {
   const navigation = useNavigation();
   const [randomNo, userId] = React.useContext(RandomContext);
   const route = useRoute();
-  const { product_name, product_id, userInfo } = route?.params;
+  const { product_name, product_id, userInfo } = route?.params || {};
 
   const [productFeed, setProductFeed] = React.useState([]);
   const [loading, setLoading] = React.useState(true);

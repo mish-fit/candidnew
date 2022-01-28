@@ -533,7 +533,7 @@ function CategoryAlt() {
   const [randomNo, userId] = React.useContext(RandomContext);
   const navigation = useNavigation();
   const route = useRoute();
-  const { categoryCarousel, master_category_name, userInfo, userSummary } = route?.params;
+  const { categoryCarousel, master_category_name, userInfo, userSummary } = route?.params || {};
   const [userName, setUserName] = React.useState('');
   const [categoryArray, setCategoryArray] = React.useState([]);
   const [contextsChecked, setContextsChecked] = React.useState([]);
