@@ -299,29 +299,27 @@ function FeedItemComponent({ item, id, userInfo, deleteItem }) {
   };
 
   const deleteAction = () => {
-    {
-      console.log(item);
-      const body = {
-        feed_id: item.feed_id,
-      };
-      axios(
-        {
-          method: 'post',
-          url: `${URL}/delete`,
-          data: body,
-        },
-        { timeout: 5000 }
-      )
-        .then((res) => {
-          console.log(res.data);
-          ToastAndroid.show('Post is deleted', ToastAndroid.SHORT);
-          deleteItem(item.feed_id);
-        })
-        .catch((e) => {
-          console.log(e);
-          ToastAndroid.show('Error deleting the post ', ToastAndroid.SHORT);
-        });
-    }
+    console.log(item);
+    const body = {
+      feed_id: item.feed_id,
+    };
+    axios(
+      {
+        method: 'post',
+        url: `${URL}/delete`,
+        data: body,
+      },
+      { timeout: 5000 }
+    )
+      .then((res) => {
+        console.log(res.data);
+        ToastAndroid.show('Post is deleted', ToastAndroid.SHORT);
+        deleteItem(item.feed_id);
+      })
+      .catch((e) => {
+        console.log(e);
+        ToastAndroid.show('Error deleting the post ', ToastAndroid.SHORT);
+      });
   };
 
   const sharePost = async () => {
@@ -670,20 +668,12 @@ function MyDetails() {
                 source={{ uri: `${userImage}?${new Date()}` }}
                 style={{ width: 100, height: 100, borderRadius: 100 }}
               />
-            ) : userInfo.user_name ? (
-              <Avatar.Image
-                source={{
-                  uri: `https://ui-avatars.com/api/?rounded=true&name=${userInfo.user_name.replace(
-                    ' ',
-                    '+'
-                  )}&size=512&background=D7354A&color=fff`,
-                }}
-                size={100}
-              />
             ) : (
               <Avatar.Image
                 source={{
-                  uri: 'https://ui-avatars.com/api/?rounded=true&background=D7354A&color=fff&size=512',
+                  uri: `https://ui-avatars.com/api/?rounded=true&name=${(
+                    userInfo.user_name || ''
+                  ).replace(' ', '+')}&size=512&background=D7354A&color=fff`,
                 }}
                 size={100}
               />

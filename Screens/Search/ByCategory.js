@@ -110,15 +110,19 @@ function FeedItemComponent({ item, id }) {
             >
               <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{item.user_name}</Text>
             </TouchableOpacity>
-            {item.isFollowing ? null : tempFollow ? (
-              <View>
-                <Text style={{ color: '#AAA', marginLeft: 10 }}>Following</Text>
-              </View>
-            ) : (
-              <TouchableOpacity onPress={followUser}>
-                <Text style={{ color: 'skyblue', marginLeft: 10 }}>Follow</Text>
-              </TouchableOpacity>
-            )}
+            {(() => {
+              if (item.isFollowing) return null;
+
+              return tempFollow ? (
+                <View>
+                  <Text style={{ color: '#AAA', marginLeft: 10 }}>Following</Text>
+                </View>
+              ) : (
+                <TouchableOpacity onPress={followUser}>
+                  <Text style={{ color: 'skyblue', marginLeft: 10 }}>Follow</Text>
+                </TouchableOpacity>
+              );
+            })()}
           </View>
 
           <View style={{ marginTop: 5, marginLeft: 5, flexDirection: 'row', flexWrap: 'wrap' }}>

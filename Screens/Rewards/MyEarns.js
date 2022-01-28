@@ -105,15 +105,19 @@ function EarnItemComponent({ item, id }) {
     );
   }
 
-  return item.engaged_product_name ? (
-    <Engagement
-      reward_type={item.reward_type}
-      coins_value={item.coins_value}
-      engaged_user_name={item.engaged_user_name}
-      engaged_product_name={item.engaged_product_name}
-      created_at={item.created_at}
-    />
-  ) : item.engaged_user_name ? (
+  if (item.engaged_product_name) {
+    return (
+      <Engagement
+        reward_type={item.reward_type}
+        coins_value={item.coins_value}
+        engaged_user_name={item.engaged_user_name}
+        engaged_product_name={item.engaged_product_name}
+        created_at={item.created_at}
+      />
+    );
+  }
+
+  return item.engaged_user_name ? (
     <Referral
       reward_type={item.reward_type}
       coins_value={item.coins_value}

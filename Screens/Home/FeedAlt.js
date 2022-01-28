@@ -997,11 +997,13 @@ function FeedAlt() {
             }}
           >
             <Text style={{ fontWeight: 'bold', fontSize: 20, color: alttheme }}>
-              {userInfo && userInfo.user_name
-                ? userInfo.user_name.length > 15
-                  ? userInfo.user_name
-                  : userInfo.user_name.slice(0, 15)
-                : ''}
+              {(() => {
+                if (!userInfo?.user_name) return '';
+
+                return userInfo.user_name.length > 15
+                  ? userInfo.user_name.slice(0, 15)
+                  : userInfo.user_name;
+              })()}
             </Text>
           </TouchableOpacity>
           <View

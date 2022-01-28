@@ -53,20 +53,13 @@ export default function DrawerContent(props) {
                   source={{ uri: `${userImage}?${new Date()}` }}
                   style={{ width: 30, height: 30, borderRadius: 30 }}
                 />
-              ) : userName ? (
-                <Avatar.Image
-                  source={{
-                    uri: `https://ui-avatars.com/api/?rounded=true&name=${userName.replace(
-                      ' ',
-                      '+'
-                    )}&size=512&background=D7354A&color=fff`,
-                  }}
-                  size={50}
-                />
               ) : (
                 <Avatar.Image
                   source={{
-                    uri: 'https://ui-avatars.com/api/?rounded=true&background=D7354A&color=fff&size=512',
+                    uri: `https://ui-avatars.com/api/?rounded=true&name=${(userName || '').replace(
+                      ' ',
+                      '+'
+                    )}&size=512&background=D7354A&color=fff`,
                   }}
                   size={50}
                 />

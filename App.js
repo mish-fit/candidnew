@@ -123,11 +123,11 @@ function App() {
 
   return (
     <View style={{ flex: 1 }}>
-      {isLoading ? (
+      {isLoading || !loadingTimeWait ? (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
           <LoadingPage />
         </View>
-      ) : loadingTimeWait ? (
+      ) : (
         <MenuProvider>
           <RandomProvider value={[randomNo, userId]}>
             <NativeBaseProvider>
@@ -137,10 +137,6 @@ function App() {
             </NativeBaseProvider>
           </RandomProvider>
         </MenuProvider>
-      ) : (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
-          <LoadingPage />
-        </View>
       )}
     </View>
   );

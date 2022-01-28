@@ -438,15 +438,17 @@ function ProfileInfo() {
             }}
           >
             <LinearGradient
-              colors={
-                checked
-                  ? couponCodeAccepted && userNameAccepted
+              colors={(() => {
+                if (checked) {
+                  return couponCodeAccepted && userNameAccepted
                     ? ['#ed4b60', '#E7455A', '#D7354A']
-                    : ['rgba(200,200,200,0.5)', 'rgba(225,225,225,0.5)', 'rgba(250,250,250,0.5)']
-                  : !userNameAccepted
+                    : ['rgba(200,200,200,0.5)', 'rgba(225,225,225,0.5)', 'rgba(250,250,250,0.5)'];
+                }
+
+                return !userNameAccepted
                   ? ['rgba(200,200,200,0.5)', 'rgba(225,225,225,0.5)', 'rgba(250,250,250,0.5)']
-                  : ['#ed4b60', '#E7455A', '#D7354A']
-              }
+                  : ['#ed4b60', '#E7455A', '#D7354A'];
+              })()}
               style={{
                 width: 100,
                 height: 40,
@@ -470,13 +472,13 @@ function ProfileInfo() {
               >
                 <Text
                   style={{
-                    color: checked
-                      ? couponCodeAccepted && userNameAccepted
-                        ? 'white'
-                        : '#888'
-                      : !userNameAccepted
-                      ? '#888'
-                      : 'white',
+                    color: (() => {
+                      if (checked) {
+                        return couponCodeAccepted && userNameAccepted ? 'white' : '#888';
+                      }
+
+                      return !userNameAccepted ? '#888' : 'white';
+                    })(),
                   }}
                 >
                   Next
