@@ -28,9 +28,7 @@
       "package": "com.candid.app",
       "googleServicesFile": "./google-services.json",
       "config": {
-        "googleSignIn": {
-          "apiKey": "AIzaSyCelzKVnbYY07aLtswA4EE9pF9mNeXJtRs"
-        }
+       
       }
     },
     "web": {
